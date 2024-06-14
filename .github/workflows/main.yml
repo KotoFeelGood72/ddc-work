@@ -33,7 +33,8 @@ jobs:
         FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
-        lftp -e "
-        set ftp:ssl-allow no;
+        lftp -c "
+        set ssl:verify-certificate no;
+        open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
         mirror -R ./dist /www/manager.dynamic-devs-collective.ru/wp-content/themes/manager/vue/;
-        quit" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER
+        quit"
