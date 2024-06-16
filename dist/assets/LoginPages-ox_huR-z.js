@@ -1,1 +1,0 @@
-import{d as e,o as a,c as o,a as t,b as n,S as c}from"./index-Y6wI4yU_.js";const m=e({__name:"LoginPages",setup(r){return(s,i)=>(a(),o("div",null,[t(" Good template for vite "),n(c,{name:"notification-unread"})]))}});export{m as default};

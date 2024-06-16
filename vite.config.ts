@@ -9,7 +9,7 @@ export default defineConfig({
     createSvgIconsPlugin({
       iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
       symbolId: 'icon-[dir]-[name]',
-      svgoOptions: true, // Включить опции оптимизации SVG
+      svgoOptions: true, 
     })
   ],
   resolve: {
@@ -24,7 +24,4 @@ export default defineConfig({
       }
     }
   }
-  // server: {
-  //   port: 3000
-  // }
 });
