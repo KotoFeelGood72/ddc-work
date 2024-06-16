@@ -1,6 +1,6 @@
 <template>
   <div>
-    Good template for vite
+    Good template for vite ss
     <SvgIcon name="notification-unread" :size="14" />
   </div>
 </template>
