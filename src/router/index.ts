@@ -6,9 +6,9 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../modules/main/pages/DashboardPages.vue'),
+    redirect: '/dashboard',
     meta: {
-      layout: 'default',
+      layout: 'Admin',
       requiresAuth: true,
     },
   },
@@ -33,8 +33,9 @@ const routes = [
     name: 'Dashboard',
     component: () => import('../modules/main/pages/DashboardPages.vue'),
     meta: {
-      layout: 'default',
+      layout: 'Admin',
       requiresAuth: true,
+      title: 'Dashboard'
     },
   },
 ]
@@ -44,7 +45,6 @@ export const router = createRouter({
   routes,
 })
 
-// Добавьте гвард для проверки авторизации
 router.beforeEach((to, _from, next) => {
   const isAuthenticated = !!localStorage.getItem('authToken');
 

@@ -1,0 +1,30 @@
+<template>
+  <div class="admin">
+    <adminSidebar />
+    <div class="main">
+      <AdminHeaderVue />
+      <div class="content">
+        <slot />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import AdminHeaderVue from "@/components/header/AdminHeader.vue";
+import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
+</script>
+
+<style scoped lang="scss">
+.main {
+  flex-grow: 1;
+  min-height: 100%;
+  height: 100%;
+}
+.admin {
+  @include flex-start;
+}
+.content {
+  height: calc(100vh - 70px);
+}
+</style>
