@@ -41,7 +41,7 @@ const routes = [
 ]
 
 export const router = createRouter({
-  history: createWebHistory('https://manager.dynamic-devs-collective.ru/'),
+  history: createWebHistory(),
   routes,
 })
 
