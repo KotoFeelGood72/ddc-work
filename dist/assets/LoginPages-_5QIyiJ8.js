@@ -1,1 +1,0 @@
-import{d as e,o as a,c as o,a as t,b as n,S as s}from"./index-BidjteY0.js";const m=e({__name:"LoginPages",setup(c){return(r,i)=>(a(),o("div",null,[t(" Good template for vite ss "),n(s,{name:"notification-unread",size:14})]))}});export{m as default};
