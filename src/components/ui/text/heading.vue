@@ -9,9 +9,9 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    title: string;
-    level: number;
-    size: number;
+    title?: string;
+    level?: number;
+    size?: number;
   }>(),
   {
     title: "",

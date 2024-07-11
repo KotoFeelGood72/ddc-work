@@ -71,7 +71,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api/api";
 import custom from "@/api/custom";
-import AuthLogin from "@/components/modal/view/AuthLogin.vue";
+import AuthLogin from "../../../components/modal/view/AuthLogin.vue";
 
 const clients = ref<any>([]);
 const page = ref(1);
@@ -110,7 +110,7 @@ async function updateClient(client: any) {
   }
 }
 
-function getStatusClass(status) {
+function getStatusClass(status: any) {
   switch (status) {
     case "Новый":
       return "status-new";

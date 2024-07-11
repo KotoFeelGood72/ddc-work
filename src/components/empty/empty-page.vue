@@ -4,7 +4,7 @@
       <img src="../../assets/img/empty/empty-document.png" alt="" />
     </div>
     <div class="empty-content">
-      <heading title="Данный раздел в разработке" size="4" />
+      <heading title="Данный раздел в разработке" :size="4" />
     </div>
   </div>
 </template>

@@ -10,7 +10,7 @@ import { computed } from "vue";
 const props = withDefaults(
   defineProps<{
     img?: string;
-    size: "small" | "medium" | "big" | "large";
+    size?: "small" | "medium" | "big" | "large";
   }>(),
   {
     img: avatar,

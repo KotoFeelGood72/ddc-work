@@ -6,12 +6,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useUsersStore } from "@/store/useUserStore";
 
-const username = ref("");
-const password = ref("");
+const username = ref<any>("");
+const password = ref<any>("");
 const userStore = useUsersStore();
 
 const login = async () => {
