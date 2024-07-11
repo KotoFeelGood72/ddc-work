@@ -5,13 +5,14 @@
       <thead>
         <tr>
           <th class="text-left">Наименование</th>
-          <th class="text-left">Город</th>
+          <!-- <th class="text-left">Город</th> -->
           <th class="text-left">Телефон</th>
           <th class="text-left">Website</th>
           <th class="text-left">Категория</th>
           <th class="text-left">Статус</th>
           <th class="text-left">Перезвонить</th>
           <th class="text-left">Комментарий</th>
+          <th class="text-left">Удалить</th>
         </tr>
       </thead>
       <tbody>
@@ -21,7 +22,7 @@
           :class="getStatusClass(item.acf.status)"
         >
           <td><input v-model="item.acf.name" @change="updateClient(item)" /></td>
-          <td><input v-model="item.acf.city" @change="updateClient(item)" /></td>
+          <!-- <td><input v-model="item.acf.city" @change="updateClient(item)" /></td> -->
           <td><input v-model="item.acf.phones" @change="updateClient(item)" /></td>
           <td>
             <div>
@@ -56,13 +57,16 @@
           </td>
           <td><input v-model="item.acf.callback" @change="updateClient(item)" /></td>
           <td><input v-model="item.acf.comment" @change="updateClient(item)" /></td>
+          <td><button @click="deleteClient(item.id)">Удалить</button></td>
         </tr>
       </tbody>
     </v-table>
     <div class="pagination">
-      <button @click="prevPage" :disabled="page === 1">Previous</button>
-      <span>Page {{ page }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="page === totalPages">Next</button>
+      <defaultBtn name="Предыдущая" @click="prevPage" :disabled="page === 1" />
+      <div class="center_pag">
+        <span>Page {{ page }} of {{ totalPages }}</span>
+      </div>
+      <defaultBtn name="Следущая" @click="nextPage" :disabled="page === totalPages" />
     </div>
   </div>
 </template>
@@ -72,6 +76,7 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api/api";
 import custom from "@/api/custom";
+import defaultBtn from "@/components/ui/buttons/default-btn.vue";
 import AuthLogin from "../../../components/modal/view/AuthLogin.vue";
 
 const clients = ref<any>([]);
@@ -108,6 +113,16 @@ async function updateClient(client: any) {
     console.log(`Client ${client.id} updated`, response.data);
   } catch (error) {
     console.error(`Failed to update client ${client.id}:`, error);
+  }
+}
+
+async function deleteClient(clientId: number) {
+  try {
+    await custom.delete(`/delete-client/${clientId}`);
+    clients.value = clients.value.filter((client: any) => client.id !== clientId);
+    console.log(`Client ${clientId} deleted`);
+  } catch (error) {
+    console.error(`Failed to delete client ${clientId}:`, error);
   }
 }
 
@@ -201,5 +216,11 @@ onMounted(() => {
 }
 .status-not-relevant {
   background-color: #f44336;
+}
+
+.center_pag {
+  min-width: 200px;
+  @include flex-center;
+  font-size: 18px;
 }
 </style>
