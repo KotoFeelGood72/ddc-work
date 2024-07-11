@@ -51,6 +51,7 @@
               <option value="Выслан договор">Выслан договор</option>
               <option value="Выслано предложение">Выслано предложение</option>
               <option value="Клиент">Клиент</option>
+              <option value="Не актуально">Не актуально</option>
             </select>
           </td>
           <td><input v-model="item.acf.callback" @change="updateClient(item)" /></td>
@@ -126,6 +127,8 @@ function getStatusClass(status: any) {
       return "status-proposal-sent";
     case "Клиент":
       return "status-client";
+    case "Не актуально":
+      return "status-not-relevant";
     default:
       return "";
   }
@@ -195,5 +198,8 @@ onMounted(() => {
 }
 .status-client {
   background-color: #9e9e9e;
+}
+.status-not-relevant {
+  background-color: #f44336;
 }
 </style>
