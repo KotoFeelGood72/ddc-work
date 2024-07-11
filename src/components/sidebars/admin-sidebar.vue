@@ -1,5 +1,6 @@
 <template>
   <div class="admin-sidebar">
+    <avatar :img="logo" size="large" />
     <ul class="nav">
       <li v-for="(link, i) in AdminNav" :key="'admin-nav-item-' + i">
         <router-link :to="link.url">
@@ -15,6 +16,8 @@
 
 <script setup lang="ts">
 import { AdminNav } from "@/consts/AdminNav";
+import avatar from "../ui/people/avatar.vue";
+import logo from "@/assets/img/logo.png";
 </script>
 
 <style scoped lang="scss">
@@ -24,6 +27,10 @@ import { AdminNav } from "@/consts/AdminNav";
   border-right: 1px solid $bg-color-secondary;
   min-width: 270px;
   padding: 30px 20px;
+
+  :deep(.avatar) {
+    margin-bottom: 20px;
+  }
 }
 
 .nav {
