@@ -1,6 +1,7 @@
 <template>
   <div class="clients">
     <AuthLogin />
+
     <v-table>
       <thead>
         <tr>

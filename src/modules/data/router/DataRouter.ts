@@ -2,7 +2,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 
 const routes = [
   { 
-    path: '/clients', 
+    path: '/clients/', 
     name: 'clients', 
     component: () => import('../pages/DataMain.vue'), 
     meta: {
