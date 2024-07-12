@@ -2,6 +2,16 @@
   <div class="clients">
     <AuthLogin />
 
+    <div class="filter">
+      <label for="category-filter">Фильтр по категориям:</label>
+      <select id="category-filter" v-model="selectedCategory" @change="filterByCategory">
+        <option value="">Все</option>
+        <option v-for="category in categories" :key="category.id" :value="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
     <v-table>
       <thead>
         <tr>
@@ -81,21 +91,42 @@ import defaultBtn from "@/components/ui/buttons/default-btn.vue";
 import AuthLogin from "../../../components/modal/view/AuthLogin.vue";
 
 const clients = ref<any>([]);
+const categories = ref<any[]>([]);
 const page = ref(1);
 const perPage = 10;
 const totalPages = ref(1);
+const selectedCategory = ref<any>("");
 
 const route = useRoute();
 const router = useRouter();
 
 async function getClients() {
   try {
-    const response = await api.get(`/client_new?page=${page.value}&per_page=${perPage}`);
+    const params = {
+      page: page.value,
+      per_page: perPage,
+      theme_bussines: 1,
+    };
+
+    if (selectedCategory.value) {
+      params.theme_bussines = selectedCategory.value;
+    }
+
+    const response = await api.get("/client_new", { params });
     clients.value = response.data;
     totalPages.value = Math.ceil(response.headers["x-wp-total"] / perPage);
     console.log(response.data);
   } catch (error) {
     console.error(error);
+  }
+}
+
+async function getCategories() {
+  try {
+    const response = await api.get("/theme_bussines");
+    categories.value = response.data;
+  } catch (error) {
+    console.error("Failed to get categories:", error);
   }
 }
 
@@ -121,7 +152,6 @@ async function deleteClient(clientId: number) {
   try {
     await custom.delete(`/delete-client/${clientId}`);
     clients.value = clients.value.filter((client: any) => client.id !== clientId);
-    console.log(`Client ${clientId} deleted`);
   } catch (error) {
     console.error(`Failed to delete client ${clientId}:`, error);
   }
@@ -158,6 +188,10 @@ function splitWebsites(websites: string): string[] {
   return websites.split("|").map((site) => site.trim());
 }
 
+function filterByCategory() {
+  getClients();
+}
+
 function updatePage(newPage: number) {
   router.push({ query: { ...route.query, page: newPage.toString() } });
 }
@@ -182,6 +216,7 @@ watch(route, () => {
 onMounted(() => {
   page.value = parseInt(route.query.page as string) || 1;
   getClients();
+  getCategories();
 });
 </script>
 
@@ -189,11 +224,17 @@ onMounted(() => {
 .clients {
   // стили для таблицы и пагинации
 }
+
+.filter {
+  margin-bottom: 20px;
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
+
 .status-new {
   background-color: #e0f7fa;
 }
