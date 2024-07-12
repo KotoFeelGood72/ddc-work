@@ -105,7 +105,7 @@ async function getClients() {
     const params = {
       page: page.value,
       per_page: perPage,
-      theme_bussines: 1,
+      theme_bussines: null,
     };
 
     if (selectedCategory.value) {
