@@ -1,6 +1,5 @@
 <template>
   <div class="clients">
-    {{ isLoading }}
     <div class="filter">
       <Selects
         v-model="selectedCategory"
