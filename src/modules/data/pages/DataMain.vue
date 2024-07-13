@@ -197,6 +197,8 @@ onMounted(() => {
 
 .filter {
   margin-bottom: 20px;
+  @include flex-start;
+  gap: 10px;
 }
 
 .center_pag {

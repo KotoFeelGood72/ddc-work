@@ -38,7 +38,7 @@ watch(localValue, (newValue) => {
 <style scoped lang="scss">
 .input-search {
   width: 100%;
-  margin-bottom: 20px;
+  // margin-bottom: 20px;
 
   input {
     width: 100%;
