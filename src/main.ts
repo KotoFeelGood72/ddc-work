@@ -7,6 +7,7 @@ import SvgIcon from './components/ui/icons/SvgIcon.vue';
 import heading from './components/ui/text/heading.vue';
 import text from './components/ui/text/text.vue';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import Icons from './components/ui/Icons.vue'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -22,7 +23,7 @@ const pinia = createPinia();
 const app = createApp(App);
 
 pinia.use(piniaPluginPersistedstate)
-
+app.component('Icons', Icons);
 app.component('SvgIcon', SvgIcon)
 app.component('heading', heading)
 app.component('v-text', text)

@@ -8,6 +8,7 @@
         :type="passwordVisible ? 'text' : 'password'"
         :placeholder="placeholder"
         autocomplete="false"
+        v-model="localValue"
       />
       <button type="button" class="toggle-visibility" @click="togglePasswordVisibility">
         <SvgIcon :name="passwordVisible ? 'visible' : 'novisible'" />
@@ -18,24 +19,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     placeholder?: string;
     message?: string;
     error?: boolean;
     icon: string;
+    modelValue: string;
   }>(),
   {
     placeholder: "Create Password",
     message: "",
     error: false,
     icon: "lock",
+    modelValue: "",
   }
 );
 
 const passwordVisible = ref(false);
+const emit = defineEmits(["update:modelValue"]);
+
+const localValue = computed({
+  get: () => props.modelValue,
+  set: (newValue) => emit("update:modelValue", newValue),
+});
 
 const togglePasswordVisibility = () => {
   passwordVisible.value = !passwordVisible.value;

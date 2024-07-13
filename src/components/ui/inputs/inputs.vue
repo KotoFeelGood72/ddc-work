@@ -4,20 +4,23 @@
       <div class="input-icon" v-if="icon">
         <SvgIcon :name="icon" />
       </div>
-      <input :type="type" :placeholder="placeholder" />
+      <input :type="type" :placeholder="placeholder" v-model="localValue" />
     </div>
     <span v-if="error" class="input-message">{{ message }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-withDefaults(
+import { computed } from "vue";
+
+const props = withDefaults(
   defineProps<{
     type?: string;
     placeholder?: string;
     message?: string;
     error?: boolean;
     icon: string;
+    modelValue: string;
   }>(),
   {
     type: "text",
@@ -25,8 +28,16 @@ withDefaults(
     message: "",
     error: false,
     icon: "",
+    modelValue: "",
   }
 );
+
+const emit = defineEmits(["update:modelValue"]);
+
+const localValue = computed({
+  get: () => props.modelValue,
+  set: (newValue) => emit("update:modelValue", newValue),
+});
 </script>
 
 <style scoped lang="scss">

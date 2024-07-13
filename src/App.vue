@@ -1,6 +1,7 @@
 <template>
   <component :is="layoutComponent">
     <router-view />
+    <Modal :positionX="isCart ? 'right' : 'center'" />
   </component>
 </template>
 
@@ -10,6 +11,12 @@ import { useRoute } from "vue-router";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
+import Modal from "./components/modal/Modal.vue";
+import { useModalStoreRefs } from "./store/useModalStore";
+
+const { modals } = useModalStoreRefs();
+
+const isCart = computed(() => modals.value.client);
 
 const route = useRoute();
 

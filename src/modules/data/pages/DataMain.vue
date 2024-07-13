@@ -1,84 +1,37 @@
 <template>
   <div class="clients">
-    <AuthLogin />
-
-    <div class="filter">
-      <label for="category-filter">Фильтр по категориям:</label>
-      <select id="category-filter" v-model="selectedCategory" @change="filterByCategory">
-        <option value="">Все</option>
-        <option v-for="category in categories" :key="category.id" :value="category.id">
-          {{ category.name }}
-        </option>
-      </select>
-    </div>
-
-    <v-table>
-      <thead>
-        <tr>
-          <th class="text-left">Наименование</th>
-          <!-- <th class="text-left">Город</th> -->
-          <th class="text-left">Телефон</th>
-          <th class="text-left">Website</th>
-          <th class="text-left">Категория</th>
-          <th class="text-left">Статус</th>
-          <th class="text-left">Перезвонить</th>
-          <th class="text-left">Комментарий</th>
-          <th class="text-left">Удалить</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
+    <div class="clients_main" v-if="clients.length > 0">
+      <div class="filter">
+        <label for="category-filter">Фильтр по категориям:</label>
+        <select
+          id="category-filter"
+          v-model="selectedCategory"
+          @change="filterByCategory"
+        >
+          <option value="">Все</option>
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+      <div class="clients__list">
+        <ClientCard
           v-for="item in clients"
           :key="item.id"
           :class="getStatusClass(item.acf.status)"
-        >
-          <td><input v-model="item.acf.name" @change="updateClient(item)" /></td>
-          <!-- <td><input v-model="item.acf.city" @change="updateClient(item)" /></td> -->
-          <td><input v-model="item.acf.phones" @change="updateClient(item)" /></td>
-          <td>
-            <div>
-              <span
-                v-for="(website, index) in splitWebsites(item.acf.websites)"
-                :key="index"
-              >
-                <template v-if="isValidUrl(website)">
-                  <a :href="website.trim()" target="_blank">{{ website.trim() }}</a>
-                </template>
-                <template v-else>
-                  {{ website.trim() }}
-                </template>
-                <span v-if="index < splitWebsites(item.acf.websites).length - 1">
-                  |
-                </span>
-              </span>
-            </div>
-          </td>
-          <td><input v-model="item.acf.category" @change="updateClient(item)" /></td>
-          <td>
-            <select v-model="item.acf.status" @change="updateClient(item)">
-              <option value="Новый">Новый</option>
-              <option value="В обработке">В обработке</option>
-              <option value="В работе">В работе</option>
-              <option value="Согласование">Согласование</option>
-              <option value="Выслан договор">Выслан договор</option>
-              <option value="Выслано предложение">Выслано предложение</option>
-              <option value="Клиент">Клиент</option>
-              <option value="Не актуально">Не актуально</option>
-            </select>
-          </td>
-          <td><input v-model="item.acf.callback" @change="updateClient(item)" /></td>
-          <td><input v-model="item.acf.comment" @change="updateClient(item)" /></td>
-          <td><button @click="deleteClient(item.id)">Удалить</button></td>
-        </tr>
-      </tbody>
-    </v-table>
-    <div class="pagination">
-      <defaultBtn name="Предыдущая" @click="prevPage" :disabled="page === 1" />
-      <div class="center_pag">
-        <span>Page {{ page }} of {{ totalPages }}</span>
+          :card="item"
+          @deleteCard="deleteClient(item.id)"
+          @updateCard="updateClient"
+        />
       </div>
-      <defaultBtn name="Следущая" @click="nextPage" :disabled="page === totalPages" />
+      <pagination
+        @nextPage="nextPage"
+        @prevPage="prevPage"
+        :totalPages="totalPages"
+        :currentPage="page"
+      />
     </div>
+    <Loader v-else style="background-color: transparent" />
   </div>
 </template>
 
@@ -87,8 +40,9 @@ import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api/api";
 import custom from "@/api/custom";
-import defaultBtn from "@/components/ui/buttons/default-btn.vue";
-import AuthLogin from "../../../components/modal/view/AuthLogin.vue";
+import ClientCard from "@/components/ui/card/ClientCard.vue";
+import pagination from "@/components/ui/buttons/pagination.vue";
+import Loader from "@/components/ui/loading/Loader.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
@@ -130,21 +84,26 @@ async function getCategories() {
   }
 }
 
-async function updateClient(client: any) {
+async function updateClient(updatedClient: any) {
   try {
-    const response = await custom.post(`/update-client/${client.id}`, {
-      name: client.acf.name,
-      city: client.acf.city,
-      phones: client.acf.phones,
-      websites: client.acf.websites,
-      category: client.acf.category,
-      status: client.acf.status,
-      callback: client.acf.callback,
-      comment: client.acf.comment,
+    const response = await custom.post(`/update-client/${updatedClient.id}`, {
+      name: updatedClient.acf.name,
+      city: updatedClient.acf.city,
+      phones: updatedClient.acf.phones,
+      websites: updatedClient.acf.websites,
+      category: updatedClient.acf.category,
+      status: updatedClient.acf.status,
+      callback: updatedClient.acf.callback,
+      comment: updatedClient.acf.comment,
     });
-    console.log(`Client ${client.id} updated`, response.data);
+    console.log(`Client ${updatedClient.id} updated`, response.data);
+
+    const index = clients.value.findIndex((item: any) => item.id === updatedClient.id);
+    if (index !== -1) {
+      clients.value[index] = updatedClient;
+    }
   } catch (error) {
-    console.error(`Failed to update client ${client.id}:`, error);
+    console.error(`Failed to update client ${updatedClient.id}:`, error);
   }
 }
 
@@ -180,14 +139,6 @@ function getStatusClass(status: any) {
   }
 }
 
-function isValidUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url.trim());
-}
-
-function splitWebsites(websites: string): string[] {
-  return websites.split("|").map((site) => site.trim());
-}
-
 function filterByCategory() {
   getClients();
 }
@@ -199,12 +150,14 @@ function updatePage(newPage: number) {
 function nextPage() {
   if (page.value < totalPages.value) {
     updatePage(page.value + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
 
 function prevPage() {
   if (page.value > 1) {
     updatePage(page.value - 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
 
@@ -222,42 +175,14 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .clients {
-  // стили для таблицы и пагинации
+  // background-color: $bg-color-tertiary;
+  // padding: 20px 20px 60px 20px;
+  min-height: 100vh;
+  position: relative;
 }
 
 .filter {
   margin-bottom: 20px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.status-new {
-  background-color: #e0f7fa;
-}
-.status-processing {
-  background-color: #ffeb3b;
-}
-.status-working {
-  background-color: #ff9800;
-}
-.status-agreement {
-  background-color: #4caf50;
-}
-.status-contract-sent {
-  background-color: #2196f3;
-}
-.status-proposal-sent {
-  background-color: #673ab7;
-}
-.status-client {
-  background-color: #9e9e9e;
-}
-.status-not-relevant {
-  background-color: #f44336;
 }
 
 .center_pag {

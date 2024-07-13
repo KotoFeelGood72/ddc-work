@@ -23,8 +23,11 @@ import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
 }
 .admin {
   @include flex-start;
+  align-items: flex-start;
 }
 .content {
-  height: calc(100vh - 70px);
+  min-height: calc(100vh - 70px);
+  padding: 40px;
+  background-color: $bg-color-tertiary;
 }
 </style>

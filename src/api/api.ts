@@ -10,7 +10,7 @@ const wpInstance = axios.create({
 
 wpInstance.interceptors.request.use((config: any) => {
   const userStore = useUsersStore();
-  const token = userStore.user.access_token;
+  const token = userStore.user.token;
 
   if (token) {
     if (!config.headers) {
@@ -25,11 +25,28 @@ wpInstance.interceptors.response.use(
   (response: any) => {
     return response;
   },
-  (error) => {
+  async (error) => {
+    const userStore = useUsersStore();
+
     if (error.response && error.response.status === 401) {
-      const userStore = useUsersStore();
-      userStore.clearUser();
+      try {
+        // Пробуем обновить токен
+        await userStore.refreshToken();
+        
+        // Повторяем оригинальный запрос с новым токеном
+        const originalRequest = error.config;
+        const newToken = userStore.user.token;
+        if (newToken) {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        }
+        return wpInstance(originalRequest);
+      } catch (refreshError) {
+        // Не удалось обновить токен, очищаем данные пользователя
+        userStore.clearUser();
+        return Promise.reject(refreshError);
+      }
     }
+
     return Promise.reject(error);
   }
 );

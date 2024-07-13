@@ -7,10 +7,13 @@
       </div>
       <div class="auth_form">
         <div class="auth_form__inputs">
-          <inputs icon="mail" placeholder="Введите E-Mail" />
-          <inputs icon="smile" placeholder="Введите имя" />
-          <inputsPass icon="lock" placeholder="Введите пароль" />
-          <defaultBtn name="Войти" />
+          <inputs icon="smile" placeholder="Введите логин" v-model="userData.username" />
+          <inputsPass
+            icon="lock"
+            placeholder="Введите пароль"
+            v-model="userData.password"
+          />
+          <defaultBtn name="Войти" @click="inLogin()" />
         </div>
         <v-text
           text="Нажимая на нопку войти, вы соглашаетесь с политикой конфиденциальности"
@@ -26,6 +29,21 @@
 import inputs from "@/components/ui/inputs/inputs.vue";
 import inputsPass from "@/components/ui/inputs/inputs-pass.vue";
 import defaultBtn from "@/components/ui/buttons/default-btn.vue";
+
+import { ref } from "vue";
+
+import { useUsersStore } from "@/store/useUserStore";
+
+const { login } = useUsersStore();
+
+const userData = ref<any>({
+  username: "",
+  password: "",
+});
+
+function inLogin() {
+  login(userData.value);
+}
 </script>
 
 <style scoped lang="scss">
