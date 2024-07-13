@@ -1,11 +1,18 @@
 <template>
   <div class="clients">
+    {{ isLoading }}
     <div class="filter">
       <Selects
         v-model="selectedCategory"
         :options="categories"
         placeholder="Выберите категорию"
         @update:modelValue="filterByCategory"
+      />
+      <Selects
+        v-model="selectedStatus"
+        :options="statuses"
+        placeholder="Выберите статус"
+        @update:modelValue="filterByStatus"
       />
       <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." />
     </div>
@@ -49,10 +56,18 @@ import InputsSearch from "@/components/ui/inputs/InputsSearch.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
+const statuses = ref<any[]>([
+  { name: "Новый", id: "Новый" },
+  { name: "В обработке", id: "В обработке" },
+  { name: "В работе", id: "В работе" },
+  { name: "Клиент", id: "Клиент" },
+  { name: "Не актуально", id: "Не актуально" },
+]);
 const page = ref(1);
 const perPage = 10;
 const totalPages = ref(1);
 const selectedCategory = ref<any>("");
+const selectedStatus = ref<any>("");
 const searchQuery = ref<string>("");
 const isLoading = ref(false);
 
@@ -60,25 +75,40 @@ const route = useRoute();
 const router = useRouter();
 
 const filteredClients = computed(() => {
-  if (!searchQuery.value) return clients.value;
+  let filtered = clients.value;
 
-  return clients.value.filter((client: any) => {
-    const searchLower = searchQuery.value.toLowerCase();
-    return (
-      client.acf.name.toLowerCase().includes(searchLower) ||
-      client.acf.city.toLowerCase().includes(searchLower) ||
-      client.acf.phones.some((phone: string) =>
-        phone.toLowerCase().includes(searchLower)
-      ) ||
-      client.acf.websites.some((website: string) =>
-        website.toLowerCase().includes(searchLower)
-      ) ||
-      client.acf.category.toLowerCase().includes(searchLower) ||
-      client.acf.status.toLowerCase().includes(searchLower) ||
-      client.acf.callback.toLowerCase().includes(searchLower) ||
-      client.acf.comment.toLowerCase().includes(searchLower)
+  if (selectedCategory.value) {
+    filtered = filtered.filter((client: any) =>
+      client.acf.category.toLowerCase().includes(selectedCategory.value.toLowerCase())
     );
-  });
+  }
+
+  if (selectedStatus.value) {
+    filtered = filtered.filter((client: any) =>
+      client.acf.status.toLowerCase().includes(selectedStatus.value.toLowerCase())
+    );
+  }
+
+  if (searchQuery.value) {
+    const searchLower = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (client: any) =>
+        client.acf.name.toLowerCase().includes(searchLower) ||
+        client.acf.city.toLowerCase().includes(searchLower) ||
+        client.acf.phones.some((phone: string) =>
+          phone.toLowerCase().includes(searchLower)
+        ) ||
+        client.acf.websites.some((website: string) =>
+          website.toLowerCase().includes(searchLower)
+        ) ||
+        client.acf.category.toLowerCase().includes(searchLower) ||
+        client.acf.status.toLowerCase().includes(searchLower) ||
+        client.acf.callback.toLowerCase().includes(searchLower) ||
+        client.acf.comment.toLowerCase().includes(searchLower)
+    );
+  }
+
+  return filtered;
 });
 
 async function getClients() {
@@ -91,6 +121,10 @@ async function getClients() {
 
     if (selectedCategory.value) {
       params.theme_bussines = selectedCategory.value;
+    }
+
+    if (selectedStatus.value) {
+      params.status = selectedStatus.value;
     }
 
     if (searchQuery.value) {
@@ -177,6 +211,11 @@ function filterByCategory() {
   getClients();
 }
 
+function filterByStatus() {
+  page.value = 1; // Сбрасываем страницу при изменении статуса
+  getClients();
+}
+
 function updatePage(newPage: number) {
   router.push({ query: { ...route.query, page: newPage.toString() } });
 }
@@ -196,11 +235,14 @@ function prevPage() {
 }
 
 watch(route, () => {
-  page.value = parseInt(route.query.page as string) || 1;
-  getClients();
+  if (route.query.page) {
+    page.value = parseInt(route.query.page as string) || 1;
+
+    getClients();
+  }
 });
 
-watch([selectedCategory, searchQuery], () => {
+watch([selectedCategory, selectedStatus, searchQuery], () => {
   filterByCategory();
 });
 

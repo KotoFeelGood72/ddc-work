@@ -140,10 +140,6 @@ function openQR(link: any, type: "phone" | "url") {
     router.push({ query: { phone: link } });
   }
 }
-
-onMounted(() => {
-  // getClientCategories();
-});
 </script>
 
 <style scoped lang="scss">
