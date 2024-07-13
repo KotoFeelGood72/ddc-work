@@ -1,37 +1,38 @@
 <template>
   <div class="clients">
-    <div class="clients_main" v-if="clients.length > 0">
-      <div class="filter">
-        <label for="category-filter">Фильтр по категориям:</label>
-        <select
-          id="category-filter"
-          v-model="selectedCategory"
-          @change="filterByCategory"
-        >
-          <option value="">Все</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">
-            {{ category.name }}
-          </option>
-        </select>
-      </div>
-      <div class="clients__list">
-        <ClientCard
-          v-for="item in clients"
-          :key="item.id"
-          :class="getStatusClass(item.acf.status)"
-          :card="item"
-          @deleteCard="deleteClient(item.id)"
-          @updateCard="updateClient"
-        />
-      </div>
-      <pagination
-        @nextPage="nextPage"
-        @prevPage="prevPage"
-        :totalPages="totalPages"
-        :currentPage="page"
+    <div class="filter">
+      <Selects
+        v-model="selectedCategory"
+        :options="categories"
+        placeholder="Выберите категорию"
+        @update:modelValue="filterByCategory"
       />
+      <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." />
     </div>
-    <Loader v-else style="background-color: transparent" />
+    <div class="clients_main">
+      <Loader v-if="isLoading" style="background-color: transparent" />
+      <div v-else>
+        <div v-if="clients.length > 0" class="clients__list">
+          <ClientCard
+            v-for="item in clients"
+            :key="item.id"
+            :class="getStatusClass(item.acf.status)"
+            :card="item"
+            @deleteCard="deleteClient(item.id)"
+            @updateCard="updateClient"
+          />
+          <pagination
+            @nextPage="nextPage"
+            @prevPage="prevPage"
+            :totalPages="totalPages"
+            :currentPage="page"
+          />
+        </div>
+        <div v-else>
+          <p>Нет результатов по вашему запросу</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -43,6 +44,8 @@ import custom from "@/api/custom";
 import ClientCard from "@/components/ui/card/ClientCard.vue";
 import pagination from "@/components/ui/buttons/pagination.vue";
 import Loader from "@/components/ui/loading/Loader.vue";
+import Selects from "@/components/ui/dropdown/Selects.vue";
+import InputsSearch from "@/components/ui/inputs/InputsSearch.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
@@ -50,20 +53,26 @@ const page = ref(1);
 const perPage = 10;
 const totalPages = ref(1);
 const selectedCategory = ref<any>("");
+const searchQuery = ref<string>("");
+const isLoading = ref(false);
 
 const route = useRoute();
 const router = useRouter();
 
 async function getClients() {
+  isLoading.value = true;
   try {
-    const params = {
+    const params: any = {
       page: page.value,
       per_page: perPage,
-      theme_bussines: null,
     };
 
     if (selectedCategory.value) {
       params.theme_bussines = selectedCategory.value;
+    }
+
+    if (searchQuery.value) {
+      params.search = searchQuery.value;
     }
 
     const response = await api.get("/client_new", { params });
@@ -72,6 +81,8 @@ async function getClients() {
     console.log(response.data);
   } catch (error) {
     console.error(error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -140,6 +151,7 @@ function getStatusClass(status: any) {
 }
 
 function filterByCategory() {
+  page.value = 1; // Сбрасываем страницу при изменении категории
   getClients();
 }
 
@@ -166,6 +178,10 @@ watch(route, () => {
   getClients();
 });
 
+watch([selectedCategory, searchQuery], () => {
+  filterByCategory();
+});
+
 onMounted(() => {
   page.value = parseInt(route.query.page as string) || 1;
   getClients();
@@ -175,8 +191,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .clients {
-  // background-color: $bg-color-tertiary;
-  // padding: 20px 20px 60px 20px;
   min-height: 100vh;
   position: relative;
 }

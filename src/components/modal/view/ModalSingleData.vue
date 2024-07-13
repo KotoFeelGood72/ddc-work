@@ -33,18 +33,24 @@
             Вебсайт: <span>{{ clientData.acf.websites }}</span>
           </div>
           <div class="single_body__item">
-            Город: <span>{{ clientData.acf.city }}</span>
+            Город:
+            <input type="text" v-model="clientData.acf.city" />
           </div>
           <div class="single_body__item">
-            Перезвонить: <span>{{ clientData.acf.callback }}</span>
+            Перезвонить:
+            <input type="datetime-local" v-model="clientData.acf.callback" />
           </div>
         </div>
         <div class="single_body__row commentary">
           <div class="commentary__label">Комментарий</div>
-          <InputArea v-model="clientData.acf.comment" />
+          <InputArea v-model="commentary" />
         </div>
         <div class="single__action">
-          <defaultBtn name="Сохранить" @click="saveCommentary" />
+          <defaultBtn
+            :name="isLoading ? 'Сохранение...' : 'Сохранить'"
+            @click="saveCommentary"
+            :isLoading="isLoading"
+          />
         </div>
       </div>
     </div>
@@ -54,22 +60,28 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import InputArea from "@/components/ui/inputs/InputArea.vue";
 import defaultBtn from "@/components/ui/buttons/default-btn.vue";
 import Loader from "@/components/ui/loading/Loader.vue";
 import api from "@/api/api";
-import custom from "@/api/custom"; // Импортируем ваш кастомный API для обновления клиента
+import custom from "@/api/custom";
+import { useModalStore } from "@/store/useModalStore";
 
+const { closeModal } = useModalStore();
+
+const router = useRouter();
 const route = useRoute();
 const clientData = ref<any>({});
 const commentary = ref<string>("");
 const statuses = ["Новый", "В обработке", "В работе", "Клиент", "Не актуально"];
+const isLoading = ref<boolean>(false);
 
 async function getClientById(id: string) {
   try {
     const response = await api.get(`/client_new/${id}`);
     clientData.value = response.data;
+    commentary.value = clientData.value.acf.comment || "";
   } catch (error) {
     console.error("Failed to fetch client data:", error);
   }
@@ -113,6 +125,7 @@ watch(
 );
 
 async function updateClient(updatedClient: any) {
+  isLoading.value = true;
   try {
     const response = await custom.post(`/update-client/${updatedClient.id}`, {
       name: updatedClient.acf.name,
@@ -130,14 +143,17 @@ async function updateClient(updatedClient: any) {
     clientData.value = updatedClient;
   } catch (error) {
     console.error(`Failed to update client ${updatedClient.id}:`, error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
 function saveCommentary() {
   if (clientData.value && clientData.value.acf) {
     clientData.value.acf.comment = commentary.value;
-    updateClient(clientData.value);
-    console.log("Commentary saved:", commentary.value);
+    updateClient(clientData.value).then(() => {
+      closeModal("client", router);
+    });
   }
 }
 
@@ -188,6 +204,15 @@ function updateClientStatus(status: string) {
   padding: 10px 20px;
   border-radius: 8px;
   gap: 20px;
+
+  input[type="text"],
+  input[type="date"],
+  input[type="datetime-local"] {
+    width: 100%;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+    // border-radius: 4px;
+  }
 }
 
 .single__action {

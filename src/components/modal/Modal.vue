@@ -23,6 +23,8 @@ const AsyncModalSingleData = defineAsyncComponent(
   () => import("./view/ModalSingleData.vue")
 );
 
+const AsyncModalSingleQR = defineAsyncComponent(() => import("./view/SingleQR.vue"));
+
 const props = withDefaults(
   defineProps<{
     positionY?: "center" | "right" | "left";
@@ -45,6 +47,8 @@ const activeModalComponent = computed(() => {
       switch (key) {
         case "client":
           return AsyncModalSingleData;
+        case "qr":
+          return AsyncModalSingleQR;
         default:
           return null;
       }
@@ -56,6 +60,8 @@ const activeModalComponent = computed(() => {
 const isCloseModalBtn = computed(() => {
   switch (activeModalName.value) {
     case "client":
+      return true;
+    case "qr":
       return true;
     default:
       return false;
@@ -131,5 +137,7 @@ const closeCurrentModal = () => {
 
 .close-modal {
   position: absolute;
+  top: -40px;
+  right: -40px;
 }
 </style>

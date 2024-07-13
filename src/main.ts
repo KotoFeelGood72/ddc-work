@@ -19,6 +19,16 @@ const vuetify = createVuetify({
     directives,
     ssr: true,
 })
+
+import Tooltip from '@programic/vue3-tooltip';
+import type { TooltipConfiguration } from '@programic/vue3-tooltip';
+
+// Import the CSS or use your own!
+import '@programic/vue3-tooltip/dist/index.css';
+
+
+
+
 const pinia = createPinia();
 const app = createApp(App);
 
@@ -31,5 +41,6 @@ app.use(pinia);
 app.use(vuetify);
 app.use(router);
 app.mount('#app');
+app.use(Tooltip);
 
 

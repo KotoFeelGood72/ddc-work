@@ -14,10 +14,10 @@
       <div
         class="card__phone"
         v-if="formattedPhone"
-        @click="copyToClipboard(formattedPhone)"
+        @click="[openQR(formattedPhone, 'phone')]"
       >
         <span>{{ formattedPhone }}</span>
-        <div class="clipboard">
+        <div class="clipboard" @click="copyToClipboard(formattedPhone)">
           <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
         </div>
       </div>
@@ -31,16 +31,24 @@
     </div>
     <div class="card_col__right">
       <div class="card__status">
-        <div class="status_processing" @click="updateStatus('В обработке')"></div>
-        <div class="status_working" @click="updateStatus('В работе')"></div>
-        <div class="status_client" @click="updateStatus('Клиент')"></div>
-        <div class="status_not-relevant" @click="updateStatus('Не актуально')"></div>
+        <div v-tooltip="'В обработке'">
+          <div class="status_processing" @click="updateStatus('В обработке')"></div>
+        </div>
+        <div v-tooltip="'В работе'">
+          <div class="status_working" @click="updateStatus('В работе')"></div>
+        </div>
+        <div v-tooltip="'Клиент'">
+          <div class="status_client" @click="updateStatus('Клиент')"></div>
+        </div>
+        <div v-tooltip="'Не актуально'">
+          <div class="status_not-relevant" @click="updateStatus('Не актуально')"></div>
+        </div>
       </div>
       <div class="card__btn">
-        <div class="card__open" @click="openClient(card.id)">
+        <div class="card__open" @click="openClient(card.id)" v-tooltip="'Открыть'">
           <Icons icon="ion:open-outline" size="22px" color="green" />
         </div>
-        <div class="card__delete" @click="emit('deleteCard')">
+        <div class="card__delete" @click="emit('deleteCard')" v-tooltip="'Удалить'">
           <Icons icon="weui:delete-outlined" size="22px" color="white" />
         </div>
       </div>
@@ -126,6 +134,13 @@ function openClient(id: number) {
   router.push({ query: { client: id } });
 }
 
+function openQR(link: any, type: "phone" | "url") {
+  openModal("qr");
+  if (type === "phone") {
+    router.push({ query: { phone: link } });
+  }
+}
+
 onMounted(() => {
   // getClientCategories();
 });
@@ -163,12 +178,12 @@ onMounted(() => {
   gap: 7px;
   div {
     width: 50px;
-    height: 10px;
+    height: 15px;
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0px 0px 10px 0px #00000017;
-    border: 1px solid #7474743f;
+    box-shadow: 0px 2px 10px 0px #00000017;
+    // border: 1px solid #7474743f;
 
     &.status_processing {
       background-color: $secondary-orange-active;
@@ -226,7 +241,7 @@ onMounted(() => {
 .card__title,
 .card__address {
   gap: 10px;
-  width: 16%;
+  width: 17%;
   padding: 7px 20px;
   font-size: $small-3;
   cursor: pointer;
@@ -262,7 +277,7 @@ onMounted(() => {
 }
 
 .status-processing {
-  background-color: $secondary-orange;
+  // background-color: $secondary-orange;
   .card__status {
     .status_processing {
       background-color: $primary-orange;
@@ -270,7 +285,7 @@ onMounted(() => {
   }
 }
 .status-working {
-  background-color: $secondary-green;
+  // background-color: $secondary-green;
   .card__status {
     .status_working {
       background-color: $primary-green;
@@ -279,7 +294,7 @@ onMounted(() => {
 }
 
 .status-client {
-  background-color: $secondary-blue;
+  // background-color: $secondary-blue;
   .card__status {
     .status_client {
       background-color: $primary-blue;
@@ -287,7 +302,7 @@ onMounted(() => {
   }
 }
 .status-not-relevant {
-  background-color: $secondary-red;
+  // background-color: $secondary-red;
   .card__status {
     .status_not-relevant {
       background-color: $primary-red;

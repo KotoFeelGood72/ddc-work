@@ -33,5 +33,8 @@ const layoutComponent = computed(() => {
 </script>
 
 <style scoped lang="scss">
-/* Your layout-specific styles here */
+:deep(.tooltip-holder) {
+  display: flex;
+  justify-content: center;
+}
 </style>

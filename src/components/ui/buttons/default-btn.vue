@@ -2,6 +2,7 @@
   <div :class="['default-btn', sizeClass, colorClass]" @click="onClick">
     <button type="button">
       <SvgIcon :name="icon" v-if="icon" />
+      <Icons icon="eos-icons:loading" color="white" size="23px" v-if="isLoading" />
       <p>{{ name }}</p>
     </button>
   </div>
@@ -18,11 +19,13 @@ const props = withDefaults(
   defineProps<{
     name?: string;
     icon?: string;
-    color: "danger" | "warning" | "success" | "default";
-    sheme: "primary" | "secondary";
-    size: "small" | "normal" | "medium" | "large";
+    color?: "danger" | "warning" | "success" | "default";
+    sheme?: "primary" | "secondary";
+    size?: "small" | "normal" | "medium" | "large";
+    isLoading?: boolean;
   }>(),
   {
+    isLoading: false,
     name: "",
     icon: "",
     color: "default",
@@ -67,6 +70,7 @@ const colorClass = computed(() => {
 <style scoped lang="scss">
 .default-btn {
   width: 100%;
+  position: relative;
   button {
     width: 100%;
     border: none;
