@@ -12,9 +12,9 @@
     <div class="clients_main">
       <Loader v-if="isLoading" style="background-color: transparent" />
       <div v-else>
-        <div v-if="clients.length > 0" class="clients__list">
+        <div v-if="filteredClients.length > 0" class="clients__list">
           <ClientCard
-            v-for="item in clients"
+            v-for="item in filteredClients"
             :key="item.id"
             :class="getStatusClass(item.acf.status)"
             :card="item"
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api/api";
 import custom from "@/api/custom";
@@ -58,6 +58,28 @@ const isLoading = ref(false);
 
 const route = useRoute();
 const router = useRouter();
+
+const filteredClients = computed(() => {
+  if (!searchQuery.value) return clients.value;
+
+  return clients.value.filter((client: any) => {
+    const searchLower = searchQuery.value.toLowerCase();
+    return (
+      client.acf.name.toLowerCase().includes(searchLower) ||
+      client.acf.city.toLowerCase().includes(searchLower) ||
+      client.acf.phones.some((phone: string) =>
+        phone.toLowerCase().includes(searchLower)
+      ) ||
+      client.acf.websites.some((website: string) =>
+        website.toLowerCase().includes(searchLower)
+      ) ||
+      client.acf.category.toLowerCase().includes(searchLower) ||
+      client.acf.status.toLowerCase().includes(searchLower) ||
+      client.acf.callback.toLowerCase().includes(searchLower) ||
+      client.acf.comment.toLowerCase().includes(searchLower)
+    );
+  });
+});
 
 async function getClients() {
   isLoading.value = true;

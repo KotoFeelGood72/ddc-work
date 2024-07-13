@@ -8,7 +8,7 @@ export const useUsersStore = defineStore('user', {
   actions: {
     async signIn(user: any) {
         try {
-          const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/register/user', user, {
+          await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/register/user', user, {
             headers: {
               'Content-Type': 'application/json',
             },

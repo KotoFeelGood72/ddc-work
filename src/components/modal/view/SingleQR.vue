@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick, computed } from "vue";
 import { useRoute } from "vue-router";
-import QRCode from "qrcode";
+import { toCanvas } from "qrcode";
 
 const route = useRoute();
 const qrcodeCanvas = ref<HTMLCanvasElement | null>(null);
@@ -41,11 +41,11 @@ const decodedPhone = computed(() => {
 const generateQRCode = () => {
   if (valueToEncode.value && qrcodeCanvas.value) {
     console.log("Generating QR code for:", valueToEncode.value);
-    QRCode.toCanvas(
+    toCanvas(
       qrcodeCanvas.value,
       valueToEncode.value,
-      { width: 300, height: 300 },
-      (error) => {
+      { width: 300, margin: 2 },
+      (error: any) => {
         if (error) {
           console.error("Error generating QR code:", error);
         } else {

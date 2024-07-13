@@ -25,7 +25,7 @@ const AsyncModalSingleData = defineAsyncComponent(
 
 const AsyncModalSingleQR = defineAsyncComponent(() => import("./view/SingleQR.vue"));
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     positionY?: "center" | "right" | "left";
     positionX?: "center" | "right" | "left";
