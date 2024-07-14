@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .custom-select {
   position: relative;
   width: 100%;
@@ -80,15 +80,20 @@ onBeforeUnmount(() => {
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 4px;
+  position: relative;
 }
 
 .arrow {
-  margin-left: 10px;
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
   transition: transform 0.3s ease;
+  @include flex-center;
 }
 
 .arrow.open {
-  transform: rotate(180deg);
+  transform: translateY(-50%) rotate(180deg);
 }
 
 .select-dropdown {

@@ -76,11 +76,11 @@ const router = useRouter();
 const filteredClients = computed(() => {
   let filtered = clients.value;
 
-  if (selectedCategory.value) {
-    filtered = filtered.filter((client: any) =>
-      client.acf.category.toLowerCase().includes(selectedCategory.value.toLowerCase())
-    );
-  }
+  // if (selectedCategory.value) {
+  //   filtered = filtered.filter((client: any) =>
+  //     client.acf.category.toLowerCase().includes(selectedCategory.value.toLowerCase())
+  //   );
+  // }
 
   if (selectedStatus.value) {
     filtered = filtered.filter((client: any) =>
@@ -122,9 +122,9 @@ async function getClients() {
       params.theme_bussines = selectedCategory.value;
     }
 
-    if (selectedStatus.value) {
-      params.status = selectedStatus.value;
-    }
+    // if (selectedStatus.value) {
+    //   params.status = selectedStatus.value;
+    // }
 
     if (searchQuery.value) {
       params.search = searchQuery.value;

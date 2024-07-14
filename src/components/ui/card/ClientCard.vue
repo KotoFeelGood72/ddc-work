@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from "vue";
+import { computed } from "vue";
 import avatar from "../people/avatar.vue";
 import { useModalStore } from "@/store/useModalStore";
 import { useRouter } from "vue-router";
