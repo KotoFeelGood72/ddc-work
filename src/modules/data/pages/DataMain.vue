@@ -143,7 +143,7 @@ async function getClients() {
 
 async function getCategories() {
   try {
-    const response = await api.get("/theme_bussines");
+    const response = await api.get("/theme_bussines/?per_page=100");
     categories.value = response.data;
   } catch (error) {
     console.error("Failed to get categories:", error);
