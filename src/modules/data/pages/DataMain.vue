@@ -76,12 +76,6 @@ const router = useRouter();
 const filteredClients = computed(() => {
   let filtered = clients.value;
 
-  // if (selectedCategory.value) {
-  //   filtered = filtered.filter((client: any) =>
-  //     client.acf.category.toLowerCase().includes(selectedCategory.value.toLowerCase())
-  //   );
-  // }
-
   if (selectedStatus.value) {
     filtered = filtered.filter((client: any) =>
       client.acf.status.toLowerCase().includes(selectedStatus.value.toLowerCase())
@@ -94,7 +88,7 @@ const filteredClients = computed(() => {
       (client: any) =>
         client.acf.name.toLowerCase().includes(searchLower) ||
         client.acf.city.toLowerCase().includes(searchLower) ||
-        client.acf.phones.some((phone: string) =>
+        client.acf?.phones?.some((phone: string) =>
           phone.toLowerCase().includes(searchLower)
         ) ||
         client.acf.websites.some((website: string) =>
@@ -121,10 +115,6 @@ async function getClients() {
     if (selectedCategory.value) {
       params.theme_bussines = selectedCategory.value;
     }
-
-    // if (selectedStatus.value) {
-    //   params.status = selectedStatus.value;
-    // }
 
     if (searchQuery.value) {
       params.search = searchQuery.value;
@@ -206,13 +196,39 @@ function getStatusClass(status: any) {
 }
 
 function filterByCategory() {
-  page.value = 1; // Сбрасываем страницу при изменении категории
+  page.value = 1;
+  updateQueryParams();
   getClients();
 }
 
 function filterByStatus() {
-  page.value = 1; // Сбрасываем страницу при изменении статуса
+  page.value = 1;
+  updateQueryParams();
   getClients();
+}
+
+function updateQueryParams() {
+  const query: any = { ...route.query };
+
+  if (selectedCategory.value) {
+    query.category = selectedCategory.value;
+  } else {
+    delete query.category;
+  }
+
+  if (selectedStatus.value) {
+    query.status = selectedStatus.value;
+  } else {
+    delete query.status;
+  }
+
+  if (searchQuery.value) {
+    query.search = searchQuery.value;
+  } else {
+    delete query.search;
+  }
+
+  router.push({ query });
 }
 
 function updatePage(newPage: number) {
@@ -236,7 +252,14 @@ function prevPage() {
 watch(route, () => {
   if (route.query.page) {
     page.value = parseInt(route.query.page as string) || 1;
-
+    getClients();
+  }
+  if (route.query.category) {
+    selectedCategory.value = route.query.category;
+    getClients();
+  }
+  if (route.query.search) {
+    searchQuery.value = route.query.search;
     getClients();
   }
 });
@@ -268,5 +291,10 @@ onMounted(() => {
   min-width: 200px;
   @include flex-center;
   font-size: 18px;
+}
+
+.clients__list {
+  overflow-x: auto;
+  max-width: 100%;
 }
 </style>

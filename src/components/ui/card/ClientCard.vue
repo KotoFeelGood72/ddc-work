@@ -1,54 +1,55 @@
 <template>
-  <div class="card">
+  <div class="card" @click="openClient(card.id)">
     <div class="card_col__left">
       <avatar />
       <div class="card__title">
         <p>{{ card.acf.name }}</p>
       </div>
-      <div class="card__address" @click="copyToClipboard(card.acf.address)">
+      <div class="card__address" @click.stop="copyToClipboard(card.acf.address)">
         <span>{{ card.acf.address }}</span>
         <div class="clipboard">
           <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
         </div>
       </div>
-      <div
-        class="card__phone"
-        v-if="formattedPhone"
-        @click="[openQR(formattedPhone, 'phone')]"
-      >
+      <div class="card__phone" v-if="formattedPhone" @click.stop="handlePhoneClick">
         <span>{{ formattedPhone }}</span>
-        <div class="clipboard" @click="copyToClipboard(formattedPhone)">
+        <div class="clipboard" @click.stop="copyToClipboard(formattedPhone)">
           <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
         </div>
       </div>
       <div class="card__website" v-if="firstWebsite">
-        <a :href="firstWebsite" target="_blank">{{ firstWebsite }}</a>
-        <div class="clipboard" @click="copyToClipboard(firstWebsite)">
+        <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
+          firstWebsite
+        }}</a>
+        <div class="clipboard" @click.stop="copyToClipboard(firstWebsite)">
           <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
         </div>
       </div>
-      <div class="card__categories">{{ card.category_name }}</div>
+      <!-- <div class="card__categories">{{ card.category_name }}</div> -->
     </div>
     <div class="card_col__right">
       <div class="card__status">
         <div v-tooltip="'В обработке'">
-          <div class="status_processing" @click="updateStatus('В обработке')"></div>
+          <div class="status_processing" @click.stop="updateStatus('В обработке')"></div>
         </div>
         <div v-tooltip="'В работе'">
-          <div class="status_working" @click="updateStatus('В работе')"></div>
+          <div class="status_working" @click.stop="updateStatus('В работе')"></div>
         </div>
         <div v-tooltip="'Клиент'">
-          <div class="status_client" @click="updateStatus('Клиент')"></div>
+          <div class="status_client" @click.stop="updateStatus('Клиент')"></div>
         </div>
         <div v-tooltip="'Не актуально'">
-          <div class="status_not-relevant" @click="updateStatus('Не актуально')"></div>
+          <div
+            class="status_not-relevant"
+            @click.stop="updateStatus('Не актуально')"
+          ></div>
         </div>
       </div>
       <div class="card__btn">
         <div class="card__open" @click="openClient(card.id)" v-tooltip="'Открыть'">
           <Icons icon="ion:open-outline" size="22px" color="green" />
         </div>
-        <div class="card__delete" @click="emit('deleteCard')" v-tooltip="'Удалить'">
+        <div class="card__delete" @click.stop="emit('deleteCard')" v-tooltip="'Удалить'">
           <Icons icon="weui:delete-outlined" size="22px" color="white" />
         </div>
       </div>
@@ -134,6 +135,17 @@ function openClient(id: number) {
   router.push({ query: { client: id } });
 }
 
+function handlePhoneClick() {
+  openQR(formattedPhone.value, "phone");
+  updateStatus("В обработке");
+}
+
+function handleWebsiteClick(event: Event) {
+  event.preventDefault();
+  updateStatus("В обработке");
+  window.open(firstWebsite.value, "_blank");
+}
+
 function openQR(link: any, type: "phone" | "url") {
   openModal("qr");
   if (type === "phone") {
@@ -143,6 +155,13 @@ function openQR(link: any, type: "phone" | "url") {
 </script>
 
 <style scoped lang="scss">
+.card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    box-shadow: 0 0 30px 0 #6161612a;
+  }
+}
 .card,
 .card_col__left,
 .card_col__right,
@@ -264,6 +283,15 @@ function openQR(link: any, type: "phone" | "url") {
   }
 }
 
+.card__website {
+  a {
+    max-width: 115px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
 .clipboard {
   @include flex-center;
 }
@@ -273,7 +301,7 @@ function openQR(link: any, type: "phone" | "url") {
 }
 
 .status-processing {
-  // background-color: $secondary-orange;
+  background-color: $secondary-orange;
   .card__status {
     .status_processing {
       background-color: $primary-orange;
@@ -281,7 +309,7 @@ function openQR(link: any, type: "phone" | "url") {
   }
 }
 .status-working {
-  // background-color: $secondary-green;
+  background-color: $secondary-green;
   .card__status {
     .status_working {
       background-color: $primary-green;
@@ -290,7 +318,7 @@ function openQR(link: any, type: "phone" | "url") {
 }
 
 .status-client {
-  // background-color: $secondary-blue;
+  background-color: $secondary-blue;
   .card__status {
     .status_client {
       background-color: $primary-blue;
@@ -298,7 +326,7 @@ function openQR(link: any, type: "phone" | "url") {
   }
 }
 .status-not-relevant {
-  // background-color: $secondary-red;
+  background-color: $secondary-red;
   .card__status {
     .status_not-relevant {
       background-color: $primary-red;
