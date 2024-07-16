@@ -259,7 +259,7 @@ watch(route, () => {
     getClients();
   }
   if (route.query.search) {
-    searchQuery.value = route.query.search;
+    // searchQuery.value = route.query.search;
     getClients();
   }
 });
