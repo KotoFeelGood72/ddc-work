@@ -51,17 +51,17 @@ import ClientCard from "@/components/ui/card/ClientCard.vue";
 import pagination from "@/components/ui/buttons/pagination.vue";
 import Loader from "@/components/ui/loading/Loader.vue";
 import Selects from "@/components/ui/dropdown/Selects.vue";
-import InputsSearch from "@/components/ui/inputs/InputsSearch.vue";
+// import InputsSearch from "@/components/ui/inputs/InputsSearch.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
-const statuses = ref<any[]>([
-  { name: "Новый", id: "Новый" },
-  { name: "В обработке", id: "В обработке" },
-  { name: "В работе", id: "В работе" },
-  { name: "Клиент", id: "Клиент" },
-  { name: "Не актуально", id: "Не актуально" },
-]);
+// const statuses = ref<any[]>([
+//   { name: "Новый", id: "Новый" },
+//   { name: "В обработке", id: "В обработке" },
+//   { name: "В работе", id: "В работе" },
+//   { name: "Клиент", id: "Клиент" },
+//   { name: "Не актуально", id: "Не актуально" },
+// ]);
 const page = ref(1);
 const perPage = 10;
 const totalPages = ref(1);
