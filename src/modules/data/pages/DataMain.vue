@@ -205,11 +205,11 @@ function filterByCategory() {
   getClients();
 }
 
-function filterByStatus() {
-  page.value = 1;
-  updateQueryParams();
-  getClients();
-}
+// function filterByStatus() {
+//   page.value = 1;
+//   updateQueryParams();
+//   getClients();
+// }
 
 function updateQueryParams() {
   const query: any = { ...route.query };
