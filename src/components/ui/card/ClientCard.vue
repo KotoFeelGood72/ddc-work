@@ -172,6 +172,8 @@ function openQR(link: any, type: "phone" | "url") {
 .card_col__left {
   gap: 10px;
   flex-grow: 1;
+  flex-wrap: wrap;
+  max-width: 70%;
 }
 .card_col__right {
   gap: 30px;
@@ -283,7 +285,12 @@ function openQR(link: any, type: "phone" | "url") {
   }
 }
 
+.card__phone {
+  min-width: 180px;
+}
+
 .card__website {
+  min-width: 150px;
   a {
     max-width: 115px;
     overflow: hidden;

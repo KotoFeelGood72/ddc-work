@@ -7,13 +7,13 @@
         placeholder="Выберите категорию"
         @update:modelValue="filterByCategory"
       />
-      <Selects
+      <!-- <Selects
         v-model="selectedStatus"
         :options="statuses"
         placeholder="Выберите статус"
         @update:modelValue="filterByStatus"
       />
-      <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." />
+      <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." /> -->
     </div>
     <div class="clients_main">
       <Loader v-if="isLoading" style="background-color: transparent" />
@@ -114,6 +114,10 @@ async function getClients() {
 
     if (selectedCategory.value) {
       params.theme_bussines = selectedCategory.value;
+    }
+
+    if (selectedStatus.value) {
+      params.status = selectedStatus.value;
     }
 
     if (searchQuery.value) {
@@ -259,7 +263,7 @@ watch(route, () => {
     getClients();
   }
   if (route.query.search) {
-    // searchQuery.value = route.query.search;
+    searchQuery.value = route.query.search as string;
     getClients();
   }
 });
@@ -279,6 +283,7 @@ onMounted(() => {
 .clients {
   min-height: 100vh;
   position: relative;
+  width: 100%;
 }
 
 .filter {
@@ -296,5 +301,9 @@ onMounted(() => {
 .clients__list {
   overflow-x: auto;
   max-width: 100%;
+}
+
+.clients_main {
+  width: 100%;
 }
 </style>
