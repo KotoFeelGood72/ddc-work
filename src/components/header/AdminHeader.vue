@@ -22,7 +22,7 @@ import { useUsersStore } from "@/store/useUserStore";
 import { useRoute } from "vue-router";
 
 const { clearUser } = useUsersStore();
-const route = useRoute();
+// const route = useRoute();
 </script>
 
 <style scoped lang="scss">
