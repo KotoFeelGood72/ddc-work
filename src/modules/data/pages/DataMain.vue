@@ -259,6 +259,7 @@ function prevPage() {
 
 const goToPage = (newPage: number) => {
   if (newPage >= 1 && newPage <= totalPages.value) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     updatePage(newPage);
   }
 };
