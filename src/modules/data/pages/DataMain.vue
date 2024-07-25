@@ -32,6 +32,7 @@
             @prevPage="prevPage"
             :totalPages="totalPages"
             :currentPage="page"
+            @goToPage="goToPage"
           />
         </div>
         <div v-else>
@@ -201,17 +202,17 @@ function getStatusClass(status: any) {
 
 function filterByCategory() {
   page.value = 1;
-  updateQueryParams();
+  updateQueryParamsWithPageLast();
   getClients();
 }
 
 // function filterByStatus() {
 //   page.value = 1;
-//   updateQueryParams();
+//   updateQueryParamsWithPageLast();
 //   getClients();
 // }
 
-function updateQueryParams() {
+function updateQueryParamsWithPageLast() {
   const query: any = { ...route.query };
 
   if (selectedCategory.value) {
@@ -232,11 +233,14 @@ function updateQueryParams() {
     delete query.search;
   }
 
-  router.push({ query });
+  query.page = page.value.toString();
+
+  router.replace({ query });
 }
 
 function updatePage(newPage: number) {
-  router.push({ query: { ...route.query, page: newPage.toString() } });
+  page.value = newPage;
+  updateQueryParamsWithPageLast();
 }
 
 function nextPage() {
@@ -252,6 +256,12 @@ function prevPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
+
+const goToPage = (newPage: number) => {
+  if (newPage >= 1 && newPage <= totalPages.value) {
+    updatePage(newPage);
+  }
+};
 
 watch(route, () => {
   if (route.query.page) {
