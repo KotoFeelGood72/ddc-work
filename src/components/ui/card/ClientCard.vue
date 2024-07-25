@@ -20,7 +20,7 @@
       <div class="card__phone__mobile" v-if="formattedPhone" @click.stop>
         <a :href="`tel:${formattedPhone}`">{{ formattedPhone }}</a>
       </div>
-      <div class="card__website" v-if="firstWebsite">
+      <div class="card__website" v-if="firstWebsite" @click.stop>
         <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
           firstWebsite
         }}</a>
@@ -317,7 +317,7 @@ function openQR(link: any, type: "phone" | "url") {
   p,
   a {
     @include bp($point_4) {
-      max-width: 200px !important;
+      max-width: 300px !important;
     }
   }
   &:hover {
@@ -337,6 +337,10 @@ function openQR(link: any, type: "phone" | "url") {
     z-index: -1;
     backdrop-filter: blur(20px);
     transition: all 0.3s ease-in-out;
+
+    @include bp($point_4) {
+      backdrop-filter: blur(0px);
+    }
   }
 }
 
@@ -351,6 +355,12 @@ function openQR(link: any, type: "phone" | "url") {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    @include bp($point_4) {
+      max-width: 100%;
+      @include flex-start;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
