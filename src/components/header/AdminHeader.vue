@@ -19,7 +19,7 @@
 import avatar from "../ui/people/avatar.vue";
 import notificationBtn from "../ui/buttons/notification-btn.vue";
 import { useUsersStore } from "@/store/useUserStore";
-import { useRoute } from "vue-router";
+// import { useRoute } from "vue-router";
 
 const { clearUser } = useUsersStore();
 // const route = useRoute();
