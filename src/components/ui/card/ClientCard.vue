@@ -24,9 +24,6 @@
         <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
           firstWebsite
         }}</a>
-        <div class="clipboard" @click.stop="copyToClipboard(firstWebsite)">
-          <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
-        </div>
       </div>
       <!-- <div class="card__categories">{{ card.category_name }}</div> -->
     </div>
@@ -51,9 +48,11 @@
       <div class="card__btn">
         <div class="card__open" @click="openClient(card.id)" v-tooltip="'Открыть'">
           <Icons icon="ion:open-outline" size="22px" color="green" />
+          <p>Открыть</p>
         </div>
         <div class="card__delete" @click.stop="emit('deleteCard')" v-tooltip="'Удалить'">
           <Icons icon="weui:delete-outlined" size="22px" color="white" />
+          <p>Удалить</p>
         </div>
       </div>
     </div>
@@ -192,11 +191,22 @@ function openQR(link: any, type: "phone" | "url") {
 .card_col__right {
   gap: 30px;
   @include bp($point_4) {
-    // flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    z-index: 3;
   }
 }
 .card__btn {
   gap: 5px;
+  div {
+  }
+}
+
+:deep(.tooltip-holder) {
+  @include bp($point_4) {
+    gap: 10px;
+  }
 }
 
 .card {
@@ -216,6 +226,9 @@ function openQR(link: any, type: "phone" | "url") {
 .card__status {
   @include flex-end;
   gap: 7px;
+  @include bp($point_4) {
+    width: 100%;
+  }
   div {
     width: 50px;
     height: 15px;
@@ -224,6 +237,13 @@ function openQR(link: any, type: "phone" | "url") {
     transition: all 0.3s ease-in-out;
     box-shadow: 0px 2px 10px 0px #00000017;
     // border: 1px solid #7474743f;
+    z-index: 99;
+
+    @include bp($point_4) {
+      width: 25%;
+      height: 30px;
+      flex-grow: 1;
+    }
 
     &.status_processing {
       background-color: $secondary-orange-active;
@@ -292,6 +312,13 @@ function openQR(link: any, type: "phone" | "url") {
   @include bp($point_4) {
     width: 100%;
     justify-content: flex-start;
+    padding: 7px;
+  }
+  p,
+  a {
+    @include bp($point_4) {
+      max-width: 200px !important;
+    }
   }
   &:hover {
     &:before {
@@ -394,6 +421,62 @@ function openQR(link: any, type: "phone" | "url") {
   display: none;
   @include bp($point_4) {
     display: block;
+  }
+  a {
+    @include flex-start;
+    width: 100%;
+    height: 100%;
+    font-size: 20px;
+    text-decoration: none;
+    color: $text-color-primary;
+  }
+}
+
+.card__website {
+  a {
+    @include bp($point_4) {
+      @include flex-start;
+      width: 100%;
+      height: 100%;
+      font-size: 20px;
+      text-decoration: none;
+      color: $text-color-primary;
+      max-width: 100%;
+    }
+  }
+}
+
+.card__address {
+  @include bp($point_4) {
+    display: none;
+  }
+}
+
+.card__title {
+  p {
+    @include bp($point_4) {
+      font-size: 18px;
+      max-width: 90%;
+    }
+  }
+}
+
+.card__btn {
+  @include bp($point_4) {
+    gap: 10px;
+    width: 100%;
+  }
+  & > div {
+    @include bp($point_4) {
+      gap: 10px;
+      flex-grow: 1;
+    }
+  }
+  p {
+    display: none;
+    @include bp($point_4) {
+      display: flex;
+    }
   }
 }
 </style>

@@ -6,7 +6,7 @@
         iconColor="white"
         iconHoverColor="white"
         iconSize="16px"
-        @onClick="prevPage"
+        @click="prevPage"
         :disabled="currentPage === 1"
         size="normal"
         color="#377dff"
@@ -36,7 +36,7 @@
         iconColor="white"
         iconHoverColor="white"
         iconSize="16px"
-        @onClick="nextPage"
+        @click="nextPage"
         :disabled="currentPage === totalPages"
         size="normal"
         color="#377dff"
@@ -95,33 +95,25 @@ const pages = computed(() => {
     }
   } else {
     if (current <= 5) {
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 6; i++) {
         pages.push(i);
       }
       pages.push("...");
-      for (let i = total - 4; i <= total; i++) {
-        pages.push(i);
-      }
+      pages.push(total);
     } else if (current >= total - 4) {
-      for (let i = 1; i <= 5; i++) {
-        pages.push(i);
-      }
+      pages.push(1);
       pages.push("...");
-      for (let i = total - 4; i <= total; i++) {
+      for (let i = total - 5; i <= total; i++) {
         pages.push(i);
       }
     } else {
-      for (let i = 1; i <= 2; i++) {
+      pages.push(1);
+      pages.push("...");
+      for (let i = current - 2; i <= current + 2; i++) {
         pages.push(i);
       }
       pages.push("...");
-      for (let i = current - 1; i <= current + 1; i++) {
-        pages.push(i);
-      }
-      pages.push("...");
-      for (let i = total - 1; i <= total; i++) {
-        pages.push(i);
-      }
+      pages.push(total);
     }
   }
 
