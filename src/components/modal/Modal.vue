@@ -111,7 +111,13 @@ const closeCurrentModal = () => {
       transform: translateY(-50%);
       top: 50%;
       @include bp($point_4) {
-        left: -30px;
+        left: 20px;
+        top: 20px;
+        transform: translateY(0);
+        z-index: 99;
+
+        background-color: $bg-color-secondary;
+  
       }
     }
   }

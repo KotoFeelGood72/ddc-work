@@ -178,9 +178,11 @@ function updateClientStatus(status: string) {
   font-size: $small-2;
 
   @include bp($point_4) {
-    max-width: 95%;
-    min-width: 95%;
-    padding: 20px;
+    max-width: 100%;
+    min-width: 100%;
+    padding: 70px 20px 20px 20px;
+    max-height: 100vh;
+    overflow-y: auto;
   }
 }
 

@@ -5,7 +5,7 @@
         <div class="main-link">
           <RouterLink to="/clients">Клиенты</RouterLink>
         </div>
-        <heading :title="route?.meta?.title" :level="3" :size="8" />
+        <!-- <heading :title="route?.meta?.title" :level="3" :size="8" /> -->
       </div>
       <div class="row-end">
         <notificationBtn />
