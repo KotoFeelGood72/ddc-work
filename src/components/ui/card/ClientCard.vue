@@ -1,66 +1,75 @@
 <template>
-  <div class="card" @click="openClient(card.id)">
-    <div class="card_col__left">
-      <avatar />
-      <div class="card__title">
-        <p>{{ card.acf.name }}</p>
+  <transition name="fade" @after-leave="handleAfterLeave">
+    <div v-if="!isDeleted" class="card" @click="openClient(card.id)">
+      <div v-if="isLoading" class="loading-overlay">
+        <p>Loading...</p>
       </div>
-      <div class="card__address" @click.stop="copyToClipboard(card.acf.address)">
-        <span>{{ card.acf.address }}</span>
-        <div class="clipboard">
-          <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
+      <div v-else class="card__row">
+        <div class="card_col__left">
+          <avatar />
+          <div class="card__title">
+            <p>{{ card.acf.name }}</p>
+          </div>
+          <div class="card__address" @click.stop="copyToClipboard(card.acf.address)">
+            <span>{{ card.acf.address }}</span>
+            <div class="clipboard">
+              <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
+            </div>
+          </div>
+          <div class="card__phone" v-if="formattedPhone" @click.stop="handlePhoneClick">
+            <span>{{ formattedPhone }}</span>
+            <div class="clipboard" @click.stop="copyToClipboard(formattedPhone)">
+              <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
+            </div>
+          </div>
+          <div class="card__phone__mobile" v-if="formattedPhone" @click.stop>
+            <a :href="`tel:${formattedPhone}`">{{ formattedPhone }}</a>
+          </div>
+          <div class="card__website" v-if="firstWebsite" @click.stop>
+            <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
+              firstWebsite
+            }}</a>
+          </div>
+        </div>
+        <div class="card_col__right">
+          <div class="card__status">
+            <div v-tooltip="'В обработке'">
+              <div
+                class="status_processing"
+                @click.stop="updateStatus('В обработке')"
+              ></div>
+            </div>
+            <div v-tooltip="'В работе'">
+              <div class="status_working" @click.stop="updateStatus('В работе')"></div>
+            </div>
+            <div v-tooltip="'Клиент'">
+              <div class="status_client" @click.stop="updateStatus('Клиент')"></div>
+            </div>
+            <div v-tooltip="'Не актуально'">
+              <div
+                class="status_not-relevant"
+                @click.stop="updateStatus('Не актуально')"
+              ></div>
+            </div>
+          </div>
+          <div class="card__btn">
+            <div class="card__open" @click="openClient(card.id)" v-tooltip="'Открыть'">
+              <Icons icon="ion:open-outline" size="22px" color="green" />
+              <p>Открыть</p>
+            </div>
+            <div class="card__delete" @click.stop="triggerDelete" v-tooltip="'Удалить'">
+              <Icons icon="weui:delete-outlined" size="22px" color="white" />
+              <p>Удалить</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card__phone" v-if="formattedPhone" @click.stop="handlePhoneClick">
-        <span>{{ formattedPhone }}</span>
-        <div class="clipboard" @click.stop="copyToClipboard(formattedPhone)">
-          <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
-        </div>
-      </div>
-      <div class="card__phone__mobile" v-if="formattedPhone" @click.stop>
-        <a :href="`tel:${formattedPhone}`">{{ formattedPhone }}</a>
-      </div>
-      <div class="card__website" v-if="firstWebsite" @click.stop>
-        <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
-          firstWebsite
-        }}</a>
-      </div>
-      <!-- <div class="card__categories">{{ card.category_name }}</div> -->
     </div>
-    <div class="card_col__right">
-      <div class="card__status">
-        <div v-tooltip="'В обработке'">
-          <div class="status_processing" @click.stop="updateStatus('В обработке')"></div>
-        </div>
-        <div v-tooltip="'В работе'">
-          <div class="status_working" @click.stop="updateStatus('В работе')"></div>
-        </div>
-        <div v-tooltip="'Клиент'">
-          <div class="status_client" @click.stop="updateStatus('Клиент')"></div>
-        </div>
-        <div v-tooltip="'Не актуально'">
-          <div
-            class="status_not-relevant"
-            @click.stop="updateStatus('Не актуально')"
-          ></div>
-        </div>
-      </div>
-      <div class="card__btn">
-        <div class="card__open" @click="openClient(card.id)" v-tooltip="'Открыть'">
-          <Icons icon="ion:open-outline" size="22px" color="green" />
-          <p>Открыть</p>
-        </div>
-        <div class="card__delete" @click.stop="emit('deleteCard')" v-tooltip="'Удалить'">
-          <Icons icon="weui:delete-outlined" size="22px" color="white" />
-          <p>Удалить</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import avatar from "../people/avatar.vue";
 import { useModalStore } from "@/store/useModalStore";
 import { useRouter } from "vue-router";
@@ -78,6 +87,8 @@ const { openModal } = useModalStore();
 const router = useRouter();
 
 const emit = defineEmits(["deleteCard", "updateCard"]);
+const isLoading = ref(false);
+const isDeleted = ref(false);
 
 const firstWebsite = computed(() => {
   if (!props.card.acf.websites) return null;
@@ -154,12 +165,34 @@ function openQR(link: any, type: "phone" | "url") {
     router.push({ query: { phone: link } });
   }
 }
+
+async function deleteCard() {
+  isLoading.value = true;
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Имитируем запрос на сервер
+    emit("deleteCard");
+    isDeleted.value = true;
+  } catch (error) {
+    console.error("Failed to delete card: ", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+function triggerDelete() {
+  isDeleted.value = true;
+}
+
+function handleAfterLeave() {
+  deleteCard();
+}
 </script>
 
 <style scoped lang="scss">
 .card {
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
 
   @include bp($point_4) {
     flex-direction: column;
@@ -317,7 +350,7 @@ function openQR(link: any, type: "phone" | "url") {
   p,
   a {
     @include bp($point_4) {
-      max-width: 300px !important;
+      max-width: 250px !important;
     }
   }
   &:hover {
@@ -487,6 +520,24 @@ function openQR(link: any, type: "phone" | "url") {
     @include bp($point_4) {
       display: flex;
     }
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.card__row {
+  @include flex-space;
+  @include bp($point_4) {
+    width: 100%;
+    flex-direction: column;
+    gap: 20px;
   }
 }
 </style>

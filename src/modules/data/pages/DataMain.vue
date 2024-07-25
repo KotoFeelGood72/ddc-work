@@ -9,7 +9,7 @@
       />
       <!-- <Selects
         v-model="selectedStatus"
-        :options="statuses"
+        :options="status"
         placeholder="Выберите статус"
         @update:modelValue="filterByStatus"
       />
@@ -56,7 +56,7 @@ import Selects from "@/components/ui/dropdown/Selects.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
-// const statuses = ref<any[]>([
+// const status = ref<any[]>([
 //   { name: "Новый", id: "Новый" },
 //   { name: "В обработке", id: "В обработке" },
 //   { name: "В работе", id: "В работе" },
@@ -111,6 +111,7 @@ async function getClients() {
     const params: any = {
       page: page.value,
       per_page: perPage,
+      statuses: "Не актуально",
     };
 
     if (selectedCategory.value) {
