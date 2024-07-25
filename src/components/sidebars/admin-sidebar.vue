@@ -28,6 +28,10 @@ import logo from "@/assets/img/logo.png";
   min-width: 270px;
   padding: 30px 20px;
 
+  @include bp($point_4) {
+    display: none;
+  }
+
   :deep(.avatar) {
     margin-bottom: 20px;
   }

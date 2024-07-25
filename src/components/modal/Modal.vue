@@ -110,6 +110,9 @@ const closeCurrentModal = () => {
       left: -60px;
       transform: translateY(-50%);
       top: 50%;
+      @include bp($point_4) {
+        left: -30px;
+      }
     }
   }
 }

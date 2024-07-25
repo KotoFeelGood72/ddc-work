@@ -29,5 +29,9 @@ import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
   min-height: calc(100vh - 70px);
   padding: 40px;
   background-color: $bg-color-tertiary;
+
+  @include bp($point_4) {
+    padding: 20px 10px;
+  }
 }
 </style>

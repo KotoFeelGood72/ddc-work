@@ -17,6 +17,9 @@
           <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
         </div>
       </div>
+      <div class="card__phone__mobile" v-if="formattedPhone" @click.stop>
+        <a :href="`tel:${formattedPhone}`">{{ formattedPhone }}</a>
+      </div>
       <div class="card__website" v-if="firstWebsite">
         <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
           firstWebsite
@@ -158,6 +161,11 @@ function openQR(link: any, type: "phone" | "url") {
 .card {
   transition: all 0.3s ease;
   cursor: pointer;
+
+  @include bp($point_4) {
+    flex-direction: column;
+    gap: 20px;
+  }
   &:hover {
     box-shadow: 0 0 30px 0 #6161612a;
   }
@@ -174,9 +182,18 @@ function openQR(link: any, type: "phone" | "url") {
   flex-grow: 1;
   flex-wrap: wrap;
   max-width: 70%;
+
+  @include bp($point_4) {
+    max-width: 100%;
+    flex-direction: column;
+    width: 100%;
+  }
 }
 .card_col__right {
   gap: 30px;
+  @include bp($point_4) {
+    // flex-direction: column;
+  }
 }
 .card__btn {
   gap: 5px;
@@ -188,6 +205,12 @@ function openQR(link: any, type: "phone" | "url") {
   border-radius: 10px;
   margin: 20px 0;
   padding: 15px 20px;
+
+  :deep(.avatar) {
+    @include bp($point_4) {
+      display: none;
+    }
+  }
 }
 
 .card__status {
@@ -253,6 +276,7 @@ function openQR(link: any, type: "phone" | "url") {
 }
 
 .card__phone,
+.card__phone__mobile,
 .card__website,
 .card__categories,
 .card__title,
@@ -265,6 +289,10 @@ function openQR(link: any, type: "phone" | "url") {
   position: relative;
   z-index: 2;
   @include flex-center;
+  @include bp($point_4) {
+    width: 100%;
+    justify-content: flex-start;
+  }
   &:hover {
     &:before {
       background-color: #94939348;
@@ -354,6 +382,18 @@ function openQR(link: any, type: "phone" | "url") {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+.card__phone {
+  @include bp($point_4) {
+    display: none;
+  }
+}
+.card__phone__mobile {
+  display: none;
+  @include bp($point_4) {
+    display: block;
   }
 }
 </style>

@@ -134,6 +134,9 @@ const pages = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  @include bp($point_4) {
+    flex-direction: column;
+  }
 }
 
 .pagination__btn {
@@ -144,6 +147,10 @@ const pages = computed(() => {
 .pagination__numbers {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap;
+  @include bp($point_4) {
+    justify-content: center;
+  }
 }
 
 .pagination__number {
@@ -172,5 +179,18 @@ const pages = computed(() => {
 
 .total-page {
   font-size: 14px;
+}
+
+.icon-btn {
+  @include bp($point_4) {
+    display: none;
+  }
+}
+
+.pagination__input {
+  @include bp($point_4) {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
 </style>

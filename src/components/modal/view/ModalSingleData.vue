@@ -176,6 +176,12 @@ function updateClientStatus(status: string) {
   margin-right: 0;
   position: relative;
   font-size: $small-2;
+
+  @include bp($point_4) {
+    max-width: 95%;
+    min-width: 95%;
+    padding: 20px;
+  }
 }
 
 .single__head {
@@ -226,6 +232,10 @@ function updateClientStatus(status: string) {
   gap: 3px;
   width: 100%;
   margin-bottom: 20px;
+
+  @include bp($point_4) {
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+  }
 
   .single_status__item {
     padding: 10px;
