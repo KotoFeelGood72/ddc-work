@@ -181,7 +181,8 @@ const pages = computed(() => {
 
 .pagination__input {
   @include bp($point_4) {
-    width: 100%;
+    width: 90px;
+    height: 60px;
     margin: 10px 0;
   }
 }

@@ -7,13 +7,19 @@
         placeholder="Выберите категорию"
         @update:modelValue="filterByCategory"
       />
-      <!-- <Selects
+      <Selects
         v-model="selectedStatus"
-        :options="status"
+        :options="statuses"
         placeholder="Выберите статус"
         @update:modelValue="filterByStatus"
       />
-      <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." /> -->
+      <Selects
+        v-model="selectedCity"
+        :options="cities"
+        placeholder="Выберите город"
+        @update:modelValue="filterByCity"
+      />
+      <!-- <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." /> -->
     </div>
     <div class="clients_main">
       <Loader v-if="isLoading" style="background-color: transparent" />
@@ -56,18 +62,24 @@ import Selects from "@/components/ui/dropdown/Selects.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
-// const status = ref<any[]>([
-//   { name: "Новый", id: "Новый" },
-//   { name: "В обработке", id: "В обработке" },
-//   { name: "В работе", id: "В работе" },
-//   { name: "Клиент", id: "Клиент" },
-//   { name: "Не актуально", id: "Не актуально" },
-// ]);
+const statuses = ref<any[]>([
+  { name: "Новый", id: "Новый" },
+  { name: "Не актуально", id: "Не актуально" },
+  { name: "В обработке", id: "В обработке" },
+  { name: "Клиент", id: "Клиент" },
+]);
+const cities = ref<any[]>([
+  { name: "Тверь", id: "Тверь" },
+  { name: "Краснодар", id: "Краснодар" },
+  { name: "Москва", id: "Москва" },
+  { name: "Ростов на Дону", id: "Ростов на Дону" },
+]); // Фиксированный массив городов
 const page = ref(1);
 const perPage = 10;
 const totalPages = ref(1);
 const selectedCategory = ref<any>("");
 const selectedStatus = ref<any>("");
+const selectedCity = ref<any>(""); // Переменная для выбранного города
 const searchQuery = ref<string>("");
 const isLoading = ref(false);
 
@@ -77,9 +89,15 @@ const router = useRouter();
 const filteredClients = computed(() => {
   let filtered = clients.value;
 
-  if (selectedStatus.value) {
+  if (selectedStatus.value !== "") {
     filtered = filtered.filter((client: any) =>
       client.acf.status.toLowerCase().includes(selectedStatus.value.toLowerCase())
+    );
+  }
+
+  if (selectedCity.value !== "") {
+    filtered = filtered.filter((client: any) =>
+      client.acf.city.toLowerCase().includes(selectedCity.value.toLowerCase())
     );
   }
 
@@ -117,8 +135,12 @@ async function getClients() {
       params.theme_bussines = selectedCategory.value;
     }
 
-    if (selectedStatus.value) {
-      params.status = selectedStatus.value;
+    if (selectedStatus.value !== "") {
+      params.statuses = selectedStatus.value;
+    }
+
+    if (selectedCity.value !== "") {
+      params.city = selectedCity.value;
     }
 
     if (searchQuery.value) {
@@ -183,14 +205,6 @@ function getStatusClass(status: any) {
       return "status-new";
     case "В обработке":
       return "status-processing";
-    case "В работе":
-      return "status-working";
-    case "Согласование":
-      return "status-agreement";
-    case "Выслан договор":
-      return "status-contract-sent";
-    case "Выслано предложение":
-      return "status-proposal-sent";
     case "Клиент":
       return "status-client";
     case "Не актуально":
@@ -206,11 +220,18 @@ function filterByCategory() {
   getClients();
 }
 
-// function filterByStatus() {
-//   page.value = 1;
-//   updateQueryParamsWithPageLast();
-//   getClients();
-// }
+function filterByStatus() {
+  page.value = 1;
+  updateQueryParamsWithPageLast();
+  getClients();
+}
+
+function filterByCity() {
+  // Новая функция для фильтрации по городу
+  page.value = 1;
+  updateQueryParamsWithPageLast();
+  getClients();
+}
 
 function updateQueryParamsWithPageLast() {
   const query: any = { ...route.query };
@@ -221,10 +242,16 @@ function updateQueryParamsWithPageLast() {
     delete query.category;
   }
 
-  if (selectedStatus.value) {
+  if (selectedStatus.value !== "") {
     query.status = selectedStatus.value;
   } else {
     delete query.status;
+  }
+
+  if (selectedCity.value !== "") {
+    query.city = selectedCity.value;
+  } else {
+    delete query.city;
   }
 
   if (searchQuery.value) {
@@ -273,13 +300,21 @@ watch(route, () => {
     selectedCategory.value = route.query.category;
     getClients();
   }
+  if (route.query.status) {
+    selectedStatus.value = route.query.status;
+    getClients();
+  }
+  if (route.query.city) {
+    selectedCity.value = route.query.city;
+    getClients();
+  }
   if (route.query.search) {
     searchQuery.value = route.query.search as string;
     getClients();
   }
 });
 
-watch([selectedCategory, selectedStatus, searchQuery], () => {
+watch([selectedCategory, selectedStatus, selectedCity, searchQuery], () => {
   filterByCategory();
 });
 
@@ -316,5 +351,11 @@ onMounted(() => {
 
 .clients_main {
   width: 100%;
+}
+
+.filter {
+  @include bp($point_4) {
+    flex-direction: column;
+  }
 }
 </style>
