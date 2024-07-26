@@ -111,7 +111,6 @@ async function getClients() {
     const params: any = {
       page: page.value,
       per_page: perPage,
-      statuses: "Не актуально",
     };
 
     if (selectedCategory.value) {
