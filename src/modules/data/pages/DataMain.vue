@@ -122,7 +122,7 @@ const perPage = ref<any>("10");
 const totalPages = ref(1);
 const selectedCategory = ref<any>("");
 const selectedStatus = ref<any>("");
-const selectedCity = ref<any>(""); // Переменная для выбранного города
+const selectedCity = ref<any>("");
 const isLoading = ref(false);
 const currentView = ref(markRaw(ClientCard));
 
