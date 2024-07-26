@@ -24,6 +24,11 @@ import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
 .admin {
   @include flex-start;
   align-items: flex-start;
+  &.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
 }
 .content {
   min-height: calc(100vh - 70px);

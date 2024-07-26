@@ -59,8 +59,6 @@ const generateQRCode = () => {
 const updateValueToEncode = () => {
   const phone = decodedPhone.value;
   const url = route.query.url ? decodeURIComponent(route.query.url as string) : null;
-  console.log("Decoded phone:", phone);
-  console.log("Decoded url:", url);
 
   if (phone) {
     valueToEncode.value = `tel:${phone}`;

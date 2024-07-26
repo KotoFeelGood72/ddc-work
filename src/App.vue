@@ -1,5 +1,5 @@
 <template>
-  <component :is="layoutComponent">
+  <component :is="layoutComponent" :class="{ fixed: isAnyModalActive }">
     <router-view />
     <Modal :positionX="isCart ? 'right' : 'center'" />
   </component>
@@ -15,7 +15,9 @@ import Modal from "./components/modal/Modal.vue";
 import { useModalStoreRefs } from "./store/useModalStore";
 
 const { modals } = useModalStoreRefs();
-
+const isAnyModalActive = computed(() => {
+  return Object.values(modals.value).some((value) => value);
+});
 const isCart = computed(() => modals.value.client);
 
 const route = useRoute();

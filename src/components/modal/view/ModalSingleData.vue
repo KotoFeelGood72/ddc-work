@@ -53,6 +53,10 @@
           />
         </div>
       </div>
+      <div class="single_close" @click="closeModal('client', router)">
+        <Icons icon="ic:round-close" size="26px" color="#424242" />
+        <p>Закрыть</p>
+      </div>
     </div>
     <Loader v-else />
   </div>
@@ -74,7 +78,7 @@ const router = useRouter();
 const route = useRoute();
 const clientData = ref<any>({});
 const commentary = ref<string>("");
-const statuses = ["Новый", "В обработке", "В работе", "Клиент", "Не актуально"];
+const statuses = ["В обработке", "В работе", "Клиент", "Не актуально"];
 const isLoading = ref<boolean>(false);
 
 async function getClientById(id: string) {
@@ -93,8 +97,6 @@ function getStatusClass(status: string, activeStatus: string) {
 
 function getStatusColorClass(status: string) {
   switch (status) {
-    case "Новый":
-      return "status-new";
     case "В обработке":
       return "status-processing";
     case "В работе":
@@ -118,7 +120,6 @@ watch(
   () => route.query.client,
   (newClientId) => {
     if (newClientId) {
-      console.log("Client ID from query:", newClientId);
       getClientById(newClientId as string);
     }
   }
@@ -179,10 +180,11 @@ function updateClientStatus(status: string) {
 
   @include bp($point_4) {
     max-width: 100%;
-    min-width: 100%;
-    padding: 70px 20px 20px 20px;
-    max-height: 100vh;
+    min-width: 300px;
+    padding: 30px 20px 80px 20px;
+    max-height: 90%;
     overflow-y: auto;
+    width: 100%;
   }
 }
 
@@ -236,7 +238,7 @@ function updateClientStatus(status: string) {
   margin-bottom: 20px;
 
   @include bp($point_4) {
-    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(35%, 1fr));
   }
 
   .single_status__item {
@@ -245,6 +247,11 @@ function updateClientStatus(status: string) {
     text-align: center;
     cursor: pointer;
     font-size: $small-3;
+
+    @include bp($point_4) {
+      // font-size: 10px;
+      // padding: 5px 7px;
+    }
     &:hover {
       opacity: 0.8;
     }
@@ -304,6 +311,21 @@ function updateClientStatus(status: string) {
 
   .status-inactive {
     opacity: 0.6;
+  }
+}
+
+.single_close {
+  display: none;
+  @include bp($point_4) {
+    bottom: 10px;
+    position: fixed;
+    gap: 10px;
+    @include flex-center;
+    background-color: $secondary-red;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px 20px;
+    width: calc(100% - 40px);
   }
 }
 </style>

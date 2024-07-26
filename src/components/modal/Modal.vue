@@ -117,7 +117,6 @@ const closeCurrentModal = () => {
         z-index: 99;
 
         background-color: $bg-color-secondary;
-  
       }
     }
   }
@@ -142,11 +141,17 @@ const closeCurrentModal = () => {
 .modal_main {
   position: relative;
   pointer-events: all;
+  @include bp($point_4) {
+    width: 100%;
+  }
 }
 
 .close-modal {
   position: absolute;
   top: -40px;
   right: -40px;
+  @include bp($point_4) {
+    display: none;
+  }
 }
 </style>
