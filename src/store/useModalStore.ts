@@ -20,8 +20,11 @@ export const useModalStore = defineStore('modal', {
       this.modals[modalName] = false;
       this.clearQueryParams(router);
     },
-    clearQueryParams(router: any) {
-      router.replace({ query: {} });
+   clearQueryParams(router: any) {
+      const query = { ...router.currentRoute.value.query };
+      delete query.client;
+      delete query.phone;
+      router.replace({ query });
     },
   },
 });

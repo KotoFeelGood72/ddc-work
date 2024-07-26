@@ -167,6 +167,11 @@ const pages = computed(() => {
   border: 1px solid #ccc;
   border-radius: 5px;
   text-align: center;
+
+  @include bp($point_4) {
+    flex-grow: 1;
+    width: 100% !important;
+  }
 }
 
 .total-page {

@@ -3,7 +3,7 @@
     <div class="admin__main">
       <div class="row-start">
         <div class="main-link">
-          <RouterLink to="/clients">Клиенты</RouterLink>
+          <RouterLink to="/clients?page=1&view=list&count=10">Клиенты</RouterLink>
         </div>
         <!-- <heading :title="route?.meta?.title" :level="3" :size="8" /> -->
       </div>

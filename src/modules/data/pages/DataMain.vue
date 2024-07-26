@@ -1,38 +1,72 @@
 <template>
   <div class="clients">
     <div class="filter">
-      <Selects
-        v-model="selectedCategory"
-        :options="categories"
-        placeholder="Выберите категорию"
-        @update:modelValue="filterByCategory"
-      />
-      <Selects
-        v-model="selectedStatus"
-        :options="statuses"
-        placeholder="Выберите статус"
-        @update:modelValue="filterByStatus"
-      />
-      <Selects
-        v-model="selectedCity"
-        :options="cities"
-        placeholder="Выберите город"
-        @update:modelValue="filterByCity"
-      />
-      <!-- <InputsSearch v-model="searchQuery" placeholder="Поиск клиентов..." /> -->
+      <div class="filter_row">
+        <Selects
+          v-model="selectedCategory"
+          :options="categories"
+          placeholder="Выберите категорию"
+          @update:modelValue="filterByCategory"
+        />
+        <Selects
+          v-model="selectedStatus"
+          :options="statuses"
+          placeholder="Выберите статус"
+          @update:modelValue="filterByStatus"
+        />
+        <Selects
+          v-model="selectedCity"
+          :options="cities"
+          placeholder="Выберите город"
+          @update:modelValue="filterByCity"
+        />
+        <Selects
+          v-model="perPage"
+          :options="perPageOptions"
+          placeholder="Элементов на странице"
+          @update:modelValue="updatePerPage"
+        />
+      </div>
+      <div class="change__card">
+        <div
+          class="row-template"
+          @click="changeToRowTemplate"
+          :class="{ active: route.query.view === 'list' }"
+        >
+          <Icons icon="mingcute:rows-3-fill" size="20" />
+        </div>
+        <div
+          class="card-template"
+          @click="changeToCardTemplate"
+          :class="{ active: route.query.view === 'card' }"
+        >
+          <Icons icon="mingcute:rows-3-fill" size="20" />
+        </div>
+      </div>
     </div>
     <div class="clients_main">
       <Loader v-if="isLoading" style="background-color: transparent" />
       <div v-else>
-        <div v-if="filteredClients.length > 0" class="clients__list">
-          <ClientCard
-            v-for="item in filteredClients"
-            :key="item.id"
-            :class="getStatusClass(item.acf.status)"
-            :card="item"
-            @deleteCard="deleteClient(item.id)"
-            @updateCard="updateClient"
-          />
+        <div class="client_list__w" v-if="filteredClients.length > 0">
+          <div
+            :class="[
+              {
+                list: route.query.view === 'list',
+                cards: route.query.view === 'card',
+              },
+              'clients__list',
+            ]"
+          >
+            <component
+              v-for="item in filteredClients"
+              :key="item.id"
+              :is="currentView"
+              :class="getStatusClass(item.acf.status)"
+              :card="item"
+              @deleteCard="deleteClient(item.id)"
+              @updateCard="updateClient"
+            />
+          </div>
           <pagination
             @nextPage="nextPage"
             @prevPage="prevPage"
@@ -50,15 +84,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, markRaw } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "@/api/api";
 import custom from "@/api/custom";
 import ClientCard from "@/components/ui/card/ClientCard.vue";
+import ClientCardDefault from "@/components/ui/card/ClientCardDefault.vue";
 import pagination from "@/components/ui/buttons/pagination.vue";
 import Loader from "@/components/ui/loading/Loader.vue";
 import Selects from "@/components/ui/dropdown/Selects.vue";
-// import InputsSearch from "@/components/ui/inputs/InputsSearch.vue";
 
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
@@ -74,15 +108,23 @@ const cities = ref<any[]>([
   { name: "Москва", id: "Москва" },
   { name: "Ростов на Дону", id: "Ростов на Дону" },
   { name: "Пермь", id: "Пермь" },
-]); // Фиксированный массив городов
+]);
+const perPageOptions = ref<any[]>([
+  { name: "10", id: "10" },
+  { name: "20", id: "20" },
+  { name: "30", id: "30" },
+  { name: "40", id: "40" },
+  { name: "50", id: "50" },
+  { name: "100", id: "100" },
+]);
 const page = ref(1);
-const perPage = 10;
+const perPage = ref(20);
 const totalPages = ref(1);
 const selectedCategory = ref<any>("");
 const selectedStatus = ref<any>("");
 const selectedCity = ref<any>(""); // Переменная для выбранного города
-const searchQuery = ref<string>("");
 const isLoading = ref(false);
+const currentView = ref(markRaw(ClientCard));
 
 const route = useRoute();
 const router = useRouter();
@@ -102,25 +144,6 @@ const filteredClients = computed(() => {
     );
   }
 
-  if (searchQuery.value) {
-    const searchLower = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(
-      (client: any) =>
-        client.acf.name.toLowerCase().includes(searchLower) ||
-        client.acf.city.toLowerCase().includes(searchLower) ||
-        client.acf?.phones?.some((phone: string) =>
-          phone.toLowerCase().includes(searchLower)
-        ) ||
-        client.acf.websites.some((website: string) =>
-          website.toLowerCase().includes(searchLower)
-        ) ||
-        client.acf.category.toLowerCase().includes(searchLower) ||
-        client.acf.status.toLowerCase().includes(searchLower) ||
-        client.acf.callback.toLowerCase().includes(searchLower) ||
-        client.acf.comment.toLowerCase().includes(searchLower)
-    );
-  }
-
   return filtered;
 });
 
@@ -129,7 +152,7 @@ async function getClients() {
   try {
     const params: any = {
       page: page.value,
-      per_page: perPage,
+      per_page: perPage.value,
     };
 
     if (selectedCategory.value) {
@@ -144,14 +167,9 @@ async function getClients() {
       params.city = selectedCity.value;
     }
 
-    if (searchQuery.value) {
-      params.search = searchQuery.value;
-    }
-
     const response = await api.get("/client_new", { params });
     clients.value = response.data;
-    totalPages.value = Math.ceil(response.headers["x-wp-total"] / perPage);
-    console.log(response.data);
+    totalPages.value = Math.ceil(response.headers["x-wp-total"] / perPage.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -228,7 +246,12 @@ function filterByStatus() {
 }
 
 function filterByCity() {
-  // Новая функция для фильтрации по городу
+  page.value = 1;
+  updateQueryParamsWithPageLast();
+  getClients();
+}
+
+function updatePerPage() {
   page.value = 1;
   updateQueryParamsWithPageLast();
   getClients();
@@ -255,13 +278,9 @@ function updateQueryParamsWithPageLast() {
     delete query.city;
   }
 
-  if (searchQuery.value) {
-    query.search = searchQuery.value;
-  } else {
-    delete query.search;
-  }
-
   query.page = page.value.toString();
+  query.count = perPage.value.toString();
+  query.view = currentView.value === ClientCardDefault ? "card" : "list"; // добавляем текущий шаблон в query
 
   router.replace({ query });
 }
@@ -292,37 +311,59 @@ const goToPage = (newPage: number) => {
   }
 };
 
-watch(route, () => {
-  if (route.query.page) {
-    page.value = parseInt(route.query.page as string) || 1;
-    getClients();
-  }
-  if (route.query.category) {
-    selectedCategory.value = route.query.category;
-    getClients();
-  }
-  if (route.query.status) {
-    selectedStatus.value = route.query.status;
-    getClients();
-  }
-  if (route.query.city) {
-    selectedCity.value = route.query.city;
-    getClients();
-  }
-  if (route.query.search) {
-    searchQuery.value = route.query.search as string;
-    getClients();
-  }
-});
+const changeToRowTemplate = () => {
+  currentView.value = markRaw(ClientCard);
+  updateQueryParamsWithPageLast(); // обновляем query параметры после смены шаблона
+};
 
-watch([selectedCategory, selectedStatus, selectedCity, searchQuery], () => {
+const changeToCardTemplate = () => {
+  currentView.value = markRaw(ClientCardDefault);
+  updateQueryParamsWithPageLast(); // обновляем query параметры после смены шаблона
+};
+
+watch(
+  () => route.query,
+  () => {
+    if (route.query.page) {
+      page.value = parseInt(route.query.page as string) || 1;
+      getClients();
+    }
+    if (route.query.perPage) {
+      perPage.value = parseInt(route.query.perPage as string) || 20;
+      getClients();
+    }
+    if (route.query.category) {
+      selectedCategory.value = route.query.category;
+      getClients();
+    }
+    if (route.query.status) {
+      selectedStatus.value = route.query.status;
+      getClients();
+    }
+    if (route.query.city) {
+      selectedCity.value = route.query.city;
+      getClients();
+    }
+    if (route.query.view) {
+      currentView.value =
+        route.query.view === "card" ? markRaw(ClientCardDefault) : markRaw(ClientCard);
+    }
+  }
+);
+
+watch([selectedCategory, selectedStatus, selectedCity], () => {
   filterByCategory();
 });
 
 onMounted(() => {
   page.value = parseInt(route.query.page as string) || 1;
+  perPage.value = parseInt(route.query.perPage as string) || 20;
   getClients();
   getCategories();
+  currentView.value =
+    (route.query.view as string) === "card"
+      ? markRaw(ClientCardDefault)
+      : markRaw(ClientCard);
 });
 </script>
 
@@ -336,7 +377,51 @@ onMounted(() => {
 .filter {
   margin-bottom: 20px;
   @include flex-start;
+  gap: 20px;
+}
+
+.filter_row {
+  flex-grow: 1;
+  @include flex-start;
   gap: 10px;
+
+  @include bp($point_4) {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.change__card {
+  @include flex-start;
+  gap: 5px;
+
+  @include bp($point_4) {
+    display: none;
+  }
+
+  div {
+    @include flex-center;
+    background-color: $bg-color-secondary;
+    width: 42px;
+    height: 42px;
+    border-radius: 5px;
+    color: $secondary-blue-active;
+    cursor: pointer;
+    svg {
+      color: $secondary-blue-active !important;
+    }
+
+    &.active {
+      background-color: $secondary-blue;
+      svg {
+        color: $primary-blue-active !important;
+      }
+    }
+
+    &:nth-child(2) {
+      transform: rotate(90deg);
+    }
+  }
 }
 
 .center_pag {
@@ -348,6 +433,17 @@ onMounted(() => {
 .clients__list {
   overflow-x: auto;
   max-width: 100%;
+  margin-bottom: 30px;
+
+  &.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    grid-gap: 20px;
+
+    @include bp($point_4) {
+      grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    }
+  }
 }
 
 .clients_main {

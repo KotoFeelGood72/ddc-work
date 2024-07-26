@@ -6,7 +6,6 @@
       </div>
       <div v-else class="card__row">
         <div class="card_col__left">
-          <avatar />
           <div class="card__title">
             <p>{{ card.acf.name }}</p>
           </div>
@@ -70,7 +69,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import avatar from "../people/avatar.vue";
 import { useModalStore } from "@/store/useModalStore";
 import { useRouter } from "vue-router";
 
@@ -196,26 +194,27 @@ function handleAfterLeave() {
   cursor: pointer;
   position: relative;
 
-  @include bp($point_4) {
-    flex-direction: column;
-    gap: 20px;
-  }
   &:hover {
-    box-shadow: 0 0 30px 0 #6161612a;
+    box-shadow: 0 0 30px 0 #6161610e;
   }
 }
-.card,
-.card_col__left,
-.card_col__right,
+// .card_col__left,
+// .card_col__right,
 .card__btn {
   @include flex-start;
+}
+
+.card_col__left,
+.card_col__right {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .card_col__left {
   gap: 10px;
   flex-grow: 1;
-  flex-wrap: wrap;
-  max-width: 70%;
 
   @include bp($point_4) {
     max-width: 100%;
@@ -234,8 +233,6 @@ function handleAfterLeave() {
 }
 .card__btn {
   gap: 5px;
-  div {
-  }
 }
 
 :deep(.tooltip-holder) {
@@ -248,7 +245,6 @@ function handleAfterLeave() {
   justify-content: space-between;
   background-color: $bg-color-quaternary;
   border-radius: 10px;
-  margin: 20px 0;
   padding: 15px 20px;
 
   :deep(.avatar) {
@@ -259,47 +255,41 @@ function handleAfterLeave() {
 }
 
 .card__status {
-  @include flex-end;
+  @include flex-space;
   gap: 7px;
-  @include bp($point_4) {
-    width: 100%;
-  }
   div {
-    width: 50px;
-    height: 15px;
+    width: 25%;
+    height: 25px;
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     box-shadow: 0px 2px 10px 0px #00000017;
-    // border: 1px solid #7474743f;
     z-index: 99;
-
-    @include bp($point_4) {
-      width: 25%;
-      height: 30px;
-      flex-grow: 1;
-    }
 
     &.status_processing {
       background-color: $secondary-orange-active;
+      width: 100%;
       &:hover {
         background-color: $primary-orange;
       }
     }
     &.status_working {
       background-color: $secondary-green-active;
+      width: 100%;
       &:hover {
         background-color: $primary-green;
       }
     }
     &.status_client {
       background-color: $secondary-blue-active;
+      width: 100%;
       &:hover {
         background-color: $primary-blue;
       }
     }
     &.status_not-relevant {
       background-color: $secondary-red-active;
+      width: 100%;
       &:hover {
         background-color: $primary-red;
       }
@@ -337,20 +327,21 @@ function handleAfterLeave() {
 .card__title,
 .card__address {
   gap: 10px;
-  width: 17%;
   padding: 7px 20px;
   font-size: $small-3;
   cursor: pointer;
   position: relative;
   z-index: 2;
-  @include flex-center;
+  @include flex-start;
+  font-size: 16px;
   @include bp($point_4) {
     width: 100%;
     justify-content: flex-start;
     padding: 7px;
   }
   p,
-  a {
+  a,
+  span {
     @include bp($point_4) {
       max-width: 250px !important;
     }
@@ -370,7 +361,7 @@ function handleAfterLeave() {
     background-color: #9493931a;
     content: "";
     z-index: -1;
-    backdrop-filter: blur(20px);
+    // backdrop-filter: blur(20px);
     transition: all 0.3s ease-in-out;
 
     @include bp($point_4) {
@@ -379,12 +370,7 @@ function handleAfterLeave() {
   }
 }
 
-.card__phone {
-  min-width: 180px;
-}
-
 .card__website {
-  min-width: 150px;
   a {
     max-width: 115px;
     overflow: hidden;
@@ -491,12 +477,6 @@ function handleAfterLeave() {
   }
 }
 
-.card__address {
-  @include bp($point_4) {
-    display: none;
-  }
-}
-
 .card__title {
   p {
     @include bp($point_4) {
@@ -512,16 +492,16 @@ function handleAfterLeave() {
     width: 100%;
   }
   & > div {
-    @include bp($point_4) {
-      gap: 10px;
-      flex-grow: 1;
+    gap: 10px;
+    flex-grow: 1;
+    &:nth-child(2) {
+      p {
+        color: #fff;
+      }
     }
   }
   p {
-    display: none;
-    @include bp($point_4) {
-      display: flex;
-    }
+    font-size: 16px;
   }
 }
 
@@ -537,10 +517,7 @@ function handleAfterLeave() {
 .card__row {
   @include flex-space;
   width: 100%;
-  @include bp($point_4) {
-    width: 100%;
-    flex-direction: column;
-    gap: 20px;
-  }
+  flex-direction: column;
+  gap: 20px;
 }
 </style>

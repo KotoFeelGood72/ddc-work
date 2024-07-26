@@ -6,7 +6,7 @@ export const AdminNav = [
     },
     {
         name: 'Клиенты',
-        url: '/clients',
+        url: '/clients?page=1&view=list&count=10',
         icon: 'people'
     },
     {
