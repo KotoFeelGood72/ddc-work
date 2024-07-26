@@ -534,6 +534,7 @@ function handleAfterLeave() {
 
 .card__row {
   @include flex-space;
+  width: 100%;
   @include bp($point_4) {
     width: 100%;
     flex-direction: column;
