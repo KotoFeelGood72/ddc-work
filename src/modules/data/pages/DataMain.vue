@@ -118,7 +118,7 @@ const perPageOptions = ref<any[]>([
   { name: "100", id: "100" },
 ]);
 const page = ref(1);
-const perPage = ref("10");
+const perPage = ref<any>("10");
 const totalPages = ref(1);
 const selectedCategory = ref<any>("");
 const selectedStatus = ref<any>("");
