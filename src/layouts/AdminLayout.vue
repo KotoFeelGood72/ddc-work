@@ -28,6 +28,7 @@ import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
   }
 }
 .content {

@@ -318,35 +318,45 @@ const changeToRowTemplate = () => {
 
 const changeToCardTemplate = () => {
   currentView.value = markRaw(ClientCardDefault);
-  updateQueryParamsWithPageLast(); // обновляем query параметры после смены шаблона
+  updateQueryParamsWithPageLast();
 };
 
 watch(
   () => route.query,
-  () => {
-    if (route.query.page) {
-      page.value = parseInt(route.query.page as string) || 1;
+  (newQuery, oldQuery) => {
+    const queryChanged = (param: string) => newQuery[param] !== oldQuery[param];
+
+    // Проверяем изменение значимых параметров
+    const significantParams = ["page", "perPage", "category", "status", "city", "view"];
+    const isSignificantChange = significantParams.some((param) => queryChanged(param));
+
+    if (isSignificantChange) {
+      if (queryChanged("page")) {
+        page.value = parseInt(route.query.page as string) || 1;
+      }
+
+      if (queryChanged("perPage")) {
+        perPage.value = parseInt(route.query.perPage as string) || 20;
+      }
+
+      if (queryChanged("category")) {
+        selectedCategory.value = route.query.category || "";
+      }
+
+      if (queryChanged("status")) {
+        selectedStatus.value = route.query.status || "";
+      }
+
+      if (queryChanged("city")) {
+        selectedCity.value = route.query.city || "";
+      }
+
+      if (queryChanged("view")) {
+        currentView.value =
+          route.query.view === "card" ? markRaw(ClientCardDefault) : markRaw(ClientCard);
+      }
+
       getClients();
-    }
-    if (route.query.perPage) {
-      perPage.value = parseInt(route.query.perPage as string) || 20;
-      getClients();
-    }
-    if (route.query.category) {
-      selectedCategory.value = route.query.category;
-      getClients();
-    }
-    if (route.query.status) {
-      selectedStatus.value = route.query.status;
-      getClients();
-    }
-    if (route.query.city) {
-      selectedCity.value = route.query.city;
-      getClients();
-    }
-    if (route.query.view) {
-      currentView.value =
-        route.query.view === "card" ? markRaw(ClientCardDefault) : markRaw(ClientCard);
     }
   }
 );

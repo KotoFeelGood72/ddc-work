@@ -33,6 +33,9 @@ import defaultBtn from "@/components/ui/buttons/default-btn.vue";
 import { ref } from "vue";
 
 import { useUsersStore } from "@/store/useUserStore";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const { login } = useUsersStore();
 
@@ -43,6 +46,7 @@ const userData = ref<any>({
 
 function inLogin() {
   login(userData.value);
+  router.push("/clients?page=1&view=list&count=10");
 }
 </script>
 

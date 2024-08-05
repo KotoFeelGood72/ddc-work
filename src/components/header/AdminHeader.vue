@@ -9,7 +9,7 @@
       </div>
       <div class="row-end">
         <notificationBtn />
-        <avatar @click="clearUser()" />
+        <avatar @click="logout()" />
       </div>
     </div>
   </div>
@@ -19,10 +19,15 @@
 import avatar from "../ui/people/avatar.vue";
 import notificationBtn from "../ui/buttons/notification-btn.vue";
 import { useUsersStore } from "@/store/useUserStore";
-// import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 const { clearUser } = useUsersStore();
-// const route = useRoute();
+const router = useRouter();
+
+function logout() {
+  clearUser();
+  router.push("/");
+}
 </script>
 
 <style scoped lang="scss">
