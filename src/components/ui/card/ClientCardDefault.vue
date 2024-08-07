@@ -149,12 +149,12 @@ function openClient(id: number) {
 
 function handlePhoneClick() {
   openQR(formattedPhone.value, "phone");
-  updateStatus("В обработке");
+  // updateStatus("В обработке");
 }
 
 function handleWebsiteClick(event: Event) {
   event.preventDefault();
-  updateStatus("В обработке");
+  // updateStatus("В обработке");
   window.open(firstWebsite.value, "_blank");
 }
 
