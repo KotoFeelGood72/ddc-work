@@ -368,12 +368,15 @@ watch([selectedCategory, selectedStatus, selectedCity], () => {
 onMounted(() => {
   page.value = parseInt(route.query.page as string) || 1;
   perPage.value = parseInt(route.query.perPage as string) || 20;
-  getClients();
-  getCategories();
+  selectedCategory.value = route.query.category || "";
+  selectedStatus.value = route.query.status || "";
+  selectedCity.value = route.query.city || "";
   currentView.value =
     (route.query.view as string) === "card"
       ? markRaw(ClientCardDefault)
       : markRaw(ClientCard);
+  getClients();
+  getCategories();
 });
 </script>
 
