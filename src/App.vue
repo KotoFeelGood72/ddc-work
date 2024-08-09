@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
@@ -32,11 +32,30 @@ const layoutComponent = computed(() => {
       return DefaultLayout;
   }
 });
+
+// Watch for changes in isAnyModalActive and toggle the 'fixed' class on body
+watch(isAnyModalActive, (newValue) => {
+  if (newValue) {
+    document.documentElement.classList.add("fixed");
+  } else {
+    document.documentElement.classList.remove("fixed");
+  }
+});
 </script>
 
-<style scoped lang="scss">
-:deep(.tooltip-holder) {
+<style lang="scss">
+.tooltip-holder {
   display: flex;
   justify-content: center;
+  width: 100%;
+}
+.tooltip-holder div {
+  width: 100%;
+}
+
+html {
+  &.fixed {
+    overflow: hidden;
+  }
 }
 </style>

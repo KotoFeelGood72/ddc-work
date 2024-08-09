@@ -25,10 +25,11 @@ import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
   @include flex-start;
   align-items: flex-start;
   &.fixed {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    // position: fixed;
+    // top: 0;
+    // left: 0;
+    // width: 100%;
+    overflow: hidden;
   }
 }
 .content {

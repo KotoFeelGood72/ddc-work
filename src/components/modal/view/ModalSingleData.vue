@@ -328,4 +328,11 @@ function updateClientStatus(status: string) {
     width: calc(100% - 40px);
   }
 }
+
+.single__main {
+  @include bp($point_2) {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
 </style>
