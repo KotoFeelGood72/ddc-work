@@ -193,6 +193,9 @@ function handleAfterLeave() {
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
+  @include bp($point_2, $direction: min) {
+    min-height: 325px;
+  }
 
   &:hover {
     box-shadow: 0 0 30px 0 #6161610e;
@@ -215,6 +218,7 @@ function handleAfterLeave() {
 .card_col__left {
   gap: 10px;
   flex-grow: 1;
+  min-height: 182px;
 
   @include bp($point_4) {
     max-width: 100%;
@@ -224,6 +228,7 @@ function handleAfterLeave() {
 }
 .card_col__right {
   gap: 30px;
+  height: 100%;
   @include bp($point_4) {
     flex-direction: column;
     width: 100%;

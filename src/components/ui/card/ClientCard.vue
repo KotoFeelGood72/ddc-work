@@ -200,9 +200,9 @@ function handleAfterLeave() {
     flex-direction: column;
     gap: 20px;
   }
-  &:hover {
-    box-shadow: 0 0 30px 0 #6161612a;
-  }
+  // &:hover {
+  //   box-shadow: 0 0 10px 0 #6161612a;
+  // }
 }
 .card,
 .card_col__left,
@@ -234,8 +234,6 @@ function handleAfterLeave() {
 }
 .card__btn {
   gap: 5px;
-  div {
-  }
 }
 
 :deep(.tooltip-holder) {
@@ -247,7 +245,7 @@ function handleAfterLeave() {
 .card {
   justify-content: space-between;
   background-color: $bg-color-quaternary;
-  border-radius: 10px;
+  border-radius: 5px;
   margin: 20px 0;
   padding: 15px 20px;
 

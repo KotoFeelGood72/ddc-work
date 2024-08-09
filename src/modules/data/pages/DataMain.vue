@@ -21,6 +21,13 @@
           @update:modelValue="filterByCity"
         />
         <Selects
+          v-model="hasWebsite"
+          :options="websiteOptions"
+          placeholder="Наличие сайта"
+          @update:modelValue="filterByWebsite"
+        />
+
+        <Selects
           v-model="perPage"
           :options="perPageOptions"
           placeholder="Элементов на странице"
@@ -94,6 +101,18 @@ import pagination from "@/components/ui/buttons/pagination.vue";
 import Loader from "@/components/ui/loading/Loader.vue";
 import Selects from "@/components/ui/dropdown/Selects.vue";
 
+const hasWebsite = ref("");
+const websiteOptions = ref<any[]>([
+  { name: "Есть сайт", id: "1" },
+  { name: "Нет сайта", id: "0" },
+]);
+
+function filterByWebsite() {
+  page.value = 1;
+  updateQueryParamsWithPageLast();
+  getClients();
+}
+
 const clients = ref<any>([]);
 const categories = ref<any[]>([]);
 const statuses = ref<any[]>([
@@ -165,6 +184,10 @@ async function getClients() {
 
     if (selectedCity.value !== "") {
       params.city = selectedCity.value;
+    }
+
+    if (hasWebsite.value !== "") {
+      params.has_website = hasWebsite.value;
     }
 
     const response = await api.get("/client_new", { params });
@@ -278,9 +301,15 @@ function updateQueryParamsWithPageLast() {
     delete query.city;
   }
 
+  if (hasWebsite.value !== "") {
+    query.has_website = hasWebsite.value;
+  } else {
+    delete query.has_website;
+  }
+
   query.page = page.value.toString();
   query.count = perPage.value.toString();
-  query.view = currentView.value === ClientCardDefault ? "card" : "list"; // добавляем текущий шаблон в query
+  query.view = currentView.value === ClientCardDefault ? "card" : "list";
 
   router.replace({ query });
 }
@@ -361,7 +390,7 @@ watch(
   }
 );
 
-watch([selectedCategory, selectedStatus, selectedCity], () => {
+watch([selectedCategory, selectedStatus, selectedCity, hasWebsite], () => {
   filterByCategory();
 });
 
