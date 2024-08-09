@@ -1,9 +1,11 @@
 import { defineStore, storeToRefs } from 'pinia';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export const useUsersStore = defineStore('user', {
   state: () => ({
-    user: null as any
+    user: null as any,
+    router: useRouter()
   }),
   actions: {
     async signIn(user: any) {
@@ -23,7 +25,7 @@ export const useUsersStore = defineStore('user', {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
         this.setUser(response.data);
-        // window.location.href = '/'
+        this.router.push('/clients?page=1&view=list&count=10')
       } catch (error) {
         console.log('Login error:', error);
       }
@@ -44,7 +46,7 @@ export const useUsersStore = defineStore('user', {
     clearUser() {
       this.$reset();  
       localStorage.removeItem('user');
-      // window.location.href = '/'
+      this.router.push('/')
     },
     
     loadUserFromLocalStorage() {
