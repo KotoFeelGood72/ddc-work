@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router';
 export const useUsersStore = defineStore('user', {
   state: () => ({
     user: null as any,
-    router: useRouter()
   }),
   actions: {
     async signIn(user: any) {
@@ -20,13 +19,14 @@ export const useUsersStore = defineStore('user', {
         }
     },
     async login(user: any) {
+      const router = useRouter(); // Получаем роутер в методе
       try {
         const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token', user, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
         await this.setUser(response.data);
 
-          this.router.push('/clients?page=1&view=list&count=10')
+        router.push('/clients?page=1&view=list&count=10');
       } catch (error) {
         console.log('Login error:', error);
       }
@@ -42,12 +42,14 @@ export const useUsersStore = defineStore('user', {
       }
     },
     setUser(data: any) {
-      this.user = data
+      this.user = data;
+      localStorage.setItem('user', JSON.stringify(data)); // Сохраняем пользователя в LocalStorage
     },
     clearUser() {
       this.$reset();  
       localStorage.removeItem('user');
-      this.router.push('/')
+      const router = useRouter(); // Получаем роутер в методе
+      router.push('/');
     },
     
     loadUserFromLocalStorage() {
