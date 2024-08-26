@@ -24,11 +24,9 @@ export const useUsersStore = defineStore('user', {
         const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token', user, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
-        this.setUser(response.data);
-        setTimeout(() => {
+        await this.setUser(response.data);
 
           this.router.push('/clients?page=1&view=list&count=10')
-        }, 2000)
       } catch (error) {
         console.log('Login error:', error);
       }
