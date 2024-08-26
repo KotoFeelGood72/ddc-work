@@ -1,4 +1,4 @@
-import { defineStore, storeToRefs } from 'pinia';
+import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -8,18 +8,18 @@ export const useUsersStore = defineStore('user', {
   }),
   actions: {
     async signIn(user: any) {
-        try {
-          await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/register/user', user, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        } catch (error) {
-          console.error('Sign in error:', error);
-        }
+      try {
+        await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/register/user', user, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } catch (error) {
+        console.error('Sign in error:', error);
+      }
     },
     async login(user: any) {
-      const router = useRouter(); // Получаем роутер в методе
+      const router = useRouter(); // Инициализация роутера внутри метода
       try {
         const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token', user, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -48,7 +48,7 @@ export const useUsersStore = defineStore('user', {
     clearUser() {
       this.$reset();  
       localStorage.removeItem('user');
-      const router = useRouter(); // Получаем роутер в методе
+      const router = useRouter(); // Инициализация роутера внутри метода
       router.push('/');
     },
     
@@ -61,5 +61,3 @@ export const useUsersStore = defineStore('user', {
   },
   persist: true,
 });
-
-export const useUsersStoreRefs = () => storeToRefs(useUsersStore());
