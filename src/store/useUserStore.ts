@@ -25,7 +25,10 @@ export const useUsersStore = defineStore('user', {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
         this.setUser(response.data);
-        this.router.push('/clients?page=1&view=list&count=10')
+        setTimeout(() => {
+
+          this.router.push('/clients?page=1&view=list&count=10')
+        }, 2000)
       } catch (error) {
         console.log('Login error:', error);
       }
