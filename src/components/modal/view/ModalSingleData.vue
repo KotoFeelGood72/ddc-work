@@ -119,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import InputArea from "@/components/ui/inputs/InputArea.vue";
 import defaultBtn from "@/components/ui/buttons/default-btn.vue";
