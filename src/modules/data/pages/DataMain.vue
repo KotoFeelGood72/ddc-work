@@ -1,611 +1,269 @@
-<!-- @format -->
-
 <template>
-	<div class="clients">
-		<div class="filter">
-			<div class="filter_row">
-				<Selects
-					v-model="selectedCategory"
-					:options="categories"
-					placeholder="Выберите категорию"
-					@update:modelValue="filterByCategory"
-				/>
-				<Selects
-					v-model="selectedStatus"
-					:options="statuses"
-					placeholder="Выберите статус"
-					@update:modelValue="filterByStatus"
-				/>
-				<Selects
-					v-model="selectedCity"
-					:options="cities"
-					placeholder="Выберите город"
-					@update:modelValue="filterByCity"
-				/>
-				<Selects
-					v-model="hasWebsite"
-					:options="websiteOptions"
-					placeholder="Наличие сайта"
-					@update:modelValue="filterByWebsite"
-				/>
-
-				<Selects
-					v-model="perPage"
-					:options="perPageOptions"
-					placeholder="Элементов на странице"
-					@update:modelValue="updatePerPage"
-				/>
-			</div>
-			<div class="filter_row">
-				<div class="change__card">
-					<div
-						class="row-template"
-						@click="changeToRowTemplate"
-						:class="{ active: route.query.view === 'list' }"
-					>
-						<Icons icon="mingcute:rows-3-fill" size="20" />
-					</div>
-					<div
-						class="card-template"
-						@click="changeToCardTemplate"
-						:class="{ active: route.query.view === 'card' }"
-					>
-						<Icons icon="mingcute:rows-3-fill" size="20" />
-					</div>
-				</div>
-				<div class="clear_filter" @click="clearFilters">
-					<Icons icon="healthicons:cleaning-outline" />
-				</div>
-				<!-- Поле для стандартного поиска -->
-				<input
-					type="text"
-					v-model="searchQuery"
-					placeholder="Введите запрос для поиска"
-					@input="filterBySearch"
-					class="search-input"
-				/>
-				<!-- Поле для поиска по номеру телефона -->
-				<input
-					type="text"
-					v-model="searchPhone"
-					placeholder="Введите номер телефона"
-					@input="filterByPhone"
-					class="phone-input"
-				/>
-			</div>
-		</div>
-		<div class="clients_main">
-			<Loader v-if="isLoading" style="background-color: transparent" />
-			<div v-else>
-				<div class="client_list__w" v-if="filteredClients.length > 0">
-					<div
-						:class="[
-							{
-								list: route.query.view === 'list',
-								cards: route.query.view === 'card',
-							},
-							'clients__list',
-						]"
-					>
-						<component
-							v-for="item in filteredClients"
-							:key="item.id"
-							:is="currentView"
-							:class="getStatusClass(item.acf.status)"
-							:card="item"
-							@deleteCard="deleteClient(item.id)"
-							@updateCard="updateClient"
-						/>
-					</div>
-					<pagination
-						@nextPage="nextPage"
-						@prevPage="prevPage"
-						:totalPages="totalPages"
-						:currentPage="page"
-						@goToPage="goToPage"
-					/>
-				</div>
-				<div v-else>
-					<p>Нет результатов по вашему запросу</p>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="clients">
+    <div class="filter">
+      {{ selectedCategory }}
+      <div class="filter_row">
+        <Selects
+          v-model="selectedCategory"
+          :options="clientStore.categories"
+          placeholder="Выберите категорию"
+          @update:modelValue="clientStore.updateCategory"
+        />
+        <Selects
+          v-model="selectedStatus"
+          :options="clientStore.statuses"
+          placeholder="Выберите статус"
+          @update:modelValue="clientStore.updateStatus"
+        />
+        <Selects
+          v-model="selectedCity"
+          :options="clientStore.cities"
+          placeholder="Выберите город"
+          @update:modelValue="clientStore.updateCity"
+        />
+        <Selects
+          v-model="hasWebsite"
+          :options="clientStore.hasWebsiteOptions"
+          placeholder="Наличие сайта"
+          @update:modelValue="clientStore.updateHasWebsite"
+        />
+        <Selects
+          v-model="perPage"
+          :options="clientStore.perPageOptions"
+          placeholder="Элементов на странице"
+          @update:modelValue="clientStore.updatePerPage"
+        />
+      </div>
+      <div class="filter_row">
+        <div class="change__card">
+          <div
+            class="row-template"
+            @click="changeToRowTemplate"
+            :class="{ active: currentView === 'list' }"
+          >
+            <Icons icon="mingcute:rows-3-fill" size="20" />
+          </div>
+          <div
+            class="card-template"
+            @click="changeToCardTemplate"
+            :class="{ active: currentView === 'card' }"
+          >
+            <Icons icon="mingcute:rows-3-fill" size="20" />
+          </div>
+        </div>
+        <div class="clear_filter" @click="clearFilters">
+          <Icons icon="healthicons:cleaning-outline" />
+        </div>
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Введите запрос для поиска"
+          @input="filterBySearch"
+          class="search-input"
+        />
+        <input
+          type="text"
+          v-model="searchPhone"
+          placeholder="Введите номер телефона"
+          @input="filterByPhone"
+          class="phone-input"
+        />
+      </div>
+    </div>
+    <div class="clients_main">
+      <Loader v-if="clientStore.isLoading" style="background-color: transparent" />
+      <div v-else>
+        <div class="client_list__w" v-if="clientStore.clients.length > 0">
+          <div :class="[currentView === 'list' ? 'list' : 'cards', 'clients__list']">
+            <component
+              v-for="item in clients"
+              :key="item.id"
+              :is="currentView === 'list' ? ClientCard : ClientCardDefault"
+              :card="item"
+              :class="clientStore.getStatusClass(item.acf.status)"
+            />
+          </div>
+          <pagination
+            @nextPage="clientStore.updatePage(clientStore.page + 1)"
+            @prevPage="clientStore.updatePage(clientStore.page - 1)"
+            :totalPages="clientStore.totalPages"
+            :currentPage="clientStore.page"
+          />
+        </div>
+        <div v-else>
+          <p>Нет результатов по вашему запросу</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-	import { onMounted, ref, watch, computed, markRaw } from "vue";
-	import { useRoute, useRouter } from "vue-router";
-	import api from "@/api/api";
-	import custom from "@/api/custom";
-	import ClientCard from "@/components/ui/card/ClientCard.vue";
-	import ClientCardDefault from "@/components/ui/card/ClientCardDefault.vue";
-	import pagination from "@/components/ui/buttons/pagination.vue";
-	import Loader from "@/components/ui/loading/Loader.vue";
-	import Selects from "@/components/ui/dropdown/Selects.vue";
+import { onMounted } from "vue";
+import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
+import ClientCard from "@/components/ui/card/ClientCard.vue";
+import ClientCardDefault from "@/components/ui/card/ClientCardDefault.vue";
+import pagination from "@/components/ui/buttons/pagination.vue";
+import Loader from "@/components/ui/loading/Loader.vue";
+import Selects from "@/components/ui/dropdown/Selects.vue";
 
-	const hasWebsite = ref("");
-	const websiteOptions = ref<any[]>([
-		{ name: "Есть сайт", id: "1" },
-		{ name: "Нет сайта", id: "0" },
-	]);
+const clientStore = useClientStore();
+const {
+  clients,
+  selectedCategory,
+  selectedStatus,
+  selectedCity,
+  hasWebsite,
+  perPage,
+  searchPhone,
+  searchQuery,
+  currentView,
+} = useClientStoreRefs();
 
-	function filterByWebsite() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
+onMounted(() => {
+  clientStore.getClients();
+  clientStore.getCategories();
+});
 
-	const clients = ref<any>([]);
-	const categories = ref<any[]>([]);
-	const statuses = ref<any[]>([
-		{ name: "Новый", id: "Новый" },
-		{ name: "Не актуально", id: "Не актуально" },
-		{ name: "В обработке", id: "В обработке" },
-		{ name: "В работе", id: "В работе" },
-		{ name: "Клиент", id: "Клиент" },
-	]);
-	const cities = ref<any[]>([
-		{ name: "Тверь", id: "Тверь" },
-		{ name: "Краснодар", id: "Краснодар" },
-		{ name: "Москва", id: "Москва" },
-		{ name: "Ростов на Дону", id: "Ростов на Дону" },
-		{ name: "Пермь", id: "Пермь" },
-	]);
-	const perPageOptions = ref<any[]>([
-		{ name: "10", id: "10" },
-		{ name: "20", id: "20" },
-		{ name: "30", id: "30" },
-		{ name: "40", id: "40" },
-		{ name: "50", id: "50" },
-		{ name: "100", id: "100" },
-	]);
-	const page = ref(1);
-	const perPage = ref<any>("10");
-	const totalPages = ref(1);
-	const selectedCategory = ref<any>("");
-	const selectedStatus = ref<any>("");
-	const selectedCity = ref<any>("");
-	const isLoading = ref(false);
-	const currentView = ref(markRaw(ClientCard));
-	const searchQuery = ref("");
-	const searchPhone = ref("");
-	const route = useRoute();
-	const router = useRouter();
+function filterBySearch() {
+  clientStore.updateSearchQuery(clientStore.searchQuery);
+}
 
-	const filteredClients = computed(() => {
-		let filtered = clients.value;
+function filterByPhone() {
+  clientStore.updateSearchPhone(clientStore.searchPhone);
+}
 
-		if (selectedStatus.value !== "") {
-			filtered = filtered.filter((client: any) =>
-				client.acf.status.toLowerCase().includes(selectedStatus.value.toLowerCase())
-			);
-		}
+function changeToRowTemplate() {
+  clientStore.setCurrentView("list");
+}
 
-		if (selectedCity.value !== "") {
-			filtered = filtered.filter((client: any) =>
-				client.acf.city.toLowerCase().includes(selectedCity.value.toLowerCase())
-			);
-		}
+function changeToCardTemplate() {
+  clientStore.setCurrentView("card");
+}
 
-		return filtered;
-	});
-
-	function filterBySearch() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
-	function filterByPhone() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
-
-	async function getClients() {
-		isLoading.value = true;
-		try {
-			const params: any = {
-				page: page.value,
-				per_page: perPage.value,
-			};
-
-			if (selectedCategory.value) {
-				params.theme_bussines = selectedCategory.value;
-			}
-
-			if (selectedStatus.value !== "") {
-				params.statuses = selectedStatus.value;
-			}
-
-			if (selectedCity.value !== "") {
-				params.city = selectedCity.value;
-			}
-
-			if (hasWebsite.value !== "") {
-				params.has_website = hasWebsite.value;
-			}
-
-			if (searchQuery.value !== "") {
-				params.search = searchQuery.value;
-			}
-
-			if (searchPhone.value !== "") {
-				params.phone = searchPhone.value;
-			}
-
-			const response = await api.get("/client_new", { params });
-			clients.value = response.data;
-			totalPages.value = Math.ceil(response.headers["x-wp-total"] / perPage.value);
-		} catch (error) {
-			console.error(error);
-		} finally {
-			isLoading.value = false;
-		}
-	}
-
-	async function getCategories() {
-		try {
-			const response = await api.get("/theme_bussines/?per_page=100");
-			categories.value = response.data;
-		} catch (error) {
-			console.error("Failed to get categories:", error);
-		}
-	}
-
-	async function updateClient(updatedClient: any) {
-		try {
-			await custom.post(`/update-client/${updatedClient.id}`, {
-				name: updatedClient.acf.name,
-				city: updatedClient.acf.city,
-				phones: updatedClient.acf.phones,
-				websites: updatedClient.acf.websites,
-				category: updatedClient.acf.category,
-				status: updatedClient.acf.status,
-				callback: updatedClient.acf.callback,
-				comment: updatedClient.acf.comment,
-			});
-
-			const index = clients.value.findIndex((item: any) => item.id === updatedClient.id);
-			if (index !== -1) {
-				clients.value[index] = updatedClient;
-			}
-		} catch (error) {
-			console.error(`Failed to update client ${updatedClient.id}:`, error);
-		}
-	}
-
-	async function deleteClient(clientId: number) {
-		try {
-			await custom.delete(`/delete-client/${clientId}`);
-			clients.value = clients.value.filter((client: any) => client.id !== clientId);
-		} catch (error) {
-			console.error(`Failed to delete client ${clientId}:`, error);
-		}
-	}
-
-	function getStatusClass(status: any) {
-		switch (status) {
-			case "Новый":
-				return "status-new";
-			case "В обработке":
-				return "status-processing";
-			case "В работе":
-				return "status-working";
-			case "Клиент":
-				return "status-client";
-			case "Не актуально":
-				return "status-not-relevant";
-			default:
-				return "";
-		}
-	}
-
-	function filterByCategory() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
-
-	function filterByStatus() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
-
-	function filterByCity() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
-
-	function updatePerPage() {
-		page.value = 1;
-		updateQueryParamsWithPageLast();
-		getClients();
-	}
-
-	function updateQueryParamsWithPageLast() {
-		const query: any = { ...route.query };
-
-		if (selectedCategory.value) {
-			query.category = selectedCategory.value;
-		} else {
-			delete query.category;
-		}
-
-		if (selectedStatus.value !== "") {
-			query.status = selectedStatus.value;
-		} else {
-			delete query.status;
-		}
-
-		if (selectedCity.value !== "") {
-			query.city = selectedCity.value;
-		} else {
-			delete query.city;
-		}
-
-		if (hasWebsite.value !== "") {
-			query.has_website = hasWebsite.value;
-		} else {
-			delete query.has_website;
-		}
-
-		if (searchQuery.value !== "") {
-			query.search = searchQuery.value;
-		} else {
-			delete query.search;
-		}
-
-		if (searchPhone.value !== "") {
-			query.phone = searchPhone.value;
-		} else {
-			delete query.phone;
-		}
-
-		query.page = page.value.toString();
-		query.count = perPage.value.toString();
-		query.view = currentView.value === ClientCardDefault ? "card" : "list";
-
-		router.replace({ query });
-	}
-
-	function updatePage(newPage: number) {
-		page.value = newPage;
-		updateQueryParamsWithPageLast();
-	}
-
-	function nextPage() {
-		if (page.value < totalPages.value) {
-			updatePage(page.value + 1);
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		}
-	}
-
-	function prevPage() {
-		if (page.value > 1) {
-			updatePage(page.value - 1);
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		}
-	}
-
-	const goToPage = (newPage: number) => {
-		if (newPage >= 1 && newPage <= totalPages.value) {
-			window.scrollTo({ top: 0, behavior: "smooth" });
-			updatePage(newPage);
-		}
-	};
-
-	const changeToRowTemplate = () => {
-		currentView.value = markRaw(ClientCard);
-		updateQueryParamsWithPageLast(); // обновляем query параметры после смены шаблона
-	};
-
-	const changeToCardTemplate = () => {
-		currentView.value = markRaw(ClientCardDefault);
-		updateQueryParamsWithPageLast();
-	};
-
-	watch(
-		() => route.query,
-		(newQuery, oldQuery) => {
-			const queryChanged = (param: string) => newQuery[param] !== oldQuery[param];
-
-			// Проверяем изменение значимых параметров
-			const significantParams = ["page", "perPage", "category", "status", "city", "view"];
-			const isSignificantChange = significantParams.some((param) => queryChanged(param));
-
-			if (isSignificantChange) {
-				if (queryChanged("page")) {
-					page.value = parseInt(route.query.page as string) || 1;
-				}
-
-				if (queryChanged("perPage")) {
-					perPage.value = parseInt(route.query.perPage as string) || 20;
-				}
-
-				if (queryChanged("category")) {
-					selectedCategory.value = route.query.category || "";
-				}
-
-				if (queryChanged("status")) {
-					selectedStatus.value = route.query.status || "";
-				}
-
-				if (queryChanged("city")) {
-					selectedCity.value = route.query.city || "";
-				}
-
-				if (queryChanged("view")) {
-					currentView.value =
-						route.query.view === "card"
-							? markRaw(ClientCardDefault)
-							: markRaw(ClientCard);
-				}
-
-				getClients();
-			}
-		}
-	);
-
-	function clearFilters() {
-		selectedCategory.value = "";
-		selectedStatus.value = "";
-		selectedCity.value = "";
-		hasWebsite.value = "";
-		page.value = 1;
-		perPage.value = "10";
-		searchQuery.value = "";
-		searchPhone.value = "";
-
-		const query = {
-			page: "1",
-			count: "10",
-			view: route.query.view || "list", // сохраняем текущий вид (список или карточки)
-		};
-
-		router.replace({ query });
-		getClients();
-	}
-
-	watch([selectedCategory, selectedStatus, selectedCity, hasWebsite], () => {
-		filterByCategory();
-	});
-
-	onMounted(() => {
-		page.value = parseInt(route.query.page as string) || 1;
-		perPage.value = parseInt(route.query.perPage as string) || 20;
-		selectedCategory.value = route.query.category || "";
-		selectedStatus.value = route.query.status || "";
-		selectedCity.value = route.query.city || "";
-		currentView.value =
-			(route.query.view as string) === "card"
-				? markRaw(ClientCardDefault)
-				: markRaw(ClientCard);
-		getClients();
-		getCategories();
-	});
+function clearFilters() {
+  clientStore.clearFilters();
+}
 </script>
 
 <style scoped lang="scss">
-	.clients {
-		min-height: 100vh;
-		position: relative;
-		width: 100%;
-	}
+.clients {
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+}
 
-	.filter {
-		margin-bottom: 20px;
-		@include flex-start;
-		flex-wrap: wrap;
-		gap: 20px;
-	}
+.filter {
+  margin-bottom: 20px;
+  @include flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 
-	.filter_row {
-		width: 100%;
-		@include flex-start;
-		gap: 10px;
+.filter_row {
+  width: 100%;
+  @include flex-start;
+  gap: 10px;
 
-		@include bp($point_4) {
-			flex-direction: column;
-			width: 100%;
-		}
-	}
+  @include bp($point_4) {
+    flex-direction: column;
+    width: 100%;
+  }
+}
 
-	.change__card {
-		@include flex-start;
-		gap: 5px;
+.change__card {
+  @include flex-start;
+  gap: 5px;
 
-		@include bp($point_4) {
-			display: none;
-		}
+  @include bp($point_4) {
+    display: none;
+  }
 
-		div {
-			@include flex-center;
-			background-color: $bg-color-secondary;
-			width: 42px;
-			height: 42px;
-			border-radius: 5px;
-			color: $secondary-blue-active;
-			cursor: pointer;
-			svg {
-				color: $secondary-blue-active !important;
-			}
+  div {
+    @include flex-center;
+    background-color: $bg-color-secondary;
+    width: 42px;
+    height: 42px;
+    border-radius: 5px;
+    color: $secondary-blue-active;
+    cursor: pointer;
+    svg {
+      color: $secondary-blue-active !important;
+    }
 
-			&.active {
-				background-color: $secondary-blue;
-				svg {
-					color: $primary-blue-active !important;
-				}
-			}
+    &.active {
+      background-color: $secondary-blue;
+      svg {
+        color: $primary-blue-active !important;
+      }
+    }
 
-			&:nth-child(2) {
-				transform: rotate(90deg);
-			}
-		}
-	}
+    &:nth-child(2) {
+      transform: rotate(90deg);
+    }
+  }
+}
 
-	.center_pag {
-		min-width: 200px;
-		@include flex-center;
-		font-size: 18px;
-	}
+.center_pag {
+  min-width: 200px;
+  @include flex-center;
+  font-size: 18px;
+}
 
-	.clients__list {
-		overflow-x: auto;
-		max-width: 100%;
-		margin-bottom: 30px;
+.clients__list {
+  overflow-x: auto;
+  max-width: 100%;
+  margin-bottom: 30px;
 
-		&.cards {
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-			grid-gap: 20px;
+  &.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    grid-gap: 20px;
 
-			@include bp($point_4) {
-				grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-			}
-		}
-	}
+    @include bp($point_4) {
+      grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    }
+  }
+}
 
-	.clients_main {
-		width: 100%;
-	}
+.clients_main {
+  width: 100%;
+}
 
-	.filter {
-		@include bp($point_4) {
-			flex-direction: column;
-		}
-	}
+.filter {
+  @include bp($point_4) {
+    flex-direction: column;
+  }
+}
 
-	.clear_filter {
-		justify-content: center;
-		display: flex;
-		align-items: center;
-		background-color: #ebecf0;
-		width: 42px;
-		height: 42px;
-		border-radius: 5px;
-		color: #aeccff;
-		cursor: pointer;
-		transition: all 0.3s ease-in-out;
-		&:hover {
-			background-color: #cdd3eb;
-		}
-	}
+.clear_filter {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  background-color: #ebecf0;
+  width: 42px;
+  height: 42px;
+  border-radius: 5px;
+  color: #aeccff;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background-color: #cdd3eb;
+  }
+}
 
-	.filter_row {
-		input {
-			background-color: #ebecf0;
-			border: 1px solid #ccc;
-			border-radius: 5px;
-			width: 100%;
-			max-width: 300px;
-			height: 42px;
-			padding: 10px;
-			&:focus {
-				outline: none;
-			}
-		}
-	}
+.filter_row {
+  input {
+    background-color: #ebecf0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    height: 42px;
+    padding: 10px;
+    &:focus {
+      outline: none;
+    }
+  }
+}
 </style>

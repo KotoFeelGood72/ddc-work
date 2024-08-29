@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@programic/vue3-tooltip": "^1.0.0",
+    "@vuepic/vue-datepicker": "^9.0.2",
     "axios": "^1.7.2",
+    "date-fns": "^3.6.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "qrcode": "^1.5.3",

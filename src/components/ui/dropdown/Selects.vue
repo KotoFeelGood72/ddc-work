@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, onMounted, onBeforeUnmount } from "vue";
+import { ref, defineProps, defineEmits, onMounted, onBeforeUnmount, watch } from "vue";
 
 const props = defineProps<{
   modelValue: any;
@@ -54,6 +54,13 @@ const handleClickOutside = (event: MouseEvent) => {
     dropdownOpen.value = false;
   }
 };
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    selectedOption.value = newValue;
+  }
+);
 
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
