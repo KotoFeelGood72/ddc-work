@@ -67,6 +67,34 @@
         </div>
       </div>
       <div class="card__commentary" v-if="card.acf.comment">{{ card.acf.comment }}</div>
+      <ul
+        class="info__list"
+        v-if="
+          card.acf.manager_name ||
+          card.acf.admin_name ||
+          card.acf.marketer_name ||
+          card.acf.ceo_name ||
+          card.acf.director_name ||
+          card.acf.personal_phone ||
+          card.acf.work_phone ||
+          card.acf.whatsapp ||
+          card.acf.telegram ||
+          card.acf.email ||
+          card.acf.address
+        "
+      >
+        <li v-if="card.acf.manager_name">Менеджер: {{ card.acf.manager_name }}</li>
+        <li v-if="card.acf.admin_name">Администратор: {{ card.acf.admin_name }}</li>
+        <li v-if="card.acf.marketer_name">Маркетолог: {{ card.acf.marketer_name }}</li>
+        <li v-if="card.acf.ceo_name">Ген. Директор: {{ card.acf.ceo_name }}</li>
+        <li v-if="card.acf.director_name">Директор: {{ card.acf.director_name }}</li>
+        <li v-if="card.acf.personal_phone">Тел. Личный: {{ card.acf.personal_phone }}</li>
+        <li v-if="card.acf.work_phone">Тел. Рабочий: {{ card.acf.work_phone }}</li>
+        <li v-if="card.acf.whatsapp">WA: {{ card.acf.whatsapp }}</li>
+        <li v-if="card.acf.telegram">TG: {{ card.acf.telegram }}</li>
+        <li v-if="card.acf.email">Email: {{ card.acf.email }}</li>
+        <li v-if="card.acf.address">Адрес: {{ card.acf.address }}</li>
+      </ul>
     </div>
   </transition>
 </template>
@@ -566,9 +594,26 @@ function handleAfterLeave() {
   width: 100%;
   font-size: 14px;
   font-weight: 300;
-  background-color: #ffffff96;
+  background-color: hsla(0, 0%, 100%, 0.588);
   padding: 5px 10px;
   border-radius: 5px;
   margin-top: 20px;
+}
+
+.info__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  font-size: 12px;
+  padding: 10px;
+  background-color: #ffffff96;
+  border-radius: 5px;
+  margin-top: 20px;
+  li {
+    background-color: $secondary-green;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
 }
 </style>
