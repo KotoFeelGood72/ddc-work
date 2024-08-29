@@ -36,21 +36,42 @@
 					@update:modelValue="updatePerPage"
 				/>
 			</div>
-			<div class="change__card">
-				<div
-					class="row-template"
-					@click="changeToRowTemplate"
-					:class="{ active: route.query.view === 'list' }"
-				>
-					<Icons icon="mingcute:rows-3-fill" size="20" />
+			<div class="filter_row">
+				<div class="change__card">
+					<div
+						class="row-template"
+						@click="changeToRowTemplate"
+						:class="{ active: route.query.view === 'list' }"
+					>
+						<Icons icon="mingcute:rows-3-fill" size="20" />
+					</div>
+					<div
+						class="card-template"
+						@click="changeToCardTemplate"
+						:class="{ active: route.query.view === 'card' }"
+					>
+						<Icons icon="mingcute:rows-3-fill" size="20" />
+					</div>
 				</div>
-				<div
-					class="card-template"
-					@click="changeToCardTemplate"
-					:class="{ active: route.query.view === 'card' }"
-				>
-					<Icons icon="mingcute:rows-3-fill" size="20" />
+				<div class="clear_filter" @click="clearFilters">
+					<Icons icon="healthicons:cleaning-outline" />
 				</div>
+				<!-- Поле для стандартного поиска -->
+				<input
+					type="text"
+					v-model="searchQuery"
+					placeholder="Введите запрос для поиска"
+					@input="filterBySearch"
+					class="search-input"
+				/>
+				<!-- Поле для поиска по номеру телефона -->
+				<input
+					type="text"
+					v-model="searchPhone"
+					placeholder="Введите номер телефона"
+					@input="filterByPhone"
+					class="phone-input"
+				/>
 			</div>
 		</div>
 		<div class="clients_main">
@@ -147,7 +168,8 @@
 	const selectedCity = ref<any>("");
 	const isLoading = ref(false);
 	const currentView = ref(markRaw(ClientCard));
-
+	const searchQuery = ref("");
+	const searchPhone = ref("");
 	const route = useRoute();
 	const router = useRouter();
 
@@ -168,6 +190,17 @@
 
 		return filtered;
 	});
+
+	function filterBySearch() {
+		page.value = 1;
+		updateQueryParamsWithPageLast();
+		getClients();
+	}
+	function filterByPhone() {
+		page.value = 1;
+		updateQueryParamsWithPageLast();
+		getClients();
+	}
 
 	async function getClients() {
 		isLoading.value = true;
@@ -191,6 +224,14 @@
 
 			if (hasWebsite.value !== "") {
 				params.has_website = hasWebsite.value;
+			}
+
+			if (searchQuery.value !== "") {
+				params.search = searchQuery.value;
+			}
+
+			if (searchPhone.value !== "") {
+				params.phone = searchPhone.value;
 			}
 
 			const response = await api.get("/client_new", { params });
@@ -311,6 +352,18 @@
 			delete query.has_website;
 		}
 
+		if (searchQuery.value !== "") {
+			query.search = searchQuery.value;
+		} else {
+			delete query.search;
+		}
+
+		if (searchPhone.value !== "") {
+			query.phone = searchPhone.value;
+		} else {
+			delete query.phone;
+		}
+
 		query.page = page.value.toString();
 		query.count = perPage.value.toString();
 		query.view = currentView.value === ClientCardDefault ? "card" : "list";
@@ -396,6 +449,26 @@
 		}
 	);
 
+	function clearFilters() {
+		selectedCategory.value = "";
+		selectedStatus.value = "";
+		selectedCity.value = "";
+		hasWebsite.value = "";
+		page.value = 1;
+		perPage.value = "10";
+		searchQuery.value = "";
+		searchPhone.value = "";
+
+		const query = {
+			page: "1",
+			count: "10",
+			view: route.query.view || "list", // сохраняем текущий вид (список или карточки)
+		};
+
+		router.replace({ query });
+		getClients();
+	}
+
 	watch([selectedCategory, selectedStatus, selectedCity, hasWebsite], () => {
 		filterByCategory();
 	});
@@ -425,11 +498,12 @@
 	.filter {
 		margin-bottom: 20px;
 		@include flex-start;
+		flex-wrap: wrap;
 		gap: 20px;
 	}
 
 	.filter_row {
-		flex-grow: 1;
+		width: 100%;
 		@include flex-start;
 		gap: 10px;
 
@@ -501,6 +575,37 @@
 	.filter {
 		@include bp($point_4) {
 			flex-direction: column;
+		}
+	}
+
+	.clear_filter {
+		justify-content: center;
+		display: flex;
+		align-items: center;
+		background-color: #ebecf0;
+		width: 42px;
+		height: 42px;
+		border-radius: 5px;
+		color: #aeccff;
+		cursor: pointer;
+		transition: all 0.3s ease-in-out;
+		&:hover {
+			background-color: #cdd3eb;
+		}
+	}
+
+	.filter_row {
+		input {
+			background-color: #ebecf0;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			width: 100%;
+			max-width: 300px;
+			height: 42px;
+			padding: 10px;
+			&:focus {
+				outline: none;
+			}
 		}
 	}
 </style>
