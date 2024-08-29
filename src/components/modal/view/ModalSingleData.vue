@@ -37,6 +37,7 @@
             <input type="text" v-model="clientData.acf.city" />
           </div>
           <div class="single_body__item" v-if="clientData.acf.callback">
+            Перезвонить:
             <DatePicker
               v-model="clientData.acf.callback"
               :format="'dd.MM.yyyy HH:mm'"
