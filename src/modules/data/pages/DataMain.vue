@@ -213,7 +213,7 @@
 
 	async function updateClient(updatedClient: any) {
 		try {
-			const response = await custom.post(`/update-client/${updatedClient.id}`, {
+			await custom.post(`/update-client/${updatedClient.id}`, {
 				name: updatedClient.acf.name,
 				city: updatedClient.acf.city,
 				phones: updatedClient.acf.phones,
