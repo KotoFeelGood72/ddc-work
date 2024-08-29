@@ -43,12 +43,12 @@ export const useUsersStore = defineStore('user', {
     },
     setUser(data: any) {
       this.user = data;
-      localStorage.setItem('user', JSON.stringify(data)); // Сохраняем пользователя в LocalStorage
+      localStorage.setItem('user', JSON.stringify(data)); 
     },
     clearUser() {
       this.$reset();  
       localStorage.removeItem('user');
-      const router = useRouter(); // Инициализация роутера внутри метода
+      const router = useRouter(); 
       router.push('/');
     },
     
