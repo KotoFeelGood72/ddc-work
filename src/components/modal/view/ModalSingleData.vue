@@ -196,8 +196,6 @@ watch(
   }
 );
 
-const isCallback = computed(() => clientData.value.acf.callback);
-
 async function updateClient(updatedClient: any) {
   isLoading.value = true;
   try {
