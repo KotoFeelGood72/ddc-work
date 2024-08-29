@@ -35,6 +35,22 @@
         />
       </div>
       <div class="filter_row">
+        <div class="search-filter">
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Введите запрос для поиска"
+            @input="filterBySearch"
+            class="search-input"
+          />
+          <input
+            type="text"
+            v-model="searchPhone"
+            placeholder="Введите номер телефона"
+            @input="filterByPhone"
+            class="phone-input"
+          />
+        </div>
         <div class="change__card">
           <div
             class="row-template"
@@ -54,20 +70,6 @@
         <div class="clear_filter" @click="clearFilters">
           <Icons icon="healthicons:cleaning-outline" />
         </div>
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Введите запрос для поиска"
-          @input="filterBySearch"
-          class="search-input"
-        />
-        <input
-          type="text"
-          v-model="searchPhone"
-          placeholder="Введите номер телефона"
-          @input="filterByPhone"
-          class="phone-input"
-        />
       </div>
     </div>
     <div class="clients_main">
@@ -265,5 +267,11 @@ function clearFilters() {
       outline: none;
     }
   }
+}
+
+.search-filter {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1;
 }
 </style>

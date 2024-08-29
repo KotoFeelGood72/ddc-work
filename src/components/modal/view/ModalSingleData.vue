@@ -36,18 +36,15 @@
             Город:
             <input type="text" v-model="clientData.acf.city" />
           </div>
-          <div class="single_body__item" v-if="isCallback">
+          <div class="single_body__item" v-if="clientData.acf.callback">
             <DatePicker
-              v-model="isCallback"
+              v-model="clientData.acf.callback"
               :format="'dd.MM.yyyy HH:mm'"
               :enable-time="true"
-              :time-picker="true"
               :locale="ruLocale"
             />
           </div>
         </div>
-
-        <!-- Добавляем новые поля на основе предоставленных изображений -->
         <div class="single_body__row">
           <div class="single_body__item">
             ФИО менеджера:
@@ -133,26 +130,30 @@ import { useClientStore } from "@/store/useClientStore";
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css"; // Импорт стилей
-
+import { parse } from "date-fns";
 const { closeModal } = useModalStore();
 const clientStore = useClientStore();
-
+import { ru } from "date-fns/locale";
 const router = useRouter();
 const route = useRoute();
 const clientData = ref<any>({});
 const commentary = ref<string>("");
 const statuses = ["В обработке", "В работе", "Клиент", "Не актуально"];
 const isLoading = ref<boolean>(false);
-import { ru } from "date-fns/locale"; // Импорт русской локализации
 
-const ruLocale = ref(ru); // Устанавливаем локаль
+const ruLocale = ref<string>("ru"); // Устанавливаем локаль
 async function getClientById(id: string) {
   try {
     const response = await api.get(`/client_new/${id}`);
     clientData.value = response.data;
 
-    if (clientData.value.callback) {
-      clientData.value.acf.callback = new Date(clientData.value.acf.callback);
+    if (clientData.value.acf.callback) {
+      clientData.value.acf.callback = parse(
+        clientData.value.acf.callback,
+        "dd/MM/yyyy h:mm a",
+        new Date(),
+        { locale: ru }
+      );
     }
     commentary.value = clientData.value.acf.comment || "";
   } catch (error) {
