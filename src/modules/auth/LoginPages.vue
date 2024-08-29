@@ -56,7 +56,7 @@ async function inLogin() {
 .auth {
   @include flex-center;
   height: 100vh;
-  background-image: url("../../assets/img/auth-bg.png");
+  background-image: url("./assets/img/auth-bg.png");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;

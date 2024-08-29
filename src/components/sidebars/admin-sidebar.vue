@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { AdminNav } from "@/consts/AdminNav";
 import avatar from "../ui/people/avatar.vue";
-import logo from "@/assets/img/logo.png";
+import logo from "/assets/img/logo.png";
 </script>
 
 <style scoped lang="scss">

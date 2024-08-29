@@ -1,7 +1,7 @@
 <template>
   <div class="empty-page">
     <div class="empty-img">
-      <img src="../../assets/img/empty/empty-document.png" alt="" />
+      <img :src="emptys" alt="" />
     </div>
     <div class="empty-content">
       <heading title="Данный раздел в разработке" :size="4" />
@@ -9,7 +9,9 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import emptys from "/assets/img/empty-document.png";
+</script>
 
 <style scoped lang="scss">
 .empty-img {

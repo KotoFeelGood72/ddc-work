@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import avatar from "@/assets/img/avatar.png";
+import avatar from "/assets/img/avatar.png";
 import { computed } from "vue";
 const props = withDefaults(
   defineProps<{
