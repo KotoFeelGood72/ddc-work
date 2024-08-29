@@ -66,6 +66,7 @@
           </div>
         </div>
       </div>
+      <div class="card__commentary" v-if="card.acf.comment">{{ card.acf.comment }}</div>
     </div>
   </transition>
 </template>
@@ -240,6 +241,10 @@ function handleAfterLeave() {
 }
 .card__btn {
   gap: 5px;
+}
+
+.card {
+  flex-wrap: wrap;
 }
 
 :deep(.tooltip-holder) {
@@ -555,5 +560,15 @@ function handleAfterLeave() {
     flex-direction: column;
     gap: 20px;
   }
+}
+
+.card__commentary {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 300;
+  background-color: #ffffff96;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-top: 20px;
 }
 </style>

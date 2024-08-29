@@ -77,6 +77,7 @@ onBeforeUnmount(() => {
   width: 100%;
   cursor: pointer;
   user-select: none;
+  font-size: 14px;
 }
 
 .select-trigger {
