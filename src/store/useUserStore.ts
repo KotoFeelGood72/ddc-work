@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -45,11 +45,11 @@ export const useUsersStore = defineStore('user', {
       this.user = data;
       localStorage.setItem('user', JSON.stringify(data)); 
     },
-    clearUser() {
+    async clearUser() {
       this.$reset();  
       localStorage.removeItem('user');
-      const router = useRouter(); 
-      router.push('/');
+ 
+     
     },
     
     loadUserFromLocalStorage() {
@@ -61,3 +61,6 @@ export const useUsersStore = defineStore('user', {
   },
   persist: true,
 });
+
+
+export const useUsersStoreRefs = () => storeToRefs(useUsersStore());

@@ -3,12 +3,14 @@ import { defineStore, storeToRefs } from 'pinia';
 interface ModalsState {
   client: boolean;
   qr: boolean;
+  user: boolean
 }
 
 export const useModalStore = defineStore('modal', {
   state: (): { modals: ModalsState } => ({
     modals: {
       client: false,
+      user: false,
       qr: false,
     },
   }),
