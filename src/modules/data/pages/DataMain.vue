@@ -87,10 +87,11 @@
 						/>
 					</div>
 					<pagination
-						@nextPage="clientStore.updatePage(clientStore.page + 1)"
-						@prevPage="clientStore.updatePage(clientStore.page - 1)"
+						@nextPage="clientStore.updatePage(page + 1)"
+						@prevPage="clientStore.updatePage(page - 1)"
 						:totalPages="clientStore.totalPages"
-						:currentPage="clientStore.page"
+						:currentPage="page"
+						@goToPage="goToPage"
 					/>
 				</div>
 				<div v-else>
@@ -121,6 +122,8 @@
 		searchPhone,
 		searchQuery,
 		currentView,
+		totalPages,
+		page,
 	} = useClientStoreRefs();
 
 	onMounted(() => {
@@ -147,6 +150,13 @@
 	function clearFilters() {
 		clientStore.clearFilters();
 	}
+
+	const goToPage = (newPage: number) => {
+		if (newPage >= 1 && newPage <= totalPages.value) {
+			window.scrollTo({ top: 0, behavior: "smooth" });
+			clientStore.updatePage(newPage);
+		}
+	};
 </script>
 
 <style scoped lang="scss">

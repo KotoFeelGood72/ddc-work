@@ -7,7 +7,7 @@ export const useClientStore = defineStore('clientStore', {
     clients: [] as any[],
     categories: [] as any[],
     statuses: [
-      { name: 'Новый', id: 'Новый' },
+      { name: 'Новый', id: '' },
       { name: 'Не актуально', id: 'Не актуально' },
       { name: 'В обработке', id: 'В обработке' },
       { name: 'В работе', id: 'В работе' },
