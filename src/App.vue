@@ -6,13 +6,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import Modal from "./components/modal/Modal.vue";
 import { useModalStoreRefs } from "./store/useModalStore";
+import api from "./api/api";
 
 const { modals } = useModalStoreRefs();
 const isAnyModalActive = computed(() => {
@@ -40,6 +41,11 @@ watch(isAnyModalActive, (newValue) => {
   } else {
     document.documentElement.classList.remove("fixed");
   }
+});
+
+onMounted(async () => {
+  const response = await api.get("/users/me");
+  console.log(response);
 });
 </script>
 

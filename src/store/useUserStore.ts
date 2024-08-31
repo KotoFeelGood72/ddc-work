@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 
 export const useUsersStore = defineStore('user', {
   state: () => ({
-    user: null as any,
+    users: {} as any,
   }),
   actions: {
     async signIn(user: any) {
@@ -19,14 +19,14 @@ export const useUsersStore = defineStore('user', {
       }
     },
     async login(user: any) {
-      const router = useRouter(); // Инициализация роутера внутри метода
+      const router = useRouter(); 
       try {
         const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token', user, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
         await this.setUser(response.data);
 
-        router.push('/clients?page=1&view=list&count=10');
+        await router.push('/clients?page=1&view=list&count=10');
       } catch (error) {
         console.log('Login error:', error);
       }
@@ -34,28 +34,27 @@ export const useUsersStore = defineStore('user', {
     async refreshToken() {
       try {
         const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token/refresh', {
-          refresh_token: this.user.token,
+          refresh_token: this.users.token,
         });
         this.setUser(response.data);
+        console.log(response.data)
       } catch (error) {
         console.log('Refresh token error:', error);
       }
     },
-    setUser(data: any) {
-      this.user = data;
+    async setUser(data: any) {
+      this.users = data;
       localStorage.setItem('user', JSON.stringify(data)); 
     },
     async clearUser() {
       this.$reset();  
       localStorage.removeItem('user');
- 
-     
     },
     
     loadUserFromLocalStorage() {
       const userData = localStorage.getItem('user');
       if (userData) {
-        this.user = JSON.parse(userData);
+        this.users = JSON.parse(userData);
       }
     }
   },

@@ -10,7 +10,7 @@ const wpInstance = axios.create({
 
 wpInstance.interceptors.request.use((config: any) => {
   const userStore = useUsersStore();
-  const token = userStore.user.token;
+  const token = userStore.users.token;
 
   if (token) {
     if (!config.headers) {
@@ -35,7 +35,7 @@ wpInstance.interceptors.response.use(
         
         // Повторяем оригинальный запрос с новым токеном
         const originalRequest = error.config;
-        const newToken = userStore.user.token;
+        const newToken = userStore.users.token;
         if (newToken) {
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }

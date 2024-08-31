@@ -2,26 +2,26 @@ export const AdminNav = [
     {
         name: 'Дашборд',
         url: '/dashboard',
-        icon: 'dashboard'
+        icon: 'widget-5-bold'
     },
     {
         name: 'Клиенты',
         url: '/clients?page=1&view=list&count=10',
-        icon: 'people'
+        icon: 'case-round-bold'
     },
     {
         name: 'Проекты',
         url: '/project',
-        icon: 'list'
+        icon: 'notes-minimalistic-bold'
     },
     {
-        name: 'Активность',
-        url: '/activity',
-        icon: 'history'
+        name: 'Статистика',
+        url: '/statistic',
+        icon: 'align-bottom-bold'
     },
     {
         name: 'Настройки',
         url: '/settings',
-        icon: 'settings'
+        icon: 'settings-bold'
     },
 ]

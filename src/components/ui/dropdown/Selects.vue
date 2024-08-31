@@ -2,9 +2,9 @@
   <div class="custom-select" @click.stop="toggleDropdown">
     <div class="select-trigger">
       <span>{{ selectedOption ? getSelectedOptionName() : placeholder }}</span>
-      <span class="arrow" :class="{ open: dropdownOpen }"
-        ><Icons icon="bi:chevron-up" size="18px"
-      /></span>
+      <span class="arrow" :class="{ open: dropdownOpen }">
+        <Icons icon="bi:chevron-up" :size="16" />
+      </span>
     </div>
     <div class="select-dropdown" v-if="dropdownOpen">
       <div
@@ -12,6 +12,7 @@
         v-for="option in options"
         :key="option.id"
         @click.stop="selectOption(option.id)"
+        :class="{ active: option.id === selectedOption }"
       >
         {{ option.name }}
       </div>
@@ -85,8 +86,8 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 10px;
+  border: 1px solid $light;
+  padding: 7px;
   border-radius: 4px;
   position: relative;
 }
@@ -94,7 +95,7 @@ onBeforeUnmount(() => {
 .arrow {
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 10px;
   transform: translateY(-50%);
   transition: transform 0.3s ease;
   @include flex-center;
@@ -112,14 +113,24 @@ onBeforeUnmount(() => {
   border-radius: 4px;
   margin-top: 5px;
   z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .select-option {
-  padding: 10px;
+  padding: 8px;
   cursor: pointer;
+  border-right: 2px solid transparent;
+  transition: all 0.1s ease-in-out;
 }
 
 .select-option:hover {
-  background-color: #f0f0f0;
+  background-color: $light;
+}
+
+.select-option.active {
+  background-color: $light-blue;
+  color: $blue;
+  border-color: $blue;
 }
 </style>

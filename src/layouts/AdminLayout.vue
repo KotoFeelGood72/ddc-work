@@ -25,20 +25,12 @@ import adminSidebar from "@/components/sidebars/admin-sidebar.vue";
   @include flex-start;
   align-items: flex-start;
   &.fixed {
-    // position: fixed;
-    // top: 0;
-    // left: 0;
-    // width: 100%;
     overflow: hidden;
   }
 }
 .content {
   min-height: calc(100vh - 70px);
-  padding: 40px;
-  background-color: $bg-color-tertiary;
-
-  @include bp($point_4) {
-    padding: 20px 10px;
-  }
+  padding: 20px;
+  background-color: $bg;
 }
 </style>

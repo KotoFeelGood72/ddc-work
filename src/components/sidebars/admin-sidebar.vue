@@ -1,11 +1,14 @@
 <template>
   <div class="admin-sidebar">
-    <avatar :img="logo" size="large" />
+    <div class="admin_logo">
+      <avatar :img="logo" size="medium" />
+      <p>Happines: CRM</p>
+    </div>
     <ul class="nav">
       <li v-for="(link, i) in AdminNav" :key="'admin-nav-item-' + i">
         <router-link :to="link.url">
           <div class="nav-link__icon">
-            <svg-icon :name="link.icon" />
+            <Icons :icon="'solar:' + link.icon" />
           </div>
           <p>{{ link.name }}</p>
         </router-link>
@@ -26,14 +29,10 @@ import logo from "/assets/img/logo.png";
   height: 100%;
   border-right: 1px solid $bg-color-secondary;
   min-width: 270px;
-  padding: 30px 20px;
+  padding-top: 20px;
 
   @include bp($point_4) {
     display: none;
-  }
-
-  :deep(.avatar) {
-    margin-bottom: 20px;
   }
 }
 
@@ -42,23 +41,53 @@ import logo from "/assets/img/logo.png";
   @include flex-start;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 4px;
   li {
     width: 100%;
     a {
-      width: 100%;
-      @include flex-start;
-      background-color: $bg-color-tertiary;
       padding: 14px 20px;
-      border-radius: 15px;
-      gap: 10px;
-      color: $text-color-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
       text-decoration: none;
+      gap: 15px;
+      font-size: 14px;
+      color: $dark;
       transition: all 0.3s ease-in-out;
+      svg {
+        color: $dark !important;
+      }
       &:hover {
-        background-color: $bg-color-secondary;
+        background-color: $ulight;
+      }
+      &.router-link-exact-active {
+        background-color: $light-blue;
+        color: $blue;
+        border-right: 2px solid $blue;
+        svg {
+          color: $blue !important;
+        }
       }
     }
   }
+}
+
+.admin_logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+  p {
+    font-size: 20px;
+    color: $dark;
+  }
+}
+
+.nav-link__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

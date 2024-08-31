@@ -104,7 +104,7 @@ import { computed, ref } from "vue";
 import avatar from "../people/avatar.vue";
 import { useModalStore } from "@/store/useModalStore";
 import { useRouter } from "vue-router";
-import { useClientStore } from "@/store/useClientStore"; // Импортируем Pinia Store
+import { useClientStore } from "@/store/useClientStore";
 
 const props = withDefaults(
   defineProps<{
@@ -116,7 +116,7 @@ const props = withDefaults(
 );
 
 const { openModal } = useModalStore();
-const clientStore = useClientStore(); // Инициализация Pinia Store
+const clientStore = useClientStore();
 const router = useRouter();
 
 const emit = defineEmits(["deleteCard", "updateCard"]);
@@ -162,7 +162,6 @@ function formatPhoneNumber(phone: string): string {
 }
 
 function updateStatus(newStatus: string) {
-  // Вызываем метод store для обновления статуса
   clientStore.updateClientStatus(props.card.id, newStatus);
   emit("updateCard", { ...props.card, acf: { ...props.card.acf, status: newStatus } });
 }
@@ -206,7 +205,7 @@ function openQR(link: any, type: "phone" | "url") {
 async function deleteCard() {
   isLoading.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Имитируем запрос на сервер
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     emit("deleteCard");
     isDeleted.value = true;
   } catch (error) {
@@ -235,9 +234,6 @@ function handleAfterLeave() {
     flex-direction: column;
     gap: 20px;
   }
-  // &:hover {
-  //   box-shadow: 0 0 10px 0 #6161612a;
-  // }
 }
 .card,
 .card_col__left,
