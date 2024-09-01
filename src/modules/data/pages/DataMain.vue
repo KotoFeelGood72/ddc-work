@@ -2,6 +2,7 @@
 
 <template>
   <div class="clients">
+    <h3>Клиенты</h3>
     <div class="filter">
       <div class="filter_row">
         <Selects
@@ -61,7 +62,6 @@
       <Loader v-if="clientStore.isLoading" style="background-color: transparent" />
       <div v-else>
         <div class="client_list__w" v-if="clientStore.clients.length > 0">
-          <h3>Клиенты</h3>
           <div class="clients__list">
             <ClientCard
               v-for="item in clients"
@@ -229,16 +229,9 @@ const goToPage = (newPage: number) => {
   overflow-x: auto;
   max-width: 100%;
   margin-bottom: 30px;
-
-  &.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-    grid-gap: 20px;
-
-    @include bp($point_4) {
-      grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-    }
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .clients_main {
@@ -248,26 +241,11 @@ const goToPage = (newPage: number) => {
 .filter {
   padding: 20px;
   background-color: $white;
+  border: 1px solid $light;
   @include bp($point_4) {
     flex-direction: column;
   }
 }
-
-// .clear_filter {
-//   justify-content: center;
-//   display: flex;
-//   align-items: center;
-//   background-color: #ebecf0;
-//   width: 42px;
-//   height: 42px;
-//   border-radius: 5px;
-//   color: #aeccff;
-//   cursor: pointer;
-//   transition: all 0.3s ease-in-out;
-//   &:hover {
-//     background-color: #cdd3eb;
-//   }
-// }
 
 .filter_row {
   input {
@@ -305,13 +283,13 @@ const goToPage = (newPage: number) => {
 }
 
 .client_list__w {
-  background-color: $white;
-  padding: 20px;
+  // background-color: $white;
+  // padding: 20px;
   border-radius: 5px;
-
-  h3 {
-    color: $dark;
-    font-size: 30px;
-  }
+}
+h3 {
+  color: $dark;
+  font-size: 30px;
+  margin-bottom: 40px;
 }
 </style>

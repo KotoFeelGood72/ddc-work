@@ -60,8 +60,13 @@ onMounted(async () => {
 }
 
 html {
+  font-family: "Montserrat", sans-serif;
   &.fixed {
     overflow: hidden;
   }
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
 }
 </style>

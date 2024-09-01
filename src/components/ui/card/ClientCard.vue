@@ -3,109 +3,227 @@
 <template>
   <transition name="fade" @after-leave="handleAfterLeave">
     <div v-if="!isDeleted" class="card" @click="openClient(card.id)">
-      <div v-if="isLoading" class="loading-overlay">
-        <p>Loading...</p>
+      <button @click.stop="sendKP">Отправить КП</button>
+      <div class="card_top">
+        <ul class="card_tab__link">
+          <li @click.stop="activeTab = 'org'" :class="{ active: activeTab === 'org' }">
+            Сведение об организации
+          </li>
+          <li @click.stop="activeTab = 'info'" :class="{ active: activeTab === 'info' }">
+            Сведение о контактном лице
+          </li>
+          <li
+            @click.stop="activeTab = 'history'"
+            :class="{ active: activeTab === 'history' }"
+          >
+            Взаимодействие
+          </li>
+        </ul>
+        <Selects
+          v-model="selectedStatus"
+          :options="statuses"
+          placeholder="Выберите статус"
+          class="select_status"
+          @update:modelValue="updateStatus(selectedStatus)"
+        />
       </div>
-      <div v-else class="card__row">
-        <div class="card_col__left">
-          <avatar />
-          <div class="card__title">
-            <p>{{ card.acf.name }}</p>
-          </div>
-          <div class="card__address" @click.stop="copyToClipboard(card.acf.address)">
-            <span>{{ card.acf.address }}</span>
-            <div class="clipboard">
-              <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
-            </div>
-          </div>
-          <div class="card__phone" v-if="formattedPhone" @click.stop="handlePhoneClick">
-            <span>{{ formattedPhone }}</span>
-            <div class="clipboard" @click.stop="copyToClipboard(formattedPhone)">
-              <Icons icon="solar:clipboard-linear" size="18px" color="#424242" />
-            </div>
-          </div>
-          <div class="card__phone__mobile" v-if="formattedPhone" @click.stop>
-            <a :href="`tel:${formattedPhone}`">{{ formattedPhone }}</a>
-          </div>
-          <div class="card__website" v-if="firstWebsite" @click.stop>
-            <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
-              firstWebsite
-            }}</a>
-          </div>
-        </div>
-        <div class="card_col__right">
-          <div class="card__status">
-            <div v-tooltip="'В обработке'">
+      <ul class="card_tab__contents">
+        <li class="card_tab__content" v-if="activeTab === 'org'">
+          <ul class="info__list">
+            <li>
+              <Icons icon="solar:case-broken" :size="18" />
+              <p>Организация:</p>
+              <span>{{ card.acf.name }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:city-broken" :size="18" />
+              <p>Отрасль:</p>
+              <span>{{ card.acf.name }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:map-arrow-square-broken" :size="18" />
+              <p>Адрес организации:</p>
+              <span>{{ card.acf.address }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:phone-rounded-broken" :size="18" />
+              <p>Телефон контактный:</p>
               <div
-                class="status_processing"
-                @click.stop="updateStatus('В обработке')"
-              ></div>
-            </div>
-            <div v-tooltip="'В работе'">
-              <div class="status_working" @click.stop="updateStatus('В работе')"></div>
-            </div>
-            <div v-tooltip="'Клиент'">
-              <div class="status_client" @click.stop="updateStatus('Клиент')"></div>
-            </div>
-            <div v-tooltip="'Не актуально'">
+                class="card__phone"
+                v-if="formattedPhone"
+                @click.stop="handlePhoneClick"
+              >
+                <span>{{ formattedPhone }}</span>
+              </div>
+            </li>
+            <li>
+              <Icons icon="solar:code-circle-broken" :size="18" />
+              <p>Сайт:</p>
+              <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
+                firstWebsite
+              }}</a>
+            </li>
+            <li>
+              <Icons icon="solar:document-add-broken" :size="18" />
+              <p>E-mail:</p>
+              <span>{{ card.acf.email }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:user-id-broken" :size="18" />
+              <p>ФИО, должность руководителя:</p>
+              <span>{{ card.acf.fio }}</span>
+            </li>
+          </ul>
+        </li>
+        <li class="card_tab__content" v-if="activeTab === 'info'">
+          <ul class="info__list">
+            <li>
+              <Icons icon="solar:case-broken" :size="18" />
+              <p>Ф.И.О:</p>
+              <span>{{ card.acf.name }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:city-broken" :size="18" />
+              <p>Год рождения:</p>
+              <span>{{ card.acf.name }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:map-arrow-square-broken" :size="18" />
+              <p>Должность:</p>
+              <span>{{ card.acf.address }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:phone-rounded-broken" :size="18" />
+              <p>Телефон контактный:</p>
               <div
-                class="status_not-relevant"
-                @click.stop="updateStatus('Не актуально')"
-              ></div>
-            </div>
-          </div>
-          <div class="card__btn">
-            <div class="card__open" @click="openClient(card.id)" v-tooltip="'Открыть'">
-              <Icons icon="ion:open-outline" size="22px" color="green" />
-              <p>Открыть</p>
-            </div>
-            <div class="card__delete" @click.stop="triggerDelete" v-tooltip="'Удалить'">
-              <Icons icon="weui:delete-outlined" size="22px" color="white" />
-              <p>Удалить</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card__commentary" v-if="card.acf.comment">{{ card.acf.comment }}</div>
-      <ul
-        class="info__list"
-        v-if="
-          card.acf.manager_name ||
-          card.acf.admin_name ||
-          card.acf.marketer_name ||
-          card.acf.ceo_name ||
-          card.acf.director_name ||
-          card.acf.personal_phone ||
-          card.acf.work_phone ||
-          card.acf.whatsapp ||
-          card.acf.telegram ||
-          card.acf.email ||
-          card.acf.address
-        "
-      >
-        <li v-if="card.acf.manager_name">Менеджер: {{ card.acf.manager_name }}</li>
-        <li v-if="card.acf.admin_name">Администратор: {{ card.acf.admin_name }}</li>
-        <li v-if="card.acf.marketer_name">Маркетолог: {{ card.acf.marketer_name }}</li>
-        <li v-if="card.acf.ceo_name">Ген. Директор: {{ card.acf.ceo_name }}</li>
-        <li v-if="card.acf.director_name">Директор: {{ card.acf.director_name }}</li>
-        <li v-if="card.acf.personal_phone">Тел. Личный: {{ card.acf.personal_phone }}</li>
-        <li v-if="card.acf.work_phone">Тел. Рабочий: {{ card.acf.work_phone }}</li>
-        <li v-if="card.acf.whatsapp">WA: {{ card.acf.whatsapp }}</li>
-        <li v-if="card.acf.telegram">TG: {{ card.acf.telegram }}</li>
-        <li v-if="card.acf.email">Email: {{ card.acf.email }}</li>
-        <li v-if="card.acf.address">Адрес: {{ card.acf.address }}</li>
+                class="card__phone"
+                v-if="formattedPhone"
+                @click.stop="handlePhoneClick"
+              >
+                <span>{{ formattedPhone }}</span>
+              </div>
+            </li>
+            <li>
+              <Icons icon="solar:document-add-broken" :size="18" />
+              <p>E-mail:</p>
+              <span>{{ card.acf.email }}</span>
+            </li>
+            <li>
+              <Icons icon="solar:code-circle-broken" :size="18" />
+              <p>ЛПР:</p>
+              <span class="tags">Да</span>
+            </li>
+            <li>
+              <Icons icon="solar:code-circle-broken" :size="18" />
+              <p>ЛПР Связаный с клиентом:</p>
+              <span>Иванов Иван Иванович</span>
+            </li>
+            <li>
+              <Icons icon="solar:document-add-broken" :size="18" />
+              <p>E-mail:</p>
+              <span>{{ card.acf.email }}</span>
+            </li>
+            <li class="list_item__full">
+              <Icons icon="solar:user-id-broken" :size="18" />
+              <p>Услуги:</p>
+              <ul class="box__list">
+                <li>Продвижение сайта</li>
+                <li>Разработка сайта</li>
+                <li>Контекстная реклама</li>
+                <li>Правки на сайте</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="card_tab__content" v-if="activeTab === 'history'">
+          <ul class="info__list history_list">
+            <li class="history_item">
+              <div class="item_head">
+                <p>Перезвонить:</p>
+              </div>
+              <div class="input_date">
+                <DatePicker
+                  v-model="card.acf.callback"
+                  :format="'dd.MM.yyyy HH:mm'"
+                  :enable-time="true"
+                  :locale="ruLocale"
+                  placeholder="Ввести дату"
+                />
+                <Icons icon="solar:calendar-date-broken" />
+              </div>
+            </li>
+            <li class="history_item comment">
+              <div class="history_item__top">
+                <Icons icon="solar:chat-round-broken" />
+                Лог взаимодействия:
+              </div>
+              <ul class="comment_list">
+                <li><p>— Вы не знаете, который сейчас час? Уже есть шесть часов?</p></li>
+                <li>
+                  <p>
+                    — А вы что, на телефон не можете посмотреть? — раздраженно ответила
+                    женщина с огромными сумками в руках.
+                  </p>
+                </li>
+                <li><p>— У меня отключился телефон, — грустно объяснил юноша.</p></li>
+                <li>
+                  <p>— Половина шестого, — ответила женщина и быстро побежала прочь.</p>
+                </li>
+              </ul>
+              <textarea
+                name=""
+                id=""
+                placeholder="Оставить комментарий"
+                v-model="newComment"
+                @click.stop
+              ></textarea>
+              <div class="send_comment" @click.stop="addComment">
+                <Icons icon="solar:chat-round-unread-bold" />Отправить
+              </div>
+            </li>
+          </ul>
+        </li>
       </ul>
+      <div class="card_bottom">
+        <div class="card_bottom__left">
+          <div class="card_link__btn">
+            <IcBtn icon="solar:login-broken" />
+            Открыть
+          </div>
+          <div class="card_link__btn">
+            <IcBtn icon="solar:star-broken" />
+            Добавить в избранное
+          </div>
+          <div class="card_link__btn">
+            <IcBtn icon="solar:trash-bin-minimalistic-2-broken" />
+            Удалить
+          </div>
+        </div>
+        <div class="card_bottom__right">
+          <div class="card__view">
+            <Icons icon="solar:eye-broken" :size="20" />Просмотрено: 1
+          </div>
+          <div class="card__kp">
+            <Icons icon="solar:file-right-broken" :size="20" />КП: Отправлено
+          </div>
+        </div>
+      </div>
     </div>
   </transition>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import avatar from "../people/avatar.vue";
+import { computed, ref, watch } from "vue";
+import Selects from "../dropdown/Selects.vue";
+import IcBtn from "../buttons/IcBtn.vue";
 import { useModalStore } from "@/store/useModalStore";
 import { useRouter } from "vue-router";
-import { useClientStore } from "@/store/useClientStore";
-
+// @ts-ignore
+import DatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+// import { ru } from "date-fns/locale";
+import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
+import axios from "axios";
 const props = withDefaults(
   defineProps<{
     card: any;
@@ -117,8 +235,12 @@ const props = withDefaults(
 
 const { openModal } = useModalStore();
 const clientStore = useClientStore();
+const { statuses } = useClientStoreRefs();
 const router = useRouter();
-
+const ruLocale = ref<string>("ru");
+const activeTab = ref<any>("org");
+const selectedStatus = ref<any>(props.card.acf.status);
+const newComment = ref("");
 const emit = defineEmits(["deleteCard", "updateCard"]);
 const isLoading = ref(false);
 const isDeleted = ref(false);
@@ -162,25 +284,41 @@ function formatPhoneNumber(phone: string): string {
 }
 
 function updateStatus(newStatus: string) {
+  console.log("Good", selectedStatus.value);
   clientStore.updateClientStatus(props.card.id, newStatus);
   emit("updateCard", { ...props.card, acf: { ...props.card.acf, status: newStatus } });
-}
-
-function copyToClipboard(text: string) {
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      console.log(`Copied to clipboard: ${text}`);
-    })
-    .catch((err) => {
-      console.error("Failed to copy text: ", err);
-    });
 }
 
 function openClient(id: number) {
   openModal("client");
   const query = { ...router.currentRoute.value.query, client: id };
   router.push({ query });
+}
+
+function addComment() {
+  if (newComment.value.trim()) {
+    // Подготовка данных для обновления клиента
+    const updatedClient = {
+      id: props.card.id,
+      acf: {
+        ...props.card.acf,
+        clientHistory: newComment.value.trim(), // Отправляем массив объектов
+      },
+    };
+
+    // Отправляем данные на сервер
+    clientStore
+      .updateClient(updatedClient)
+      .then(() => {
+        console.log("Комментарий успешно отправлен");
+      })
+      .catch((error) => {
+        console.error("Ошибка при отправке комментария:", error);
+      });
+
+    // Очищаем поле ввода
+    newComment.value = "";
+  }
 }
 
 function handlePhoneClick() {
@@ -222,394 +360,269 @@ function triggerDelete() {
 function handleAfterLeave() {
   deleteCard();
 }
+
+function sendKP() {
+  const data = {
+    to: "ddc-sellers@yandex.ru",
+    subject: "Презентация от компании Счастье",
+    name: "Александр",
+    phone: "+7(123)456-78-90",
+  };
+
+  const response = axios.post(
+    "https://manager.dynamic-devs-collective.ru/wp-json/custom/v1/send-email",
+    data
+  );
+}
 </script>
 
 <style scoped lang="scss">
 .card {
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
+  background-color: $white;
+  border: 1px solid $light;
+  // padding: 20px;
+}
+.card_top {
+  margin-bottom: 10px;
+  @include flex-space;
+  padding-right: 15px;
+  border-bottom: 1px solid $light;
 
-  @include bp($point_4) {
-    flex-direction: column;
-    gap: 20px;
+  &:deep(.custom-select) {
+    max-width: 300px;
   }
 }
-.card,
-.card_col__left,
-.card_col__right,
-.card__btn {
+.card_tab__link {
   @include flex-start;
-}
+  list-style: none;
+  // gap: 10px;
 
-.card_col__left {
-  gap: 10px;
-  flex-grow: 1;
-  flex-wrap: wrap;
-  max-width: 70%;
-
-  @include bp($point_4) {
-    max-width: 100%;
-    flex-direction: column;
-    width: 100%;
-  }
-}
-.card_col__right {
-  gap: 30px;
-  @include bp($point_4) {
-    flex-direction: column;
-    width: 100%;
-    position: relative;
-    z-index: 3;
-  }
-}
-.card__btn {
-  gap: 5px;
-}
-
-.card {
-  flex-wrap: wrap;
-}
-
-:deep(.tooltip-holder) {
-  @include bp($point_4) {
-    gap: 10px;
-  }
-}
-
-.card {
-  justify-content: space-between;
-  background-color: $bg-color-quaternary;
-  border-radius: 5px;
-  margin: 20px 0;
-  padding: 15px 20px;
-
-  :deep(.avatar) {
-    @include bp($point_4) {
-      display: none;
-    }
-  }
-}
-
-.card__status {
-  @include flex-end;
-  gap: 7px;
-  @include bp($point_4) {
-    width: 100%;
-  }
-  div {
-    width: 50px;
-    height: 15px;
-    border-radius: 3px;
+  li {
+    border-bottom: 2px solid transparent;
+    // background-color: $ulight;
+    height: 100%;
+    padding: 15px 15px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0px 2px 10px 0px #00000017;
-    // border: 1px solid #7474743f;
-    z-index: 99;
-
-    @include bp($point_4) {
-      width: 25%;
-      height: 30px;
-      flex-grow: 1;
+    &:hover {
+      color: $blue;
     }
 
-    &.status_processing {
-      background-color: $secondary-orange-active;
-      &:hover {
-        background-color: $primary-orange;
-      }
-    }
-    &.status_working {
-      background-color: $secondary-green-active;
-      &:hover {
-        background-color: $primary-green;
-      }
-    }
-    &.status_client {
-      background-color: $secondary-blue-active;
-      &:hover {
-        background-color: $primary-blue;
-      }
-    }
-    &.status_not-relevant {
-      background-color: $secondary-red-active;
-      &:hover {
-        background-color: $primary-red;
-      }
+    &.active {
+      background-color: $light-blue;
+      color: $blue;
+      border-color: $blue;
     }
   }
 }
 
-.card__open {
-  background-color: $secondary-green;
-  @include flex-center;
-  padding: 7px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  &:hover {
-    background-color: $secondary-green-active;
-  }
-}
-.card__delete {
-  background-color: $primary-red;
-  @include flex-center;
-  padding: 7px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  &:hover {
-    background-color: $primary-red-hover;
-  }
-}
-
-.card__phone,
-.card__phone__mobile,
-.card__website,
-.card__categories,
-.card__title,
-.card__address {
-  gap: 10px;
-  width: 17%;
-  padding: 7px 20px;
-  font-size: $small-3;
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-  @include flex-center;
-  @include bp($point_4) {
-    width: 100%;
-    justify-content: flex-start;
-    padding: 7px;
-  }
-  p,
-  a {
-    @include bp($point_4) {
-      max-width: 250px !important;
-    }
-  }
-  &:hover {
-    &:before {
-      background-color: #94939348;
-    }
-  }
-  &:before {
-    border-radius: 5px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #9493931a;
-    content: "";
-    z-index: -1;
-    backdrop-filter: blur(20px);
-    transition: all 0.3s ease-in-out;
-
-    @include bp($point_4) {
-      backdrop-filter: blur(0px);
-    }
-  }
-}
-
-.card__phone {
-  min-width: 180px;
-}
-
-.card__website {
-  min-width: 150px;
-  a {
-    max-width: 115px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    @include bp($point_4) {
-      max-width: 100%;
-      @include flex-start;
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-
-.clipboard {
-  @include flex-center;
-}
-
-.status-new {
-  background-color: $bg-color-secondary;
-}
-
-.status-processing {
-  background-color: $secondary-orange;
-  .card__status {
-    .status_processing {
-      background-color: $primary-orange;
-    }
-  }
-}
-.status-working {
-  background-color: $secondary-green;
-  .card__status {
-    .status_working {
-      background-color: $primary-green;
-    }
-  }
-}
-
-.status-client {
-  background-color: $secondary-blue;
-  .card__status {
-    .status_client {
-      background-color: $primary-blue;
-    }
-  }
-}
-.status-not-relevant {
-  background-color: $secondary-red;
-  .card__status {
-    .status_not-relevant {
-      background-color: $primary-red;
-    }
-  }
-}
-
-.status-work {
-  background-color: $secondary-green;
-  .card__status {
-    .status_not-relevant {
-      background-color: $primary-green;
-    }
-  }
-}
-
-.card__title {
-  p {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.card__address {
-  span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.card__phone {
-  @include bp($point_4) {
-    display: none;
-  }
-}
-.card__phone__mobile {
-  display: none;
-  @include bp($point_4) {
-    display: block;
-  }
-  a {
-    @include flex-start;
-    width: 100%;
-    height: 100%;
-    font-size: 20px;
-    text-decoration: none;
-    color: $text-color-primary;
-  }
-}
-
-.card__website {
-  a {
-    @include bp($point_4) {
-      @include flex-start;
-      width: 100%;
-      height: 100%;
-      font-size: 20px;
-      text-decoration: none;
-      color: $text-color-primary;
-      max-width: 100%;
-    }
-  }
-}
-
-.card__address {
-  @include bp($point_4) {
-    display: none;
-  }
-}
-
-.card__title {
-  p {
-    @include bp($point_4) {
-      font-size: 18px;
-      max-width: 90%;
-    }
-  }
-}
-
-.card__btn {
-  @include bp($point_4) {
-    gap: 10px;
-    width: 100%;
-  }
-  & > div {
-    @include bp($point_4) {
-      gap: 10px;
-      flex-grow: 1;
-    }
-  }
-  p {
-    display: none;
-    @include bp($point_4) {
-      display: flex;
-    }
-  }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.card__row {
-  @include flex-space;
-  width: 100%;
-  @include bp($point_4) {
-    width: 100%;
-    flex-direction: column;
-    gap: 20px;
-  }
-}
-
-.card__commentary {
-  width: 100%;
-  font-size: 14px;
-  font-weight: 300;
-  background-color: hsla(0, 0%, 100%, 0.588);
-  padding: 5px 10px;
-  border-radius: 5px;
-  margin-top: 20px;
+.card_tab__contents {
+  list-style: none;
 }
 
 .info__list {
   display: flex;
   flex-wrap: wrap;
+  // gap: 10px;
+  & > li {
+    width: 50%;
+    border-bottom: 1px dotted $light;
+    @include flex-start;
+    font-size: 14px;
+    gap: 5px;
+    padding: 15px 0;
+
+    span {
+      font-weight: 500;
+      max-width: 400px;
+    }
+  }
+}
+
+.card_tab__content {
+  padding: 20px;
+  padding-bottom: 40px;
+  font-weight: 400;
+}
+
+.card_bottom__left {
+  @include flex-start;
   gap: 10px;
-  list-style: none;
+}
+
+.card_bottom__right {
+  @include flex-end;
+  gap: 20px;
+}
+
+.card_bottom {
+  @include flex-space;
+  gap: 20px;
+  padding: 0 20px 20px 20px;
+}
+
+.card__view,
+.card__kp {
+  @include flex-start;
+  gap: 5px;
   font-size: 12px;
-  padding: 10px;
-  background-color: #ffffff96;
+  background-color: $ulight;
+  padding: 7px 10px;
+  border-radius: 4px;
+  transition: all 0.3s ease-in-out;
+  font-weight: 500;
+  &:hover {
+    background-color: $light;
+  }
+}
+.card_link__btn {
+  @include flex-start;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: $ulight;
+  padding: 0 10px;
   border-radius: 5px;
-  margin-top: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background-color: $light;
+  }
+}
+
+.list_item__full {
+  width: 100% !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+}
+
+.box__list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-top: -10px;
+
   li {
-    background-color: $secondary-green;
+    background-color: $white;
+    border-bottom: 1px solid $light;
     padding: 5px 10px;
+  }
+}
+
+.history_list {
+  flex-direction: column;
+}
+.history_item {
+  width: 100% !important;
+  border-color: transparent !important;
+  // align-items: flex-end !important;
+  gap: 20px !important;
+
+  &.comment {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  &:deep(.dp__input_icon) {
+    display: none;
+  }
+  &:deep(.dp__input_icon_pad) {
+    border-bottom: 1px solid $light;
+    border-width: 0 0 1px 0;
+    border-radius: 0;
+    padding: 15px 40px;
+    font-size: 18px;
+  }
+
+  textarea {
+    width: 100%;
+    border: 1px solid $light;
+    padding: 10px 20px;
     border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    min-height: 200px;
+    margin-bottom: 10px;
+  }
+}
+
+.history_item__top {
+  width: 100%;
+  @include flex-start;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 1px solid $light;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.item_head {
+  @include flex-start;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.input_date {
+  position: relative;
+  width: 100%;
+  svg {
+    position: absolute;
+    top: 47%;
+    left: 0px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #7a7a7a !important;
+  }
+}
+
+.comment_list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  font-size: 14px;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+  li {
+    display: inline-flex;
+    &:nth-child(2n) {
+      justify-content: flex-end;
+    }
+    p {
+      max-width: 50%;
+      border-radius: 5px;
+      padding: 10px 20px;
+      background-color: $light;
+    }
+  }
+}
+
+.send_comment {
+  @include flex-center;
+  display: inline-flex;
+  background-color: $blue;
+  color: $white;
+  cursor: pointer;
+  padding: 15px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 10px;
+  gap: 10px;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    background-color: $hover;
+  }
+
+  svg {
+    color: $white !important;
   }
 }
 </style>

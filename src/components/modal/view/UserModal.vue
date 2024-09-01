@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="user_top__right">
-        <div class="user_logout">
+        <div class="user_logout" @click="logout">
           <Icons icon="solar:logout-broken" />
         </div>
       </div>

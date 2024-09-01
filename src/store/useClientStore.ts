@@ -123,7 +123,7 @@ export const useClientStore = defineStore('clientStore', {
           category: updatedClient.acf.category,
           status: updatedClient.acf.status,
           callback: updatedClient.acf.callback,
-          comment: updatedClient.acf.comment,
+          clientHistory: updatedClient.acf.clientHistory,
         });
 
         const index = this.clients.findIndex((item) => item.id === updatedClient.id);
