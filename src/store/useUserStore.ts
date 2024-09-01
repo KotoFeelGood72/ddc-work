@@ -50,6 +50,18 @@ export const useUsersStore = defineStore('user', {
       this.$reset();  
       localStorage.removeItem('user');
     },
+    async fetchUserInfo() {
+      try {
+        const response = await axios.get('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/users/me', {
+          headers: {
+            Authorization: `Bearer ${this.users.token}`,
+          },
+        });
+        this.setUser({ ...this.users, userInfo: response.data });
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      }
+    },
     
     loadUserFromLocalStorage() {
       const userData = localStorage.getItem('user');

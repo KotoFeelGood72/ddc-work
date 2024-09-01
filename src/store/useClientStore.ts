@@ -1,48 +1,48 @@
-import { defineStore, storeToRefs } from 'pinia';
-import api from '@/api/api';
-import custom from '@/api/custom';
+import { defineStore, storeToRefs } from "pinia";
+import api from "@/api/api";
+import custom from "@/api/custom";
 
-export const useClientStore = defineStore('clientStore', {
+export const useClientStore = defineStore("clientStore", {
   state: () => ({
     clients: [] as any[],
     categories: [] as any[],
     statuses: [
-      { name: 'Новый', id: 'Новый' },
-      { name: 'Не актуально', id: 'Не актуально' },
-      { name: 'В обработке', id: 'В обработке' },
-      { name: 'В работе', id: 'В работе' },
-      { name: 'Клиент', id: 'Клиент' }
+      { name: "Новый", id: "Новый" },
+      { name: "Не актуально", id: "Не актуально" },
+      { name: "В обработке", id: "В обработке" },
+      { name: "В работе", id: "В работе" },
+      { name: "Клиент", id: "Клиент" },
     ],
     cities: [
-      { name: 'Тверь', id: 'Тверь' },
-      { name: 'Краснодар', id: 'Краснодар' },
-      { name: 'Москва', id: 'Москва' },
-      { name: 'Ростов на Дону', id: 'Ростов на Дону' },
-      { name: 'Пермь', id: 'Пермь' }
+      { name: "Тверь", id: "Тверь" },
+      { name: "Краснодар", id: "Краснодар" },
+      { name: "Москва", id: "Москва" },
+      { name: "Ростов на Дону", id: "Ростов на Дону" },
+      { name: "Пермь", id: "Пермь" },
     ],
     perPageOptions: [
-      { name: '10', id: '10' },
-      { name: '20', id: '20' },
-      { name: '30', id: '30' },
-      { name: '40', id: '40' },
-      { name: '50', id: '50' },
-      { name: '100', id: '100' }
+      { name: "10", id: "10" },
+      { name: "20", id: "20" },
+      { name: "30", id: "30" },
+      { name: "40", id: "40" },
+      { name: "50", id: "50" },
+      { name: "100", id: "100" },
     ],
     hasWebsiteOptions: [
-      { name: 'Есть сайт', id: '1' },
-      { name: 'Нет сайта', id: '0' }
+      { name: "Есть сайт", id: "1" },
+      { name: "Нет сайта", id: "0" },
     ],
     page: 1,
-    perPage: '10' as any,
+    perPage: "10" as any,
     totalPages: 1 as any,
-    selectedCategory: '',
-    selectedStatus: '',
-    selectedCity: '',
-    hasWebsite: '',
-    searchQuery: '',
-    searchPhone: '',
+    selectedCategory: "",
+    selectedStatus: "",
+    selectedCity: "",
+    hasWebsite: "",
+    searchQuery: "",
+    searchPhone: "",
     isLoading: false,
-    currentView: 'list', // 'list' or 'card'
+    currentView: "list", // 'list' or 'card'
   }),
   actions: {
     async getClients() {
@@ -77,9 +77,11 @@ export const useClientStore = defineStore('clientStore', {
           params.phone = this.searchPhone;
         }
 
-        const response = await api.get('/client_new', { params });
+        const response = await api.get("/client_new", { params });
         this.clients = response.data;
-        this.totalPages = Math.ceil(response.headers['x-wp-total'] / this.perPage);
+        this.totalPages = Math.ceil(
+          response.headers["x-wp-total"] / this.perPage
+        );
       } catch (error) {
         console.error(error);
       } finally {
@@ -88,33 +90,34 @@ export const useClientStore = defineStore('clientStore', {
     },
 
     getStatusClass(status: string) {
-        switch (status) {
-          case 'Новый':
-            return 'status-new';
-          case 'В обработке':
-            return 'status-processing';
-          case 'В работе':
-            return 'status-working';
-          case 'Клиент':
-            return 'status-client';
-          case 'Не актуально':
-            return 'status-not-relevant';
-          default:
-            return '';
-        }
-      },
+      switch (status) {
+        case "Новый":
+          return "status-new";
+        case "В обработке":
+          return "status-processing";
+        case "В работе":
+          return "status-working";
+        case "Клиент":
+          return "status-client";
+        case "Не актуально":
+          return "status-not-relevant";
+        default:
+          return "";
+      }
+    },
 
     async getCategories() {
       try {
-        const response = await api.get('/theme_bussines/?per_page=100');
+        const response = await api.get("/theme_bussines/?per_page=100");
         this.categories = response.data;
       } catch (error) {
-        console.error('Failed to get categories:', error);
+        console.error("Failed to get categories:", error);
       }
     },
 
     async updateClient(updatedClient: any) {
       try {
+        // Отправляем запрос на сервер с обновленными полями
         await custom.post(`/update-client/${updatedClient.id}`, {
           name: updatedClient.acf.name,
           city: updatedClient.acf.city,
@@ -123,18 +126,37 @@ export const useClientStore = defineStore('clientStore', {
           category: updatedClient.acf.category,
           status: updatedClient.acf.status,
           callback: updatedClient.acf.callback,
-          clientHistory: updatedClient.acf.clientHistory,
+          email: updatedClient.email,
+          status_kp: updatedClient.acf.status_kp,
         });
 
-        const index = this.clients.findIndex((item) => item.id === updatedClient.id);
+        // Ищем клиента в локальном хранилище
+        const index = this.clients.findIndex(
+          (item) => item.id === updatedClient.id
+        );
+
+        // Если клиент найден, обновляем его данные
         if (index !== -1) {
-          this.clients[index] = updatedClient;
+          this.clients[index] = {
+            ...this.clients[index], // сохраняем все существующие данные
+            acf: {
+              ...this.clients[index].acf, // сохраняем все существующие поля acf
+              name: updatedClient.acf.name,
+              city: updatedClient.acf.city,
+              phones: updatedClient.acf.phones,
+              websites: updatedClient.acf.websites,
+              category: updatedClient.acf.category,
+              status: updatedClient.acf.status,
+              callback: updatedClient.acf.callback,
+              status_kp: updatedClient.acf.status_kp,
+            },
+            email: updatedClient.email, // обновляем email
+          };
         }
       } catch (error) {
         console.error(`Failed to update client ${updatedClient.id}:`, error);
       }
     },
-
     async deleteClient(clientId: number) {
       try {
         await custom.delete(`/delete-client/${clientId}`);
@@ -197,43 +219,48 @@ export const useClientStore = defineStore('clientStore', {
     },
 
     clearFilters() {
-      this.selectedCategory = '';
-      this.selectedStatus = '';
-      this.selectedCity = '';
-      this.hasWebsite = '';
+      this.selectedCategory = "";
+      this.selectedStatus = "";
+      this.selectedCity = "";
+      this.hasWebsite = "";
       this.page = 1;
-      this.perPage = '10';
-      this.searchQuery = '';
-      this.searchPhone = '';
+      this.perPage = "10";
+      this.searchQuery = "";
+      this.searchPhone = "";
       this.getClients();
     },
     updateClientInStore(updatedClient: any) {
-      const index = this.clients.findIndex(client => client.id === updatedClient.id);
+      const index = this.clients.findIndex(
+        (client) => client.id === updatedClient.id
+      );
       if (index !== -1) {
         this.clients[index] = { ...this.clients[index], ...updatedClient };
       }
     },
     async updateClientStatus(clientId: number, newStatus: string) {
-        try {
-          // Находим клиента в хранилище
-          const clientIndex = this.clients.findIndex(client => client.id === clientId);
-          if (clientIndex === -1) return;
-  
-          // Обновляем статус клиента на сервере
-          const updatedClient = { ...this.clients[clientIndex], acf: { ...this.clients[clientIndex].acf, status: newStatus }};
-          await custom.post(`/update-client/${clientId}`, {
-            status: newStatus,
-          });
-  
-          // Обновляем клиента в хранилище
-          this.clients[clientIndex] = updatedClient;
-        } catch (error) {
-          console.error(`Failed to update status for client ${clientId}:`, error);
-        }
-      },
+      try {
+        // Находим клиента в хранилище
+        const clientIndex = this.clients.findIndex(
+          (client) => client.id === clientId
+        );
+        if (clientIndex === -1) return;
+
+        // Обновляем статус клиента на сервере
+        const updatedClient = {
+          ...this.clients[clientIndex],
+          acf: { ...this.clients[clientIndex].acf, status: newStatus },
+        };
+        await custom.post(`/update-client/${clientId}`, {
+          status: newStatus,
+        });
+
+        // Обновляем клиента в хранилище
+        this.clients[clientIndex] = updatedClient;
+      } catch (error) {
+        console.error(`Failed to update status for client ${clientId}:`, error);
+      }
+    },
   },
 });
-
-
 
 export const useClientStoreRefs = () => storeToRefs(useClientStore());

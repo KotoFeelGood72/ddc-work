@@ -1,3 +1,5 @@
+<!-- @format -->
+
 <template>
   <div class="admin-sidebar">
     <div class="admin_logo">
@@ -30,7 +32,9 @@ import logo from "/assets/img/logo.png";
   border-right: 1px solid $bg-color-secondary;
   min-width: 270px;
   padding-top: 20px;
-
+  position: sticky;
+  top: 0;
+  left: 0;
   @include bp($point_4) {
     display: none;
   }

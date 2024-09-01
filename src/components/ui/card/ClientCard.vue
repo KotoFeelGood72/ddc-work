@@ -2,14 +2,19 @@
 
 <template>
   <transition name="fade" @after-leave="handleAfterLeave">
-    <div v-if="!isDeleted" class="card" @click="openClient(card.id)">
-      <button @click.stop="sendKP">Отправить КП</button>
+    <div v-if="!isDeleted" class="card">
       <div class="card_top">
         <ul class="card_tab__link">
-          <li @click.stop="activeTab = 'org'" :class="{ active: activeTab === 'org' }">
+          <li
+            @click.stop="activeTab = 'org'"
+            :class="{ active: activeTab === 'org' }"
+          >
             Сведение об организации
           </li>
-          <li @click.stop="activeTab = 'info'" :class="{ active: activeTab === 'info' }">
+          <li
+            @click.stop="activeTab = 'info'"
+            :class="{ active: activeTab === 'info' }"
+          >
             Сведение о контактном лице
           </li>
           <li
@@ -59,14 +64,50 @@
             <li>
               <Icons icon="solar:code-circle-broken" :size="18" />
               <p>Сайт:</p>
-              <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
-                firstWebsite
-              }}</a>
+              <a
+                :href="firstWebsite"
+                target="_blank"
+                @click.stop="handleWebsiteClick"
+                >{{ firstWebsite }}</a
+              >
             </li>
             <li>
               <Icons icon="solar:document-add-broken" :size="18" />
               <p>E-mail:</p>
-              <span>{{ card.acf.email }}</span>
+              <div class="card_email__w">
+                <div class="card_email">
+                  <input
+                    type="email"
+                    v-model="localEmail"
+                    @input="handleEmailInput"
+                    @click.stop
+                    placeholder="Внести E-Mail"
+                  />
+                  <div
+                    class="save_email"
+                    @click.stop="saveEmail"
+                    :class="{ disabled: isSavingEmail }"
+                  >
+                    <IcBtn icon="solar:round-arrow-right-broken" />
+                  </div>
+                  <div
+                    class="send__kp"
+                    v-if="showSendKPButton || props.card.acf.email"
+                    @click.stop="sendKP"
+                    :class="{ disabled: isStatusSendKP }"
+                  >
+                    {{ isStatusSendKP ? "Отправлено" : "Отправить" }}
+                    <Icons
+                      icon="solar:login-2-broken"
+                      v-if="!isLoad"
+                      :size="16"
+                    />
+                    <div class="send_load" v-if="isLoad">
+                      <Icons icon="line-md:loading-loop" :size="16" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
               <Icons icon="solar:user-id-broken" :size="18" />
@@ -118,11 +159,6 @@
               <p>ЛПР Связаный с клиентом:</p>
               <span>Иванов Иван Иванович</span>
             </li>
-            <li>
-              <Icons icon="solar:document-add-broken" :size="18" />
-              <p>E-mail:</p>
-              <span>{{ card.acf.email }}</span>
-            </li>
             <li class="list_item__full">
               <Icons icon="solar:user-id-broken" :size="18" />
               <p>Услуги:</p>
@@ -143,42 +179,43 @@
               </div>
               <div class="input_date">
                 <DatePicker
-                  v-model="card.acf.callback"
+                  v-model="callback"
                   :format="'dd.MM.yyyy HH:mm'"
                   :enable-time="true"
                   :locale="ruLocale"
                   placeholder="Ввести дату"
+                  @update:model-value="updateCallback"
                 />
                 <Icons icon="solar:calendar-date-broken" />
               </div>
             </li>
             <li class="history_item comment">
-              <div class="history_item__top">
-                <Icons icon="solar:chat-round-broken" />
-                Лог взаимодействия:
+              <div class="history_item__review">
+                <div class="history_item__top">
+                  <Icons icon="solar:chat-round-broken" />
+                  Лог взаимодействия:
+                </div>
+                <ul class="comment_list">
+                  <li
+                    v-for="(item, i) in card.comments"
+                    :key="'comments-item' + card.id"
+                  >
+                    <p>{{ item.comment_content }}</p>
+                  </li>
+                </ul>
               </div>
-              <ul class="comment_list">
-                <li><p>— Вы не знаете, который сейчас час? Уже есть шесть часов?</p></li>
-                <li>
-                  <p>
-                    — А вы что, на телефон не можете посмотреть? — раздраженно ответила
-                    женщина с огромными сумками в руках.
-                  </p>
-                </li>
-                <li><p>— У меня отключился телефон, — грустно объяснил юноша.</p></li>
-                <li>
-                  <p>— Половина шестого, — ответила женщина и быстро побежала прочь.</p>
-                </li>
-              </ul>
-              <textarea
-                name=""
-                id=""
-                placeholder="Оставить комментарий"
-                v-model="newComment"
-                @click.stop
-              ></textarea>
-              <div class="send_comment" @click.stop="addComment">
-                <Icons icon="solar:chat-round-unread-bold" />Отправить
+              <div class="history_item__action">
+                <textarea
+                  name=""
+                  id=""
+                  placeholder="Оставить комментарий"
+                  v-model="newComment"
+                  @input="adjustTextareaHeight"
+                  @click.stop
+                ></textarea>
+                <div class="send_comment" @click.stop="addComment">
+                  <Icons icon="solar:chat-round-unread-bold" />Отправить
+                </div>
               </div>
             </li>
           </ul>
@@ -206,6 +243,10 @@
           <div class="card__kp">
             <Icons icon="solar:file-right-broken" :size="20" />КП: Отправлено
           </div>
+          <div class="card_link__btn">
+            <IcBtn icon="solar:pen-new-round-broken" />
+            Сохранить
+          </div>
         </div>
       </div>
     </div>
@@ -221,9 +262,11 @@ import { useRouter } from "vue-router";
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-// import { ru } from "date-fns/locale";
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
+import { useUsersStore, useUsersStoreRefs } from "@/store/useUserStore";
+import api from "@/api/api";
 import axios from "axios";
+
 const props = withDefaults(
   defineProps<{
     card: any;
@@ -236,14 +279,24 @@ const props = withDefaults(
 const { openModal } = useModalStore();
 const clientStore = useClientStore();
 const { statuses } = useClientStoreRefs();
+const { users } = useUsersStoreRefs();
 const router = useRouter();
 const ruLocale = ref<string>("ru");
 const activeTab = ref<any>("org");
+const callback = ref<any>(parseDateString(props.card.acf.callback));
 const selectedStatus = ref<any>(props.card.acf.status);
 const newComment = ref("");
 const emit = defineEmits(["deleteCard", "updateCard"]);
 const isLoading = ref(false);
 const isDeleted = ref(false);
+const isLoad = ref(false);
+const isSavingEmail = ref(false);
+const showSendKPButton = ref(false);
+const localEmail = ref(props.card.acf.email);
+
+const isStatusSendKP = computed(() => {
+  return props.card.acf.status_kp === "Отправлено";
+});
 
 const firstWebsite = computed(() => {
   if (!props.card.acf.websites) return null;
@@ -256,7 +309,9 @@ const firstWebsite = computed(() => {
 
 const formattedPhone = computed(() => {
   if (!props.card.acf.phones) return null;
-  const phones = props.card.acf.phones.split(" ").map((phone: any) => phone.trim());
+  const phones = props.card.acf.phones
+    .split(" ")
+    .map((phone: any) => phone.trim());
   const firstPhone = phones[0];
   if (firstPhone.startsWith("8")) {
     return formatPhoneNumber(firstPhone.replace("8", "+7"));
@@ -264,6 +319,16 @@ const formattedPhone = computed(() => {
     return formatPhoneNumber(firstPhone);
   }
 });
+
+function handleEmailInput(event: Event) {
+  localEmail.value = (event.target as HTMLInputElement).value;
+
+  // Если email изменился, сбрасываем статус отправки КП
+  if (localEmail.value !== props.card.acf.email) {
+    props.card.acf.status_kp = "Не отправлено";
+    showSendKPButton.value = false;
+  }
+}
 
 function isValidUrl(string: string): boolean {
   try {
@@ -284,9 +349,11 @@ function formatPhoneNumber(phone: string): string {
 }
 
 function updateStatus(newStatus: string) {
-  console.log("Good", selectedStatus.value);
   clientStore.updateClientStatus(props.card.id, newStatus);
-  emit("updateCard", { ...props.card, acf: { ...props.card.acf, status: newStatus } });
+  emit("updateCard", {
+    ...props.card,
+    acf: { ...props.card.acf, status: newStatus },
+  });
 }
 
 function openClient(id: number) {
@@ -295,40 +362,64 @@ function openClient(id: number) {
   router.push({ query });
 }
 
-function addComment() {
-  if (newComment.value.trim()) {
-    // Подготовка данных для обновления клиента
+async function saveEmail() {
+  if (!localEmail.value) return;
+
+  isSavingEmail.value = true;
+
+  try {
+    // Обновляем данные клиента через метод updateClient
     const updatedClient = {
       id: props.card.id,
+      email: localEmail.value,
       acf: {
-        ...props.card.acf,
-        clientHistory: newComment.value.trim(), // Отправляем массив объектов
+        ...props.card.acf, // Сохраняем все текущие поля acf
+        status_kp: "Не отправлено", // Сбрасываем статус отправки КП при сохранении нового email
       },
     };
+    await clientStore.updateClient(updatedClient);
 
-    // Отправляем данные на сервер
-    clientStore
-      .updateClient(updatedClient)
-      .then(() => {
-        console.log("Комментарий успешно отправлен");
-      })
-      .catch((error) => {
-        console.error("Ошибка при отправке комментария:", error);
+    emit("updateCard", updatedClient); // Обновляем данные в родительском компоненте
+    showSendKPButton.value = true; // Показываем кнопку отправки КП после успешного сохранения
+  } catch (error) {
+    console.error("Ошибка при сохранении почты:", error);
+  } finally {
+    isSavingEmail.value = false;
+  }
+}
+
+async function addComment() {
+  if (newComment.value.trim()) {
+    try {
+      // Отправляем новый комментарий через API
+      await api.post("/comments", {
+        post: props.card.id,
+        content: newComment.value.trim(),
+        author_name: users.value.userInfo.name,
+        author_email: users.value.userInfo.acf.user_email,
       });
 
-    // Очищаем поле ввода
-    newComment.value = "";
+      // После успешной отправки комментария, заново получаем обновленную карточку клиента
+      const updatedCard = await api.get(`/client_new/${props.card.id}`);
+
+      // Обновляем карточку клиента в хранилище
+      clientStore.updateClientInStore(updatedCard.data);
+
+      console.log("Комментарий успешно добавлен и карточка обновлена.");
+    } catch (error) {
+      console.error("Ошибка при добавлении комментария:", error);
+    }
+
+    newComment.value = ""; // Очищаем поле ввода после отправки
   }
 }
 
 function handlePhoneClick() {
   openQR(formattedPhone.value, "phone");
-  // updateStatus("В обработке");
 }
 
 function handleWebsiteClick(event: Event) {
   event.preventDefault();
-  // updateStatus("В обработке");
   window.open(firstWebsite.value, "_blank");
 }
 
@@ -361,18 +452,100 @@ function handleAfterLeave() {
   deleteCard();
 }
 
-function sendKP() {
-  const data = {
-    to: "ddc-sellers@yandex.ru",
-    subject: "Презентация от компании Счастье",
-    name: "Александр",
-    phone: "+7(123)456-78-90",
-  };
+function adjustTextareaHeight(event: Event) {
+  const textarea = event.target as HTMLTextAreaElement;
+  textarea.style.height = "auto"; // Reset the height
+  textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match content
+}
 
-  const response = axios.post(
-    "https://manager.dynamic-devs-collective.ru/wp-json/custom/v1/send-email",
-    data
+function parseDateString(dateString: string): Date | null {
+  const parts = dateString.split(/[\/\s,:]+/);
+  if (parts.length < 5) return null;
+
+  const [day, month, year, hours, minutes] = parts;
+  return new Date(
+    parseInt(year),
+    parseInt(month) - 1, // Месяцы в JavaScript начинаются с 0
+    parseInt(day),
+    parseInt(hours),
+    parseInt(minutes)
   );
+}
+
+async function updateCallback(newCallback: Date) {
+  try {
+    isLoading.value = true;
+
+    const formattedDate = formatDate(newCallback);
+
+    await clientStore.updateClient({
+      id: props.card.id,
+      acf: {
+        ...props.card.acf,
+        callback: formattedDate,
+      },
+    });
+
+    callback.value = newCallback;
+    props.card.acf.callback = formattedDate;
+
+    emit("updateCard", {
+      ...props.card,
+      acf: {
+        ...props.card.acf,
+        callback: formattedDate,
+      },
+    });
+  } catch (error) {
+    console.error("Ошибка при обновлении поля 'Перезвонить':", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+function formatDate(date: Date): string {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
+async function sendKP() {
+  if (props.card.acf.status_kp !== "Отправлено") {
+    try {
+      if (!users.value || !users.value.userInfo) {
+        throw new Error("User information is not available");
+      }
+
+      isLoad.value = true;
+      const data = {
+        to: localEmail.value,
+        subject: "Презентация от компании Счастье",
+        name: users.value.userInfo.name,
+        phone: users.value.userInfo.acf.user_phone,
+      };
+
+      await axios.post(
+        "https://manager.dynamic-devs-collective.ru/wp-json/custom/v1/send-email",
+        data
+      );
+      props.card.acf.status_kp = "Отправлено";
+      await clientStore.updateClient({
+        id: props.card.id,
+        acf: {
+          ...props.card.acf,
+          status_kp: "Отправлено",
+        },
+      });
+    } catch (error) {
+      console.error("Ошибка при отправке КП:", error);
+    } finally {
+      isLoad.value = false;
+    }
+  }
 }
 </script>
 
@@ -499,7 +672,6 @@ function sendKP() {
 .box__list {
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
   list-style: none;
   font-size: 14px;
   font-weight: 500;
@@ -509,9 +681,11 @@ function sendKP() {
   margin-top: -10px;
 
   li {
-    background-color: $white;
+    background-color: $light;
     border-bottom: 1px solid $light;
+    border-radius: 4px;
     padding: 5px 10px;
+    font-size: 12px;
   }
 }
 
@@ -538,6 +712,7 @@ function sendKP() {
     border-radius: 0;
     padding: 15px 40px;
     font-size: 18px;
+    background-color: transparent;
   }
 
   textarea {
@@ -547,8 +722,14 @@ function sendKP() {
     border-radius: 5px;
     font-size: 16px;
     font-weight: 500;
-    min-height: 200px;
+    min-height: 300px;
     margin-bottom: 10px;
+    resize: none;
+    overflow-y: hidden;
+    &:focus {
+      outline: none;
+      border-color: $blue;
+    }
   }
 }
 
@@ -558,8 +739,6 @@ function sendKP() {
   gap: 10px;
   font-size: 16px;
   font-weight: 500;
-  border-bottom: 1px solid $light;
-  padding-bottom: 20px;
   margin-bottom: 20px;
 }
 
@@ -591,6 +770,12 @@ function sendKP() {
   gap: 10px;
   width: 100%;
   margin-bottom: 20px;
+  max-width: 700px;
+  border: 1px solid $light;
+  padding: 20px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
   li {
     display: inline-flex;
     &:nth-child(2n) {
@@ -599,7 +784,7 @@ function sendKP() {
     p {
       max-width: 50%;
       border-radius: 5px;
-      padding: 10px 20px;
+      padding: 5px 10px;
       background-color: $light;
     }
   }
@@ -624,5 +809,87 @@ function sendKP() {
   svg {
     color: $white !important;
   }
+}
+
+.card_email {
+  @include flex-start;
+  gap: 10px;
+
+  input {
+    border-bottom: 1px solid $light;
+    padding: 5px 10px;
+    &:focus {
+      outline: none;
+      border-color: $blue;
+    }
+  }
+}
+
+.send__kp {
+  position: relative;
+  @include flex-start;
+  background-color: $blue;
+  padding: 5px 20px;
+  color: $white;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+
+  &.disabled {
+    pointer-events: none;
+    background-color: $light;
+    color: $dark;
+    svg {
+      color: $dark !important;
+    }
+  }
+  &:hover {
+    background-color: $hover;
+  }
+  svg {
+    color: $white !important;
+  }
+}
+
+.send_load {
+  @include flex-center;
+}
+
+.card {
+  &.status-new {
+    background-color: #dbf3db4a;
+  }
+  &.status-not-relevant {
+    background-color: rgb(243 220 224 / 29%);
+  }
+  &.status-working {
+    background-color: rgb(243 235 220 / 29%);
+  }
+  &.status-processing {
+    background-color: rgb(238 220 243 / 29%);
+  }
+  &.status-client {
+    background-color: rgb(194 217 245 / 13%);
+  }
+}
+
+.history_item {
+  padding-top: 0 !important;
+  padding-bottom: 20px !important;
+  &.comment {
+    @include flex-start;
+    flex-direction: row;
+    gap: 40px !important;
+  }
+}
+
+.history_item__action {
+  width: 50%;
+  padding-top: 45px;
+}
+
+.history_item__review {
+  width: 50%;
 }
 </style>
