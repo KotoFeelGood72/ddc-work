@@ -3,10 +3,12 @@
 <template>
   <div class="admin-sidebar">
     <div class="admin_logo">
-      <img
-        src="http://manager.dynamic-devs-collective.ru/wp-content/uploads/2024/09/logo.svg"
-        alt=""
-      />
+      <RouterLink to="/">
+        <img
+          src="http://manager.dynamic-devs-collective.ru/wp-content/uploads/2024/09/logo.svg"
+          alt=""
+        />
+      </RouterLink>
     </div>
     <ul class="nav">
       <li v-for="(link, i) in AdminNav" :key="'admin-nav-item-' + i">
