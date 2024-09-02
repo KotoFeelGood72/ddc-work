@@ -289,7 +289,7 @@ import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { ru } from "date-fns/locale";
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
-import { useUsersStore, useUsersStoreRefs } from "@/store/useUserStore";
+import { useUsersStoreRefs } from "@/store/useUserStore";
 import api from "@/api/api";
 import axios from "axios";
 
@@ -392,11 +392,11 @@ function updateStatus(newStatus: string) {
   });
 }
 
-function openClient(id: number) {
-  openModal("client");
-  const query = { ...router.currentRoute.value.query, client: id };
-  router.push({ query });
-}
+// function openClient(id: number) {
+//   openModal("client");
+//   const query = { ...router.currentRoute.value.query, client: id };
+//   router.push({ query });
+// }
 
 async function saveEmail() {
   if (!localEmail.value) return;
@@ -480,9 +480,9 @@ async function deleteCard() {
   }
 }
 
-function triggerDelete() {
-  isDeleted.value = true;
-}
+// function triggerDelete() {
+//   isDeleted.value = true;
+// }
 
 function handleAfterLeave() {
   deleteCard();

@@ -21,7 +21,7 @@
           @update:modelValue="clientStore.updateSelectedDate"
           :markers="markers"
         >
-          <template #marker="{ marker, day, date }">
+          <template #marker="{ marker }">
             <span v-if="marker" class="custom-marker"></span>
           </template>
         </DatePicker>
@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, watchEffect, nextTick } from "vue";
+import { onMounted, ref, computed, watch, watchEffect } from "vue";
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
 import ClientCard from "@/components/ui/card/ClientCard.vue";
 import pagination from "@/components/ui/buttons/pagination.vue";
@@ -122,7 +122,6 @@ import Selects from "@/components/ui/dropdown/Selects.vue";
 import Switcher from "@/components/ui/inputs/Switcher.vue";
 import IcBtn from "@/components/ui/buttons/IcBtn.vue";
 import { ru } from "date-fns/locale";
-const highlightDates = ref([]);
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
