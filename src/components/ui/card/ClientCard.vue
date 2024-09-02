@@ -83,13 +83,7 @@
                     @click.stop
                     placeholder="Внести E-Mail"
                   />
-                  <div
-                    class="save_email"
-                    @click.stop="saveEmail"
-                    :class="{ disabled: isSavingEmail }"
-                  >
-                    <IcBtn icon="solar:round-arrow-right-broken" />
-                  </div>
+       
                   <div
                     class="send__kp"
                     v-if="showSendKPButton || props.card.acf.email"
@@ -290,7 +284,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Selects from "../dropdown/Selects.vue";
 import IcBtn from "../buttons/IcBtn.vue";
 import { useModalStore } from "@/store/useModalStore";
@@ -409,6 +403,12 @@ function updateStatus(newStatus: string) {
 //   router.push({ query });
 // }
 
+watch(localEmail, async (newEmail, oldEmail) => {
+  if (newEmail && newEmail !== oldEmail) {
+    await saveEmail();
+  }
+});
+
 async function saveEmail() {
   if (!localEmail.value) return;
 
@@ -426,6 +426,9 @@ async function saveEmail() {
     };
     await clientStore.updateClient(updatedClient);
 
+    // Обновляем props.card.acf.email после успешного сохранения
+    props.card.acf.email = localEmail.value;
+
     emit("updateCard", updatedClient); // Обновляем данные в родительском компоненте
     showSendKPButton.value = true; // Показываем кнопку отправки КП после успешного сохранения
   } catch (error) {
@@ -434,6 +437,7 @@ async function saveEmail() {
     isSavingEmail.value = false;
   }
 }
+
 
 async function addComment() {
   if (newComment.value.trim()) {
@@ -841,13 +845,20 @@ async function sendKP() {
   }
 }
 
+.card_email__w {
+  flex-grow: 1;
+
+}
+
 .card_email {
   @include flex-start;
   gap: 10px;
+  flex-grow: 1;
 
   input {
     border-bottom: 1px solid $light;
     padding: 5px 10px;
+    width: 100%;
     &:focus {
       outline: none;
       border-color: $blue;

@@ -38,6 +38,8 @@
 	.avatar {
 		@include flex-center;
 		cursor: pointer;
+		border-radius: 100px;
+		overflow: hidden;
 
 		&.size--small {
 			width: 35px;

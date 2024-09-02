@@ -4,10 +4,10 @@
   <div class="user_dropdown" v-if="users">
     <div class="user_dropdown__top">
       <div class="user_top__left">
-        <avatar />
+        <avatar :img="users.userInfo.acf.user_img"/>
         <div class="user_dropdown__topname">
-          <p>Виктор</p>
-          <p>Разработчик</p>
+          <p>{{users.userInfo.acf.user_name}}</p>
+          <p>{{users.userInfo.acf.user_professional}}</p>
         </div>
       </div>
       <div class="user_top__right">
