@@ -117,59 +117,67 @@
           </ul>
         </li>
         <li class="card_tab__content" v-if="activeTab === 'info'">
-          <ul class="info__list">
+          <ul class="contacts_people">
             <li>
-              <Icons icon="solar:case-broken" :size="18" />
-              <p>Ф.И.О:</p>
-              <span>{{ card.acf.name }}</span>
-            </li>
-            <li>
-              <Icons icon="solar:city-broken" :size="18" />
-              <p>Год рождения:</p>
-              <span>{{ card.acf.name }}</span>
-            </li>
-            <li>
-              <Icons icon="solar:map-arrow-square-broken" :size="18" />
-              <p>Должность:</p>
-              <span>{{ card.acf.address }}</span>
-            </li>
-            <li>
-              <Icons icon="solar:phone-rounded-broken" :size="18" />
-              <p>Телефон контактный:</p>
-              <div
-                class="card__phone"
-                v-if="formattedPhone"
-                @click.stop="handlePhoneClick"
-              >
-                <span>{{ formattedPhone }}</span>
-              </div>
-            </li>
-            <li>
-              <Icons icon="solar:document-add-broken" :size="18" />
-              <p>E-mail:</p>
-              <span>{{ card.acf.email }}</span>
-            </li>
-            <li>
-              <Icons icon="solar:code-circle-broken" :size="18" />
-              <p>ЛПР:</p>
-              <span class="tags">Да</span>
-            </li>
-            <li>
-              <Icons icon="solar:code-circle-broken" :size="18" />
-              <p>ЛПР Связаный с клиентом:</p>
-              <span>Иванов Иван Иванович</span>
-            </li>
-            <li class="list_item__full">
-              <Icons icon="solar:user-id-broken" :size="18" />
-              <p>Услуги:</p>
-              <ul class="box__list">
-                <li>Продвижение сайта</li>
-                <li>Разработка сайта</li>
-                <li>Контекстная реклама</li>
-                <li>Правки на сайте</li>
+              <ul class="info__list">
+                <li>
+                  <Icons icon="solar:case-broken" :size="18" />
+                  <p>Ф.И.О:</p>
+                  <span>{{ card.acf.name }}</span>
+                </li>
+                <li>
+                  <Icons icon="solar:city-broken" :size="18" />
+                  <p>Год рождения:</p>
+                  <span>{{ card.acf.name }}</span>
+                </li>
+                <li>
+                  <Icons icon="solar:map-arrow-square-broken" :size="18" />
+                  <p>Должность:</p>
+                  <span>{{ card.acf.address }}</span>
+                </li>
+                <li>
+                  <Icons icon="solar:phone-rounded-broken" :size="18" />
+                  <p>Телефон контактный:</p>
+                  <div
+                    class="card__phone"
+                    v-if="formattedPhone"
+                    @click.stop="handlePhoneClick"
+                  >
+                    <span>{{ formattedPhone }}</span>
+                  </div>
+                </li>
+                <li>
+                  <Icons icon="solar:document-add-broken" :size="18" />
+                  <p>E-mail:</p>
+                  <span>{{ card.acf.email }}</span>
+                </li>
+                <li>
+                  <Icons icon="solar:code-circle-broken" :size="18" />
+                  <p>ЛПР:</p>
+                  <span class="tags">Да</span>
+                </li>
+                <li>
+                  <Icons icon="solar:code-circle-broken" :size="18" />
+                  <p>ЛПР Связаный с клиентом:</p>
+                  <span>Иванов Иван Иванович</span>
+                </li>
+                <li class="list_item__full">
+                  <Icons icon="solar:user-id-broken" :size="18" />
+                  <p>Услуги:</p>
+                  <ul class="box__list">
+                    <li>Продвижение сайта</li>
+                    <li>Разработка сайта</li>
+                    <li>Контекстная реклама</li>
+                    <li>Правки на сайте</li>
+                  </ul>
+                </li>
               </ul>
             </li>
           </ul>
+          <div class="card_tab_infoAdd">
+            <Icons icon="solar:traffic-economy-broken" />
+            <p>Добавить</p>
+          </div>
         </li>
         <li class="card_tab__content" v-if="activeTab === 'history'">
           <ul class="info__list history_list">
@@ -181,7 +189,6 @@
                 <DatePicker
                   v-model="callback"
                   :format="'dd.MM.yyyy HH:mm'"
-           
                   :month-change-on-scroll="false"
                   auto-apply
                   disable-year-select
@@ -201,14 +208,32 @@
                   <Icons icon="solar:chat-round-broken" />
                   Лог взаимодействия:
                 </div>
-                <ul class="comment_list">
-                  <li
-                    v-for="(item, i) in card.comments"
-                    :key="'comments-item' + card.id"
+                <div class="comment__w">
+                  <ul
+                    v-for="(comments, date) in groupedComments"
+                    :key="date"
+                    class="comment_group"
                   >
-                    <p>{{ item.comment_content }}</p>
-                  </li>
-                </ul>
+                    <li class="comment_date">
+                      <p>{{ date }}</p>
+                    </li>
+                    <ul class="comment_list">
+                      <li
+                        v-for="comment in comments"
+                        :key="comment.id"
+                        class="comment_item"
+                      >
+                        <div class="comment__head">
+                          <span>{{ comment.comment_author }}</span>
+                          <span class="comment_time">{{
+                            new Date(comment.comment_date).toLocaleTimeString()
+                          }}</span>
+                        </div>
+                        <p>{{ comment.comment_content }}</p>
+                      </li>
+                    </ul>
+                  </ul>
+                </div>
               </div>
               <div class="history_item__action">
                 <textarea
@@ -244,9 +269,9 @@
             <Icons icon="solar:eye-broken" :size="20" />Просмотрено: 1
           </div>
           <div class="card__kp">
-            <Icons icon="solar:file-right-broken" :size="20" />КП: {{isStatusSendKP ? 'Отправлено': 'Не отправлено'}}
+            <Icons icon="solar:file-right-broken" :size="20" />КП:
+            {{ isStatusSendKP ? "Отправлено" : "Не отправлено" }}
           </div>
-     
         </div>
       </div>
     </div>
@@ -254,7 +279,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import Selects from "../dropdown/Selects.vue";
 import IcBtn from "../buttons/IcBtn.vue";
 import { useModalStore } from "@/store/useModalStore";
@@ -262,7 +287,7 @@ import { useRouter } from "vue-router";
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { ru } from 'date-fns/locale';
+import { ru } from "date-fns/locale";
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
 import { useUsersStore, useUsersStoreRefs } from "@/store/useUserStore";
 import api from "@/api/api";
@@ -282,7 +307,6 @@ const clientStore = useClientStore();
 const { statuses } = useClientStoreRefs();
 const { users } = useUsersStoreRefs();
 const router = useRouter();
-const ruLocale = ref<string>("ru");
 const activeTab = ref<any>("org");
 const callback = ref<any>(props.card.acf.callback);
 const selectedStatus = ref<any>(props.card.acf.status);
@@ -295,10 +319,19 @@ const isSavingEmail = ref(false);
 const showSendKPButton = ref(false);
 const localEmail = ref(props.card.acf.email);
 
-
-
 const isStatusSendKP = computed(() => {
   return props.card.acf.status_kp === "Отправлено";
+});
+
+const groupedComments = computed(() => {
+  return props.card.comments.reduce((groups: any, comment: any) => {
+    const date = new Date(comment.comment_date).toLocaleDateString();
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(comment);
+    return groups;
+  }, {});
 });
 
 const firstWebsite = computed(() => {
@@ -457,17 +490,13 @@ function handleAfterLeave() {
 
 function adjustTextareaHeight(event: Event) {
   const textarea = event.target as HTMLTextAreaElement;
-  textarea.style.height = "auto"; // Reset the height
-  textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match content
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight}px`;
 }
-
-
 
 async function updateCallback(newCallback: Date) {
   try {
     isLoading.value = true;
-
-
 
     await clientStore.updateClient({
       id: props.card.id,
@@ -485,8 +514,6 @@ async function updateCallback(newCallback: Date) {
     isLoading.value = false;
   }
 }
-
-
 
 async function sendKP() {
   if (props.card.acf.status_kp !== "Отправлено") {
@@ -670,9 +697,11 @@ async function sendKP() {
 .history_item {
   width: 100% !important;
   border-color: transparent !important;
-  // align-items: flex-end !important;
+  background-color: $white;
+  border-radius: 5px;
   gap: 20px !important;
 
+  padding: 10px !important;
   &.comment {
     flex-direction: column;
     align-items: flex-start !important;
@@ -737,6 +766,22 @@ async function sendKP() {
   }
 }
 
+.comment__w {
+  max-height: 500px;
+  overflow-y: auto;
+  &::-webkit-scrollbar-track {
+    background-color: $ulight;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #00000059;
+  }
+}
+
 .comment_list {
   display: flex;
   flex-direction: column;
@@ -745,22 +790,21 @@ async function sendKP() {
   gap: 10px;
   width: 100%;
   margin-bottom: 20px;
-  max-width: 700px;
-  border: 1px solid $light;
-  padding: 20px;
-  border-radius: 10px;
-  max-height: 300px;
-  overflow-y: auto;
+  max-width: 99%;
+
   li {
     display: inline-flex;
+    background-color: $ulight;
     &:nth-child(2n) {
-      justify-content: flex-end;
+      &.comment_item {
+        align-items: flex-end;
+      }
     }
     p {
       max-width: 50%;
       border-radius: 5px;
       padding: 5px 10px;
-      background-color: $light;
+      // background-color: $light;
     }
   }
 }
@@ -832,20 +876,60 @@ async function sendKP() {
 }
 
 .card {
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  padding-left: 50px;
+  &:before {
+    content: "";
+    width: 50px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: $white;
+    font-weight: 500;
+    letter-spacing: 5px;
+  }
   &.status-new {
-    background-color: #dbf3db4a;
+    border: 1px solid transparent;
+    &:before {
+      background-color: rgb(77, 221, 247);
+      content: "Новый";
+    }
   }
   &.status-not-relevant {
-    background-color: rgb(243 220 224 / 29%);
+    &:before {
+      background-color: rgb(247, 77, 77);
+      content: "Не актуально";
+    }
   }
   &.status-working {
-    background-color: rgb(243 235 220 / 29%);
+    &:before {
+      background-color: rgb(103, 77, 247);
+      content: "В работе";
+    }
   }
   &.status-processing {
-    background-color: rgb(238 220 243 / 29%);
+    &:before {
+      background-color: rgb(247, 154, 77);
+      content: "В обработке";
+    }
   }
   &.status-client {
-    background-color: rgb(194 217 245 / 13%);
+    &:before {
+      background-color: rgb(77, 247, 120);
+      content: "Клиент";
+    }
   }
 }
 
@@ -866,5 +950,59 @@ async function sendKP() {
 
 .history_item__review {
   width: 50%;
+}
+
+.comment_date {
+  @include flex-center;
+  margin-bottom: 10px;
+  p {
+    // background-color: $ulight;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 4px 20px;
+    border-radius: 100px;
+  }
+}
+
+.comment_item {
+  display: flex;
+  flex-direction: column;
+  // background-color: $ulight;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.comment__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 12px;
+  width: 100%;
+  padding-bottom: 5px;
+  border-bottom: 1px solid $light;
+}
+
+.contacts_people {
+  list-style: none;
+}
+
+.card_tab_infoAdd {
+  @include flex-start;
+  gap: 10px;
+  display: inline-flex;
+  background-color: $ulight;
+  padding: 10px 30px;
+  border-radius: 5px;
+  margin-top: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $light-blue;
+    color: $blue;
+    svg {
+      color: $blue !important;
+    }
+  }
 }
 </style>

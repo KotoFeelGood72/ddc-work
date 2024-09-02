@@ -40,8 +40,8 @@ const emit = defineEmits(["onClick"]);
     height: 20px;
   }
   &.normal {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
   }
   &.medium {
     width: 51px;

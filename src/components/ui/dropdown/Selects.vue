@@ -21,7 +21,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, onMounted, onBeforeUnmount, watch } from "vue";
+import {
+  ref,
+  defineProps,
+  defineEmits,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+} from "vue";
 
 const props = defineProps<{
   modelValue: any;
@@ -45,7 +52,9 @@ const selectOption = (option: string) => {
 };
 
 const getSelectedOptionName = () => {
-  const option = props.options.find((opt: any) => opt.id === selectedOption.value);
+  const option = props.options.find(
+    (opt: any) => opt.id === selectedOption.value
+  );
   return option ? option.name : "";
 };
 
@@ -109,12 +118,28 @@ onBeforeUnmount(() => {
   position: absolute;
   width: 100%;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid $light;
   border-radius: 4px;
   margin-top: 5px;
   z-index: 1000;
   max-height: 300px;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px; /* Width of the scrollbar */
+  }
+
+  &::-webkit-scrollbar-track {
+    // background-color: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #0000005d;
+  }
+
+  // &::-webkit-scrollbar-thumb:hover {
+  //   background-color: $blue;
+  // }
 }
 
 .select-option {

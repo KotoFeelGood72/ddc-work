@@ -5,24 +5,8 @@
     <h3>Клиенты</h3>
     <div class="filter">
       <div class="filter_row">
-        <!-- <DatePicker
-          
+        <DatePicker
           v-model="selectedDate"
-          :format="'dd.MM.yyyy'"
-          :enable-time-picker="false"
-          :month-change-on-scroll="false"
-          auto-apply
-          disable-year-select
-          :format-locale="ru"
-          placeholder="Выберите дату"
-          position="left"
-
-          select-text="Выбрать"
-          cancel-text="Закрыть"
-          @update:modelValue="clientStore.updateSelectedDate"
-          :highlight="highlightDays"
-        /> -->
-        <DatePicker v-model="selectedDate"
           :format="'dd.MM.yyyy'"
           :enable-time-picker="false"
           :month-change-on-scroll="false"
@@ -34,12 +18,14 @@
           :hide-offset-dates="false"
           select-text="Выбрать"
           cancel-text="Закрыть"
-          @update:modelValue="clientStore.updateSelectedDate" :markers="markers">
+          @update:modelValue="clientStore.updateSelectedDate"
+          :markers="markers"
+        >
           <template #marker="{ marker, day, date }">
             <span v-if="marker" class="custom-marker"></span>
           </template>
         </DatePicker>
-  
+
         <Selects
           v-model="selectedCategory"
           :options="clientStore.categories"
@@ -80,7 +66,9 @@
             type="text"
             v-model="dynamicSearchModel"
             :placeholder="
-              isPhoneSearch ? 'Введите номер телефона' : 'Введите запрос для поиска'
+              isPhoneSearch
+                ? 'Введите номер телефона'
+                : 'Введите запрос для поиска'
             "
             @input="filterBySearch"
             class="search-input"
@@ -94,7 +82,10 @@
       </div>
     </div>
     <div class="clients_main">
-      <Loader v-if="clientStore.isLoading" style="background-color: transparent" />
+      <Loader
+        v-if="clientStore.isLoading"
+        style="background-color: transparent"
+      />
       <div v-else>
         <div class="client_list__w" v-if="clientStore.clients.length > 0">
           <div class="clients__list">
@@ -130,7 +121,7 @@ import Loader from "@/components/ui/loading/Loader.vue";
 import Selects from "@/components/ui/dropdown/Selects.vue";
 import Switcher from "@/components/ui/inputs/Switcher.vue";
 import IcBtn from "@/components/ui/buttons/IcBtn.vue";
-import { ru } from 'date-fns/locale';
+import { ru } from "date-fns/locale";
 const highlightDates = ref([]);
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
@@ -199,9 +190,7 @@ const goToPage = (newPage: number) => {
   }
 };
 
- 
-
-const markers = ref([]);
+const markers = ref<any>([]);
 
 onMounted(async () => {
   await clientStore.getClients();
@@ -215,31 +204,26 @@ watchEffect(() => {
 });
 
 function updateMarkers() {
-  markers.value = clients.value.map((client) => {
-    const callbackDate = client.acf.callback;
+  markers.value = clients.value
+    .map((client) => {
+      const callbackDate = client.acf.callback;
 
-    // Проверка на валидность даты
-    const date = callbackDate ? new Date(callbackDate) : null;
+      // Проверка на валидность даты
+      const date = callbackDate ? new Date(callbackDate) : null;
 
-    if (date && !isNaN(date.getTime())) {
-      return {
-        date: date,
-        type: 'dot',
-        tooltip: [{ text: 'Звонки', color: 'blue' }],
-      };
-    } else {
-      console.warn(`Invalid date found for client ID: ${client.id}`);
-      return null; // Возвращаем null, чтобы исключить невалидные даты
-    }
-  }).filter(marker => marker !== null); // Фильтруем null значения
+      if (date && !isNaN(date.getTime())) {
+        return {
+          date: date,
+          type: "dot",
+          tooltip: [{ text: "Звонки", color: "blue" }],
+        };
+      } else {
+        console.warn(`Invalid date found for client ID: ${client.id}`);
+        return null; // Возвращаем null, чтобы исключить невалидные даты
+      }
+    })
+    .filter((marker) => marker !== null); // Фильтруем null значения
 }
-
-
-
-
-
-
-
 </script>
 
 <style scoped lang="scss">
@@ -378,14 +362,14 @@ h3 {
   z-index: 2;
 }
 .custom-marker {
-  content: '';
+  content: "";
   top: calc(80%);
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: $light-blue; 
+  background-color: $light-blue;
   border-radius: 4px;
   z-index: -1;
 }
@@ -393,5 +377,4 @@ h3 {
 :deep(.dp__marker_tooltip) {
   font-size: 12px;
 }
-
 </style>
