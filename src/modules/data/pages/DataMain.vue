@@ -5,6 +5,41 @@
     <h3>Клиенты</h3>
     <div class="filter">
       <div class="filter_row">
+        <!-- <DatePicker
+          
+          v-model="selectedDate"
+          :format="'dd.MM.yyyy'"
+          :enable-time-picker="false"
+          :month-change-on-scroll="false"
+          auto-apply
+          disable-year-select
+          :format-locale="ru"
+          placeholder="Выберите дату"
+          position="left"
+
+          select-text="Выбрать"
+          cancel-text="Закрыть"
+          @update:modelValue="clientStore.updateSelectedDate"
+          :highlight="highlightDays"
+        /> -->
+        <DatePicker v-model="selectedDate"
+          :format="'dd.MM.yyyy'"
+          :enable-time-picker="false"
+          :month-change-on-scroll="false"
+          auto-apply
+          disable-year-select
+          :format-locale="ru"
+          placeholder="Выберите дату"
+          position="left"
+          :hide-offset-dates="false"
+          select-text="Выбрать"
+          cancel-text="Закрыть"
+          @update:modelValue="clientStore.updateSelectedDate" :markers="markers">
+          <template #marker="{ marker, day, date }">
+            <span v-if="marker" class="custom-marker"></span>
+          </template>
+        </DatePicker>
+  
         <Selects
           v-model="selectedCategory"
           :options="clientStore.categories"
@@ -87,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, watchEffect, nextTick } from "vue";
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
 import ClientCard from "@/components/ui/card/ClientCard.vue";
 import pagination from "@/components/ui/buttons/pagination.vue";
@@ -95,7 +130,11 @@ import Loader from "@/components/ui/loading/Loader.vue";
 import Selects from "@/components/ui/dropdown/Selects.vue";
 import Switcher from "@/components/ui/inputs/Switcher.vue";
 import IcBtn from "@/components/ui/buttons/IcBtn.vue";
-
+import { ru } from 'date-fns/locale';
+const highlightDates = ref([]);
+// @ts-ignore
+import DatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 const isPhoneSearch = ref(false);
 const clientStore = useClientStore();
 const {
@@ -107,7 +146,7 @@ const {
   perPage,
   searchPhone,
   searchQuery,
-
+  selectedDate,
   totalPages,
   page,
 } = useClientStoreRefs();
@@ -159,6 +198,48 @@ const goToPage = (newPage: number) => {
     clientStore.updatePage(newPage);
   }
 };
+
+ 
+
+const markers = ref([]);
+
+onMounted(async () => {
+  await clientStore.getClients();
+  updateMarkers();
+});
+
+watchEffect(() => {
+  if (clients.value.length > 0) {
+    updateMarkers();
+  }
+});
+
+function updateMarkers() {
+  markers.value = clients.value.map((client) => {
+    const callbackDate = client.acf.callback;
+
+    // Проверка на валидность даты
+    const date = callbackDate ? new Date(callbackDate) : null;
+
+    if (date && !isNaN(date.getTime())) {
+      return {
+        date: date,
+        type: 'dot',
+        tooltip: [{ text: 'Звонки', color: 'blue' }],
+      };
+    } else {
+      console.warn(`Invalid date found for client ID: ${client.id}`);
+      return null; // Возвращаем null, чтобы исключить невалидные даты
+    }
+  }).filter(marker => marker !== null); // Фильтруем null значения
+}
+
+
+
+
+
+
+
 </script>
 
 <style scoped lang="scss">
@@ -292,4 +373,25 @@ h3 {
   font-size: 30px;
   margin-bottom: 40px;
 }
+:deep(.dp__cell_inner) {
+  position: relative;
+  z-index: 2;
+}
+.custom-marker {
+  content: '';
+  top: calc(80%);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $light-blue; 
+  border-radius: 4px;
+  z-index: -1;
+}
+
+:deep(.dp__marker_tooltip) {
+  font-size: 12px;
+}
+
 </style>

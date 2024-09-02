@@ -3,7 +3,7 @@
 <template>
 	<component :is="layoutComponent" :class="{ fixed: isAnyModalActive }">
 		<router-view />
-		<Modal :positionX="isCart ? 'right' : 'center'" />
+		<Modal :positionX="[isCart, isQr] ? 'right' : 'center'" />
 	</component>
 </template>
 
@@ -24,6 +24,7 @@
 		return Object.values(modals.value).some((value) => value);
 	});
 	const isCart = computed(() => modals.value.client);
+	const isQr = computed(() => modals.value.qr);
 
 	const route = useRoute();
 

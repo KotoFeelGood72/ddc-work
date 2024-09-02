@@ -181,10 +181,16 @@
                 <DatePicker
                   v-model="callback"
                   :format="'dd.MM.yyyy HH:mm'"
-                  :enable-time="true"
-                  :locale="ruLocale"
-                  placeholder="Ввести дату"
+           
+                  :month-change-on-scroll="false"
+                  auto-apply
+                  disable-year-select
+                  :format-locale="ru"
+                  placeholder="Выберите дату"
+                  position="left"
                   @update:model-value="updateCallback"
+                  select-text="Выбрать"
+                  cancel-text="Закрыть"
                 />
                 <Icons icon="solar:calendar-date-broken" />
               </div>
@@ -227,10 +233,7 @@
             <IcBtn icon="solar:login-broken" />
             Открыть
           </div>
-          <div class="card_link__btn">
-            <IcBtn icon="solar:star-broken" />
-            Добавить в избранное
-          </div>
+
           <div class="card_link__btn">
             <IcBtn icon="solar:trash-bin-minimalistic-2-broken" />
             Удалить
@@ -241,12 +244,9 @@
             <Icons icon="solar:eye-broken" :size="20" />Просмотрено: 1
           </div>
           <div class="card__kp">
-            <Icons icon="solar:file-right-broken" :size="20" />КП: Отправлено
+            <Icons icon="solar:file-right-broken" :size="20" />КП: {{isStatusSendKP ? 'Отправлено': 'Не отправлено'}}
           </div>
-          <div class="card_link__btn">
-            <IcBtn icon="solar:pen-new-round-broken" />
-            Сохранить
-          </div>
+     
         </div>
       </div>
     </div>
@@ -262,6 +262,7 @@ import { useRouter } from "vue-router";
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { ru } from 'date-fns/locale';
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
 import { useUsersStore, useUsersStoreRefs } from "@/store/useUserStore";
 import api from "@/api/api";
@@ -283,7 +284,7 @@ const { users } = useUsersStoreRefs();
 const router = useRouter();
 const ruLocale = ref<string>("ru");
 const activeTab = ref<any>("org");
-const callback = ref<any>(parseDateString(props.card.acf.callback));
+const callback = ref<any>(props.card.acf.callback);
 const selectedStatus = ref<any>(props.card.acf.status);
 const newComment = ref("");
 const emit = defineEmits(["deleteCard", "updateCard"]);
@@ -293,6 +294,8 @@ const isLoad = ref(false);
 const isSavingEmail = ref(false);
 const showSendKPButton = ref(false);
 const localEmail = ref(props.card.acf.email);
+
+
 
 const isStatusSendKP = computed(() => {
   return props.card.acf.status_kp === "Отправлено";
@@ -458,44 +461,24 @@ function adjustTextareaHeight(event: Event) {
   textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match content
 }
 
-function parseDateString(dateString: string): Date | null {
-  const parts = dateString.split(/[\/\s,:]+/);
-  if (parts.length < 5) return null;
 
-  const [day, month, year, hours, minutes] = parts;
-  return new Date(
-    parseInt(year),
-    parseInt(month) - 1, // Месяцы в JavaScript начинаются с 0
-    parseInt(day),
-    parseInt(hours),
-    parseInt(minutes)
-  );
-}
 
 async function updateCallback(newCallback: Date) {
   try {
     isLoading.value = true;
 
-    const formattedDate = formatDate(newCallback);
+
 
     await clientStore.updateClient({
       id: props.card.id,
       acf: {
         ...props.card.acf,
-        callback: formattedDate,
+        callback: newCallback,
       },
     });
 
     callback.value = newCallback;
-    props.card.acf.callback = formattedDate;
-
-    emit("updateCard", {
-      ...props.card,
-      acf: {
-        ...props.card.acf,
-        callback: formattedDate,
-      },
-    });
+    props.card.acf.callback = newCallback;
   } catch (error) {
     console.error("Ошибка при обновлении поля 'Перезвонить':", error);
   } finally {
@@ -503,15 +486,7 @@ async function updateCallback(newCallback: Date) {
   }
 }
 
-function formatDate(date: Date): string {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
 
-  return `${day}/${month}/${year} ${hours}:${minutes}`;
-}
 
 async function sendKP() {
   if (props.card.acf.status_kp !== "Отправлено") {
@@ -711,7 +686,7 @@ async function sendKP() {
     border-width: 0 0 1px 0;
     border-radius: 0;
     padding: 15px 40px;
-    font-size: 18px;
+    font-size: 16px;
     background-color: transparent;
   }
 

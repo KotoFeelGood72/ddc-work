@@ -95,7 +95,7 @@ function logout() {
 
 .user {
   position: relative;
-  z-index: 999;
+  z-index: 20;
 }
 
 .home-link {

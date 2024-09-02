@@ -6,8 +6,8 @@
         {{ decodedPhone }}
         <div class="clipboard" @click="handleCopy">
           <Icons
-            icon="solar:clipboard-linear"
-            size="18px"
+            icon="solar:clipboard-check-broken"
+            :size="20"
             color="#424242"
             hoverColor="#ff9800"
           />
@@ -116,31 +116,32 @@ watch(
 .qr-code-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  background-color: #fff;
-  border-radius: 10px;
+  background-color: $white;
   overflow: hidden;
   padding: 30px 60px 0 60px;
+  height: 100vh;
+  z-index: 9999;
 }
 
 .qr_title {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  // align-items: center;
   width: 100%;
   gap: 10px;
+  font-weight: 400;
 
   .qr__phone {
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1px solid #ff9800;
-    padding: 7px 20px;
+    // padding: 7px 20px;
     border-radius: 8px;
     position: relative;
-    font-size: 14px;
+    font-size: 20px;
   }
 }
 
@@ -172,7 +173,7 @@ watch(
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: calc(100% + 8px);
+  left: calc(75% + 8px);
   background-color: $secondary-orange;
   color: #424242;
   padding: 5px 10px;
@@ -191,5 +192,9 @@ watch(
   50% {
     opacity: 1;
   }
+}
+
+.qr-code {
+  margin-left: -17px;
 }
 </style>
