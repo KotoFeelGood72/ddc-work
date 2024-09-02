@@ -24,7 +24,11 @@
             <p>Виктор</p>
           </div>
           <transition>
-            <UserModal v-if="userModal" ref="userModalRef" class="user-dropdown" />
+            <UserModal
+              v-if="userModal"
+              ref="userModalRef"
+              class="user-dropdown"
+            />
           </transition>
         </div>
       </div>
@@ -40,8 +44,6 @@ import { useUsersStore } from "@/store/useUserStore";
 import { useRouter } from "vue-router";
 import IcBtn from "../ui/buttons/IcBtn.vue";
 
-const { clearUser } = useUsersStore();
-const router = useRouter();
 const userModal = ref<boolean>(false);
 const userModalRef = ref<HTMLElement | null>(null);
 
@@ -56,11 +58,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   // document.removeEventListener("click", handleClickOutside);
 });
-
-function logout() {
-  clearUser();
-  router.push("/");
-}
 </script>
 
 <style scoped lang="scss">
