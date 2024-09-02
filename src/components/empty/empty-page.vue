@@ -1,7 +1,10 @@
 <template>
   <div class="empty-page">
     <div class="empty-img">
-      <img :src="emptys" alt="" />
+      <img
+        src="http://manager.dynamic-devs-collective.ru/wp-content/uploads/2024/09/empty-document.png"
+        alt=""
+      />
     </div>
     <div class="empty-content">
       <heading title="Данный раздел в разработке" :size="4" />
@@ -9,9 +12,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import emptys from "/assets/img/empty-document.png";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 .empty-img {

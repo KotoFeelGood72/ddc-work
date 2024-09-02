@@ -208,7 +208,18 @@
                   <Icons icon="solar:chat-round-broken" />
                   Лог взаимодействия:
                 </div>
-                <div class="comment__w">
+
+                <div
+                  class="empty_comment"
+                  v-if="Object.keys(groupedComments).length === 0"
+                >
+                  <img
+                    src="http://manager.dynamic-devs-collective.ru/wp-content/uploads/2024/09/empty-message.png"
+                    alt=""
+                  />
+                  <p>Пусто</p>
+                </div>
+                <div class="comment__w" v-else>
                   <ul
                     v-for="(comments, date) in groupedComments"
                     :key="date"
@@ -1003,6 +1014,17 @@ async function sendKP() {
     svg {
       color: $blue !important;
     }
+  }
+}
+
+.empty_comment {
+  img {
+    max-width: 200px;
+  }
+  p {
+    font-size: 30px;
+    font-weight: 600;
+    margin-left: 80px;
   }
 }
 </style>
