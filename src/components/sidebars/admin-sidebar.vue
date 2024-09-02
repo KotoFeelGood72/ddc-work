@@ -3,8 +3,10 @@
 <template>
   <div class="admin-sidebar">
     <div class="admin_logo">
-      <avatar :img="logo" size="medium" />
-      <p>Happines: CRM</p>
+      <img
+        src="http://manager.dynamic-devs-collective.ru/wp-content/uploads/2024/09/logo.svg"
+        alt=""
+      />
     </div>
     <ul class="nav">
       <li v-for="(link, i) in AdminNav" :key="'admin-nav-item-' + i">
@@ -21,8 +23,6 @@
 
 <script setup lang="ts">
 import { AdminNav } from "@/consts/AdminNav";
-import avatar from "../ui/people/avatar.vue";
-import logo from "/assets/img/logo.png";
 </script>
 
 <style scoped lang="scss">
@@ -93,5 +93,15 @@ import logo from "/assets/img/logo.png";
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.admin_logo {
+  max-width: 120px;
+  @include flex-center;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 </style>
