@@ -19,7 +19,7 @@ defineProps<{
 
 <style scoped lang="scss">
 .card {
-  background-color: $ulight;
+  background-color: $white;
   border: 1px solid $light;
   border-radius: 5px;
 }
