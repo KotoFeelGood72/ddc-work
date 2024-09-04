@@ -5,16 +5,10 @@
     <div v-if="!isDeleted" class="card">
       <div class="card_top">
         <ul class="card_tab__link">
-          <li
-            @click.stop="activeTab = 'org'"
-            :class="{ active: activeTab === 'org' }"
-          >
+          <li @click.stop="activeTab = 'org'" :class="{ active: activeTab === 'org' }">
             Сведение об организации
           </li>
-          <li
-            @click.stop="activeTab = 'info'"
-            :class="{ active: activeTab === 'info' }"
-          >
+          <li @click.stop="activeTab = 'info'" :class="{ active: activeTab === 'info' }">
             Сведение о контактном лице
           </li>
           <li
@@ -64,12 +58,9 @@
             <li>
               <Icons icon="solar:code-circle-broken" :size="18" />
               <p>Сайт:</p>
-              <a
-                :href="firstWebsite"
-                target="_blank"
-                @click.stop="handleWebsiteClick"
-                >{{ firstWebsite }}</a
-              >
+              <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
+                firstWebsite
+              }}</a>
             </li>
             <li>
               <Icons icon="solar:document-add-broken" :size="18" />
@@ -83,7 +74,7 @@
                     @click.stop
                     placeholder="Внести E-Mail"
                   />
-       
+
                   <div
                     class="send__kp"
                     v-if="showSendKPButton || props.card.acf.email"
@@ -91,11 +82,7 @@
                     :class="{ disabled: isStatusSendKP }"
                   >
                     {{ isStatusSendKP ? "Отправлено" : "Отправить" }}
-                    <Icons
-                      icon="solar:login-2-broken"
-                      v-if="!isLoad"
-                      :size="16"
-                    />
+                    <Icons icon="solar:login-2-broken" v-if="!isLoad" :size="16" />
                     <div class="send_load" v-if="isLoad">
                       <Icons icon="line-md:loading-loop" :size="16" />
                     </div>
@@ -192,6 +179,7 @@
                   @update:model-value="updateCallback"
                   select-text="Выбрать"
                   cancel-text="Закрыть"
+                  @clear="clearCallback"
                 />
                 <Icons icon="solar:calendar-date-broken" />
               </div>
@@ -350,9 +338,7 @@ const firstWebsite = computed(() => {
 
 const formattedPhone = computed(() => {
   if (!props.card.acf.phones) return null;
-  const phones = props.card.acf.phones
-    .split(" ")
-    .map((phone: any) => phone.trim());
+  const phones = props.card.acf.phones.split(" ").map((phone: any) => phone.trim());
   const firstPhone = phones[0];
   if (firstPhone.startsWith("8")) {
     return formatPhoneNumber(firstPhone.replace("8", "+7"));
@@ -397,6 +383,10 @@ function updateStatus(newStatus: string) {
   });
 }
 
+function clearCallback() {
+  callback.value = null;
+}
+
 // function openClient(id: number) {
 //   openModal("client");
 //   const query = { ...router.currentRoute.value.query, client: id };
@@ -437,7 +427,6 @@ async function saveEmail() {
     isSavingEmail.value = false;
   }
 }
-
 
 async function addComment() {
   if (newComment.value.trim()) {
@@ -847,7 +836,6 @@ async function sendKP() {
 
 .card_email__w {
   flex-grow: 1;
-
 }
 
 .card_email {

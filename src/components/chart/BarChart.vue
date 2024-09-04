@@ -44,7 +44,7 @@ const monthOptions = Object.keys(monthsData).map((month) => ({
 }));
 
 // Активный месяц
-const activeMonth = ref(monthOptions[0].value);
+const activeMonth = ref<any>(monthOptions[0].value);
 
 // Серии для графика
 const series = ref([

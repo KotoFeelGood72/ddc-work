@@ -19,6 +19,7 @@ export const useClientStore = defineStore("clientStore", {
       { name: "Москва", id: "Москва" },
       { name: "Ростов на Дону", id: "Ростов на Дону" },
       { name: "Пермь", id: "Пермь" },
+      { name: "Казань", id: "Казань" },
     ],
     perPageOptions: [
       { name: "10", id: "10" },
