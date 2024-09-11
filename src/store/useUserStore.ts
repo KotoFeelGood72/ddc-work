@@ -33,8 +33,10 @@ export const useUsersStore = defineStore('user', {
     },
     async refreshToken() {
       try {
-        const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token/refresh', {
-          refresh_token: this.users.token,
+        const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token/validate', {
+          headers: {
+            Authorization: `Bearer ${this.users.token}`,
+          },
         });
         this.setUser(response.data);
         console.log(response.data)
@@ -51,6 +53,7 @@ export const useUsersStore = defineStore('user', {
       localStorage.removeItem('user');
     },
     async fetchUserInfo() {
+      await this.refreshToken()
       try {
         const response = await axios.get('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/users/me', {
           headers: {
