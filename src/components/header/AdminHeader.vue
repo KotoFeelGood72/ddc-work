@@ -20,8 +20,8 @@
         <IcBtn icon="solar:remove-folder-broken" />
         <div class="user">
           <div class="user__main" @click="toggleUserModal">
-            <avatar />
-            <p>Виктор</p>
+            <avatar :img="users.userInfo.acf.user_img"/>
+            <p>{{users.user_display_name}}</p>
           </div>
           <transition>
             <UserModal
@@ -40,12 +40,12 @@
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import avatar from "../ui/people/avatar.vue";
 import UserModal from "../modal/view/UserModal.vue";
-
+import { useUsersStoreRefs } from "@/store/useUserStore";
 import IcBtn from "../ui/buttons/IcBtn.vue";
 
 const userModal = ref<boolean>(false);
 const userModalRef = ref<HTMLElement | null>(null);
-
+const {users} = useUsersStoreRefs()
 const toggleUserModal = () => {
   userModal.value = !userModal.value;
 };
@@ -71,7 +71,7 @@ onBeforeUnmount(() => {
     @include flex-space;
     width: 100%;
     gap: 20px;
-    padding: 5px 10px;
+    padding: 5px 0;
   }
 }
 
@@ -81,6 +81,7 @@ onBeforeUnmount(() => {
 }
 .row-start {
   flex-grow: 1;
+
 }
 
 .user-dropdown {

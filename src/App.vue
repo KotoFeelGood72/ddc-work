@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <template>
   <component :is="layoutComponent" :class="{ fixed: isAnyModalActive }">
     <router-view />

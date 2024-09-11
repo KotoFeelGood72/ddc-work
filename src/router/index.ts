@@ -1,8 +1,10 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import { DataRouter } from '../modules/data/router/DataRouter'
+import {CompaniesRouter} from '../view/companies/router/CompaniesRouter'
+import {ProfileRouter} from '../view/profile/router/ProfileRouter'
 
 const routes = [
-  ...DataRouter.options.routes,
+  ...CompaniesRouter.options.routes,
+  ...ProfileRouter.options.routes,
   {
     path: '/',
     name: 'Home',
@@ -31,7 +33,7 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('../modules/main/pages/DashboardPages.vue'),
+    component: () => import('../view/Dashboard.vue'),
     meta: {
       layout: 'Admin',
       requiresAuth: true,
