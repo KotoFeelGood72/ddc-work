@@ -1,6 +1,6 @@
 <template>
   <div class="icon-btn" @click="emit('onClick')">
-    <Icons :icon="icon" :size="22" />
+    <Icons :icon="icon" size="22" />
   </div>
 </template>
 

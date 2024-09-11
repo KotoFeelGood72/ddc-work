@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <template>
   <div class="admin-sidebar">
     <div class="admin_logo">

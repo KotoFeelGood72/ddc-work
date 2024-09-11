@@ -13,7 +13,7 @@ import { ref, computed } from "vue";
 
 const props = defineProps<{
   icon: string;
-  size?: string;
+  size?: any;
   color?: string;
   hoverColor?: string;
 }>();

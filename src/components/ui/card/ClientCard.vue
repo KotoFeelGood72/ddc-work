@@ -100,17 +100,17 @@
                     <Icons
                       icon="solar:login-2-broken"
                       v-if="!isLoad"
-                      :size="16"
+                      size="16"
                     />
                     <div class="send_load" v-if="isLoad">
-                      <Icons icon="line-md:loading-loop" :size="16" />
+                      <Icons icon="line-md:loading-loop" size="16" />
                     </div>
                   </div>
                 </div>
               </div>
             </li>
             <li>
-              <Icons icon="solar:user-id-broken" :size="18" />
+              <Icons icon="solar:user-id-broken" size="18" />
               <p>ФИО, должность руководителя:</p>
               <span>{{ card.acf.fio }}</span>
             </li>
@@ -204,10 +204,10 @@
             </li>
             <li class="history_item comment">
               <div class="history_item__review">
-                <div class="history_item__top">
+                <!-- <div class="history_item__top">
                   <Icons icon="solar:chat-round-broken" />
                   Лог взаимодействия:
-                </div>
+                </div> -->
 
                 <div
                   class="empty_comment"
@@ -254,9 +254,13 @@
                   v-model="newComment"
                   @input="adjustTextareaHeight"
                   @click.stop
+                  @keydown.enter="onEnter"
                 ></textarea>
                 <div class="send_comment" @click.stop="addComment">
-                  <Icons icon="solar:chat-round-unread-bold" />Отправить
+                  <Icons
+                    icon="solar:chat-round-unread-bold"
+                    :size="20"
+                  />Отправить
                 </div>
               </div>
             </li>
@@ -409,6 +413,19 @@ function updateStatus(newStatus: string) {
 //   router.push({ query });
 // }
 
+function onEnter(event: KeyboardEvent) {
+  // Проверяем, нажата ли клавиша Shift
+  if (event.shiftKey) {
+    // Если Shift + Enter, то добавляем новую строку
+    newComment.value += "\n";
+  } else {
+    // Если просто Enter, то вызываем метод отправки комментария
+    addComment();
+    // Предотвращаем стандартное поведение Enter
+    event.preventDefault();
+  }
+}
+
 async function saveEmail() {
   if (!localEmail.value) return;
 
@@ -541,10 +558,13 @@ async function sendKP() {
         phone: users.value.userInfo.acf.user_phone,
       };
 
+      // Отправляем КП
       await axios.post(
         "https://manager.dynamic-devs-collective.ru/wp-json/custom/v1/send-email",
         data
       );
+
+      // Обновляем статус КП на "Отправлено"
       props.card.acf.status_kp = "Отправлено";
       await clientStore.updateClient({
         id: props.card.id,
@@ -553,6 +573,9 @@ async function sendKP() {
           status_kp: "Отправлено",
         },
       });
+
+      // Устанавливаем статус клиента в "В обработке"
+      updateStatus("В обработке");
     } catch (error) {
       console.error("Ошибка при отправке КП:", error);
     } finally {
@@ -615,6 +638,7 @@ async function sendKP() {
     width: 50%;
     border-bottom: 1px dotted $light;
     @include flex-start;
+    // align-items: flex-start;
     font-size: 14px;
     gap: 5px;
     padding: 15px 0;
@@ -726,7 +750,7 @@ async function sendKP() {
     border-width: 0 0 1px 0;
     border-radius: 0;
     padding: 15px 40px;
-    font-size: 16px;
+    font-size: 14px;
     background-color: transparent;
   }
 
@@ -735,12 +759,12 @@ async function sendKP() {
     border: 1px solid $light;
     padding: 10px 20px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
-    min-height: 300px;
     margin-bottom: 10px;
     resize: none;
     overflow-y: hidden;
+    min-height: 150px;
     &:focus {
       outline: none;
       border-color: $blue;
@@ -826,8 +850,8 @@ async function sendKP() {
   background-color: $blue;
   color: $white;
   cursor: pointer;
-  padding: 15px 40px;
-  font-size: 16px;
+  padding: 12px 30px;
+  font-size: 14px;
   font-weight: 500;
   border-radius: 10px;
   gap: 10px;
@@ -956,7 +980,7 @@ async function sendKP() {
 
 .history_item__action {
   width: 50%;
-  padding-top: 45px;
+  // padding-top: 45px;
 }
 
 .history_item__review {
@@ -1018,13 +1042,19 @@ async function sendKP() {
 }
 
 .empty_comment {
+  @include flex-start;
+  border: 1px solid #7a7a7a2a;
+  // box-shadow: 0px 0px 30px 0px #7a7a7a17;
+  display: inline-flex;
+  border-radius: 10px;
+  padding: 20px 40px;
   img {
-    max-width: 200px;
+    max-width: 100px;
   }
   p {
-    font-size: 30px;
+    font-size: 22px;
     font-weight: 600;
-    margin-left: 80px;
+    margin-left: 20px;
   }
 }
 </style>

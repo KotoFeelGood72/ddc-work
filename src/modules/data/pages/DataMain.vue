@@ -217,7 +217,7 @@ function updateMarkers() {
           tooltip: [{ text: "Звонки", color: "blue" }],
         };
       } else {
-        console.warn(`Invalid date found for client ID: ${client.id}`);
+        // console.warn(`Invalid date found for client ID: ${client.id}`);
         return null; // Возвращаем null, чтобы исключить невалидные даты
       }
     })
