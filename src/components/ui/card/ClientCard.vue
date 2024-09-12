@@ -72,6 +72,7 @@
                     v-model="localEmail"
                     @input="handleEmailInput"
                     @click.stop
+                    @keydown.enter="sendKP"
                     placeholder="Внести E-Mail"
                   />
 
@@ -566,6 +567,7 @@ async function sendKP() {
       });
 
       // Устанавливаем статус клиента в "В обработке"
+      selectedStatus.value = "В обработке";
       updateStatus("В обработке");
     } catch (error) {
       console.error("Ошибка при отправке КП:", error);
