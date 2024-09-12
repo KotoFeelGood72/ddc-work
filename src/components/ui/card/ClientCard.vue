@@ -470,7 +470,15 @@ async function addComment() {
   }
 }
 
-function handlePhoneClick() {
+async function handlePhoneClick() {
+  await clientStore.updateClient({
+    id: props.card.id,
+    acf: {
+      ...props.card.acf,
+      phone_visible: true,
+    },
+  });
+  console.log(props.card.phone_visible);
   openQR(formattedPhone.value, "phone");
 }
 
