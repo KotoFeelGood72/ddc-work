@@ -2,9 +2,14 @@ import axios from 'axios';
 import { useUsersStore } from '@/store/useUserStore';
 
 const wpInstance = axios.create({
-  baseURL: 'https://manager.dynamic-devs-collective.ru/wp-json/wp/v2',
+  baseURL: '/wp-json/wp/v2', // Базовый URL заменяем на проксируемый адрес
   headers: {
     'Content-Type': 'application/json',
+  },
+  proxy: {
+    host: 'localhost', // Прокси сервер
+    port: 8080,        // Порт прокси-сервера
+    protocol: 'http',
   },
 });
 
@@ -30,10 +35,7 @@ wpInstance.interceptors.response.use(
 
     if (error.response && error.response.status === 401) {
       try {
-        // Пробуем обновить токен
         await userStore.refreshToken();
-        
-        // Повторяем оригинальный запрос с новым токеном
         const originalRequest = error.config;
         const newToken = userStore.users.token;
         if (newToken) {
@@ -41,7 +43,6 @@ wpInstance.interceptors.response.use(
         }
         return wpInstance(originalRequest);
       } catch (refreshError) {
-        // Не удалось обновить токен, очищаем данные пользователя
         userStore.clearUser();
         return Promise.reject(refreshError);
       }

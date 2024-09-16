@@ -38,9 +38,9 @@ const monthsData = [
 ];
 
 // Опции для Selects
-const monthOptions = Object.keys(monthsData).map((month) => ({
-  label: month,
-  value: month,
+const monthOptions = monthsData.map((month) => ({
+  label: month.name,
+  value: month.id,
 }));
 
 // Активный месяц
@@ -95,7 +95,10 @@ const chartOptions = ref({
 
 // Функция для обновления данных графика при изменении месяца
 const setMonth = () => {
-  series.value[0].data = monthsData[activeMonth.value];
+  const monthData = monthsData.find((month) => month.id === activeMonth.value);
+  if (monthData) {
+    series.value[0].data = monthData.data;
+  }
 };
 
 watch(activeMonth, setMonth);
