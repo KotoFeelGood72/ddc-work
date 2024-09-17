@@ -1,8 +1,14 @@
 <template>
-  <div class="user_dropdown" v-if="users">
+  <div
+    class="user_dropdown"
+    v-if="users && users.userInfo && users.userInfo.acf"
+  >
     <div class="user_dropdown__top">
       <div class="user_top__left">
-        <avatar v-if="users && users.userInfo" :img="users.userInfo.acf.user_img" />
+        <avatar
+          v-if="users && users.userInfo"
+          :img="users.userInfo?.acf?.user_img"
+        />
         <div class="user_dropdown__topname">
           <p>{{ users.userInfo.acf.user_name }}</p>
           <p>{{ users.userInfo.acf.user_professional }}</p>

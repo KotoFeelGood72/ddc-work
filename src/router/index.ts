@@ -1,60 +1,63 @@
-import { createWebHistory, createRouter } from 'vue-router'
-import {CompaniesRouter} from '../view/companies/router/CompaniesRouter'
-import {ProfileRouter} from '../view/profile/router/ProfileRouter'
+import { createWebHistory, createRouter } from "vue-router";
+import { CompaniesRouter } from "../view/companies/router/CompaniesRouter";
+import { ProfileRouter } from "../view/profile/router/ProfileRouter";
 
 const routes = [
   ...CompaniesRouter.options.routes,
   ...ProfileRouter.options.routes,
   {
-    path: '/',
-    name: 'Home',
-    redirect: '/dashboard',
+    path: "/",
+    name: "Home",
+    redirect: "/dashboard",
     meta: {
-      layout: 'Admin',
+      layout: "Admin",
       requiresAuth: true,
     },
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../modules/auth/LoginPages.vue'),
+    path: "/login",
+    name: "Login",
+    component: () => import("../modules/auth/LoginPages.vue"),
     meta: {
-      layout: 'Empty',
+      layout: "Empty",
     },
   },
   {
-    path: '/sign',
-    name: 'Sign',
-    component: () => import('../modules/auth/SignPages.vue'),
+    path: "/sign",
+    name: "Sign",
+    component: () => import("../modules/auth/SignPages.vue"),
     meta: {
-      layout: 'Empty',
+      layout: "Empty",
     },
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('../view/Dashboard.vue'),
+    path: "/dashboard",
+    name: "Dashboard",
+    component: () => import("../view/Dashboard.vue"),
     meta: {
-      layout: 'Admin',
+      layout: "Admin",
       requiresAuth: true,
-      title: 'Dashboard'
+      title: "Dashboard",
     },
   },
-]
+];
 
 export const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
 router.beforeEach((to, _from, next) => {
-  const isAuthenticated = !!localStorage.getItem('user');
+  const isAuthenticated = !!localStorage.getItem("user");
 
-  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-    next({ path: '/login' })
-  } else if (to.path === '/login' && isAuthenticated) {
-    next({ path: '/dashboard' })
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !isAuthenticated
+  ) {
+    next({ path: "/login" });
+  } else if (to.path === "/login" && isAuthenticated) {
+    next({ path: "/dashboard" });
   } else {
-    next()
+    next();
   }
-})
+});

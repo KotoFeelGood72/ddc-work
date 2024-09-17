@@ -1,10 +1,10 @@
-import axios from 'axios';
-import { useUsersStore } from '@/store/useUserStore';
+import axios from "axios";
+import { useUsersStore } from "@/store/useUserStore";
 
 const wpInstance = axios.create({
-  baseURL: 'https://manager.dynamic-devs-collective.ru/wp-json/wp/v2',
+  baseURL: "/api/wp/v2",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -32,7 +32,7 @@ wpInstance.interceptors.response.use(
       try {
         // Пробуем обновить токен
         await userStore.refreshToken();
-        
+
         // Повторяем оригинальный запрос с новым токеном
         const originalRequest = error.config;
         const newToken = userStore.users.token;
