@@ -2,11 +2,7 @@ import axios from "axios";
 import { useUsersStore } from "@/store/useUserStore";
 
 const wpInstance = axios.create({
-<<<<<<< HEAD
   baseURL: "/api/wp/v2",
-=======
-  baseURL: '/wp-json/wp/v2', // Базовый URL заменяем на проксируемый адрес
->>>>>>> 60cb0e6fce1462b0b9bfe4fdb38bc99da0164212
   headers: {
     "Content-Type": "application/json",
   },
