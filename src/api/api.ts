@@ -36,11 +36,8 @@ wpInstance.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       try {
         await userStore.refreshToken();
-<<<<<<< HEAD
 
         // Повторяем оригинальный запрос с новым токеном
-=======
->>>>>>> 60cb0e6fce1462b0b9bfe4fdb38bc99da0164212
         const originalRequest = error.config;
         const newToken = userStore.users.token;
         if (newToken) {
