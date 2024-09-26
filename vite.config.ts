@@ -37,12 +37,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
-        // Прокси только для путей, начинающихся с /api
-        target: "https://manager.dynamic-devs-collective.ru/wp-json",
+      '/wp-json': {
+        target: 'https://manager.dynamic-devs-collective.ru',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""), // Переписываем /api на пустое место
-        secure: false,
+        rewrite: (path) => path.replace(/^\/wp-json/, '/wp-json'),
       },
     },
   },

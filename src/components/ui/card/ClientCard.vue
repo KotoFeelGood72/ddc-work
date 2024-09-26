@@ -1,7 +1,6 @@
 <template>
   <transition name="fade" @after-leave="handleAfterLeave">
     <div v-if="!isDeleted" class="card">
-      <button @click="sendWA">WHATSAPP</button>
       <div class="card_top">
         <ul class="card_tab__link">
           <li

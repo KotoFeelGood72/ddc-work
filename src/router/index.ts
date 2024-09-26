@@ -40,6 +40,17 @@ const routes = [
       title: "Dashboard",
     },
   },
+  {
+    path: "/staff",
+    name: "Staff",
+    component: () => import("../view/staff/index.vue"),
+    meta: {
+      layout: "Admin",
+      requiresAuth: true,
+      title: "Dashboard",
+      role: 'admin'
+    },
+  },
 ];
 
 export const router = createRouter({

@@ -6,10 +6,9 @@
     </div>
     <div class="chart__select">
       <Selects
-        :options="monthOptions"
+        :options="monthsData"
         v-model="activeMonth"
         placeholder="Выберите месяц"
-        @change="setMonth"
       />
     </div>
     <ApexChart type="bar" height="300" :options="chartOptions" :series="series" />
@@ -22,7 +21,7 @@ import ApexChart from "vue3-apexcharts";
 import Selects from "../ui/dropdown/Selects.vue";
 
 // Данные по месяцам
-const monthsData = [
+const monthsData = ref<any>([
   { id: "Январь", name: "Январь", data: [1200, 1500, 800, 1100, 1600, 1400, 1050] },
   { id: "Февраль", name: "Февраль", data: [1300, 1400, 900, 1200, 1500, 1300, 950] },
   { id: "Март", name: "Март", data: [1100, 1600, 900, 1300, 1400, 1500, 1200] },
@@ -35,22 +34,23 @@ const monthsData = [
   { id: "Октябрь", name: "Октябрь", data: [1300, 1400, 1200, 1400, 1500, 1300, 1400] },
   { id: "Ноябрь", name: "Ноябрь", data: [1400, 1300, 1100, 1500, 1600, 1400, 1200] },
   { id: "Декабрь", name: "Декабрь", data: [1500, 1200, 1000, 1600, 1700, 1500, 1100] },
-];
+]);
 
 // Опции для Selects
-const monthOptions = monthsData.map((month) => ({
-  label: month.name,
-  value: month.id,
-}));
+// const monthOptions = monthsData.map((month) => ({
+//   label: month.name,
+//   value: month.id,
+// }));
 
 // Активный месяц
-const activeMonth = ref<any>(monthOptions[0].value);
+// const activeMonth = ref<any>(monthOptions[0].value);
+const activeMonth = ref<any>(monthsData.value[0].name);
 
 // Серии для графика
 const series = ref([
   {
     name: "Доход",
-    data: monthsData[activeMonth.value],
+    data: monthsData.value[0].data,
   },
 ]);
 
@@ -93,15 +93,23 @@ const chartOptions = ref({
   colors: ["#90e0ef"],
 });
 
-// Функция для обновления данных графика при изменении месяца
-const setMonth = () => {
-  const monthData = monthsData.find((month) => month.id === activeMonth.value);
+const setMonth = (selectedValue: string) => {
+  activeMonth.value = selectedValue; // Явное обновление активного месяца
+  const monthData = monthsData.value.find((month) => month.id === selectedValue);
   if (monthData) {
+    console.log(monthData)
     series.value[0].data = monthData.data;
   }
 };
 
-watch(activeMonth, setMonth);
+
+watch(activeMonth, (newMonth) => {
+  const monthData = monthsData.value.find((month) => month.id === newMonth);
+  if (monthData) {
+    series.value[0].data = monthData.data;
+  }
+});
+
 </script>
 
 <style lang="scss" scoped>

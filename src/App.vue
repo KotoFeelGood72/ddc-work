@@ -46,7 +46,9 @@ watch(isAnyModalActive, (newValue) => {
 });
 
 onMounted(async () => {
-  await fetchUserInfo();
+  if(route.path != '/login') {
+    await fetchUserInfo();
+  }
 });
 </script>
 

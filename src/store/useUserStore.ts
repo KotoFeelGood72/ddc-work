@@ -4,12 +4,12 @@ import { useRouter } from 'vue-router';
 
 export const useUsersStore = defineStore('user', {
   state: () => ({
-    users: {} as any,
+    users: null as any,
   }),
   actions: {
     async signIn(user: any) {
       try {
-        await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/register/user', user, {
+        await axios.post('/wp-json/wp/v2/register/user', user, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -21,7 +21,7 @@ export const useUsersStore = defineStore('user', {
     async login(user: any) {
       const router = useRouter(); 
       try {
-        const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token', user, {
+        const response = await axios.post('/wp-json/jwt-auth/v1/token', user, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
         await this.setUser(response.data);
@@ -33,12 +33,11 @@ export const useUsersStore = defineStore('user', {
     },
     async refreshToken() {
       try {
-        const response = await axios.post('https://manager.dynamic-devs-collective.ru/wp-json/jwt-auth/v1/token/validate', {
+        const response = await axios.post('/wp-json/jwt-auth/v1/token/validate', {},{
           headers: {
             Authorization: `Bearer ${this.users.token}`,
           },
         });
-        this.setUser(response.data);
         console.log(response.data)
       } catch (error) {
         console.log('Refresh token error:', error);
@@ -53,16 +52,19 @@ export const useUsersStore = defineStore('user', {
       localStorage.removeItem('user');
     },
     async fetchUserInfo() {
-      await this.refreshToken()
-      try {
-        const response = await axios.get('https://manager.dynamic-devs-collective.ru/wp-json/wp/v2/users/me', {
-          headers: {
-            Authorization: `Bearer ${this.users.token}`,
-          },
-        });
-        this.setUser({ ...this.users, userInfo: response.data });
-      } catch (error) {
-        console.error('Failed to fetch user info:', error);
+      if(this.users) {
+
+        await this.refreshToken()
+        try {
+          const response = await axios.get('/wp-json/wp/v2/users/me', {
+            headers: {
+              Authorization: `Bearer ${this.users.token}`,
+            },
+          });
+          this.setUser({ ...this.users, userInfo: response.data });
+        } catch (error) {
+          console.error('Failed to fetch user info:', error);
+        }
       }
     },
     
