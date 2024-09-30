@@ -19,7 +19,7 @@
         <IcBtn icon="solar:chat-round-unread-broken" />
         <IcBtn icon="solar:remove-folder-broken" />
         <div class="user">
-          <div class="user__main" @click="toggleUserModal">
+          <div class="user__main" @click="toggleUserModal" v-if="users && users.userInfo">
             <avatar :img="users.userInfo?.acf?.user_img" />
             <p>{{ users.user_display_name }}</p>
           </div>
