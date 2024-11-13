@@ -34,7 +34,7 @@ import defaultBtn from "@/components/ui/buttons/default-btn.vue";
 
 import { ref } from "vue";
 
-import { useUsersStore } from "@/store/useUserStore";
+import { useUsersStore } from "@/stores/useUsersStore";
 import { useRouter } from "vue-router";
 
 const router = useRouter();

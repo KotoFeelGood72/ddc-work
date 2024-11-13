@@ -36,7 +36,7 @@
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import avatar from "../ui/people/avatar.vue";
 import UserModal from "../modal/view/UserModal.vue";
-import { useUsersStoreRefs } from "@/store/useUserStore";
+import { useUsersStoreRefs } from "@/stores/useUsersStore";
 import IcBtn from "../ui/buttons/IcBtn.vue";
 
 const userModal = ref<boolean>(false);

@@ -23,7 +23,10 @@ import CardViewStatistic from "@/components/ui/card/CardViewStatistic.vue";
 import BarChart from "@/components/chart/BarChart.vue";
 // import CircleChart from "@/components/chart/CircleChart.vue";
 import AreaChart from "@/components/chart/AreaChart.vue";
-import { ref } from "vue";
+import { useUsersStore } from "@/stores/useUsersStore";
+import { ref, onMounted } from "vue";
+
+const { refreshToken } = useUsersStore();
 
 const stat1 = ref<any>([
   {
@@ -55,6 +58,10 @@ const stat1 = ref<any>([
     description: "За последний месяц",
   },
 ]);
+
+onMounted(() => {
+  refreshToken();
+});
 </script>
 
 <style scoped lang="scss">

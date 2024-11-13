@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useModalStore } from "@/store/useModalStore";
+import { useModalStore } from "@/stores/useModalStore";
 import { useRouter } from "vue-router";
 
 const props = withDefaults(

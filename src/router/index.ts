@@ -58,17 +58,31 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _from, next) => {
-  const isAuthenticated = !!localStorage.getItem("user");
 
-  if (
-    to.matched.some((record) => record.meta.requiresAuth) &&
-    !isAuthenticated
-  ) {
+const getUserData = () => {
+  const userData = localStorage.getItem("user");
+  if (userData) {
+    const parsedUser = JSON.parse(userData);
+    return {
+      token: parsedUser?.auth?.jwt_token || null,
+    };
+  }
+  return { token: null };
+};
+
+
+router.beforeEach((to, _from, next) => {
+  const { token } = getUserData();
+  const isAuthenticated = !!token;
+
+
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
     next({ path: "/login" });
   } else if (to.path === "/login" && isAuthenticated) {
+    // Если пользователь уже авторизован, перенаправляем на /dashboard
     next({ path: "/dashboard" });
   } else {
+    // Все условия выполнены, разрешаем переход
     next();
   }
 });

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useUsersStore } from '@/store/useUserStore';
+import { useUsersStore } from '@/stores/useUsersStore';
 
 const customInstance = axios.create({
   baseURL: 'https://manager.dynamic-devs-collective.ru/wp-json/custom/v1',

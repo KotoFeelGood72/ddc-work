@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useUsersStore } from "@/store/useUserStore";
+import { useUsersStore } from "@/stores/useUsersStore";
 
 const username = ref<any>("");
 const password = ref<any>("");

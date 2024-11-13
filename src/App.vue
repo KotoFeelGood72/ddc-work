@@ -12,8 +12,8 @@ import AdminLayout from "@/layouts/AdminLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
 import Modal from "./components/modal/Modal.vue";
-import { useModalStoreRefs } from "./store/useModalStore";
-import { useUsersStore } from "./store/useUserStore";
+import { useModalStoreRefs } from "./stores/useModalStore";
+import { useUsersStore } from "./stores/useUsersStore";
 
 const { modals } = useModalStoreRefs();
 const { fetchUserInfo } = useUsersStore();

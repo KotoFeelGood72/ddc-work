@@ -128,8 +128,8 @@
 	import Loader from "@/components/ui/loading/Loader.vue";
 	import api from "@/api/api";
 	import custom from "@/api/custom";
-	import { useModalStore } from "@/store/useModalStore";
-	import { useClientStore } from "@/store/useClientStore";
+	import { useModalStore } from "@/stores/useModalStore";
+	import { useClientStore } from "@/stores/useClientsStore";
 	// @ts-ignore
 	import DatePicker from "@vuepic/vue-datepicker";
 	import "@vuepic/vue-datepicker/dist/main.css"; // Импорт стилей

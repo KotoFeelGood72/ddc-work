@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUsersStore, useUsersStoreRefs } from "@/store/useUserStore";
+import { useUsersStore, useUsersStoreRefs } from "@/stores/useUsersStore";
 import avatar from "@/components/ui/people/avatar.vue";
 import { useRouter } from "vue-router";
 const { users } = useUsersStoreRefs();

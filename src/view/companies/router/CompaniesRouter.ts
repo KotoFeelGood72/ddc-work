@@ -4,7 +4,7 @@ const routes = [
   { 
     path: '/clients/', 
     name: 'clients', 
-    component: () => import('../pages/Companies.vue'), 
+    component: () => import('../../../screens/clients/clients.vue'), 
     meta: {
       layout: 'Admin',
       requiresAuth: true,

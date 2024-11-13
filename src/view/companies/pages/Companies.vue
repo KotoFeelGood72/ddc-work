@@ -107,7 +107,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, watchEffect } from "vue";
-import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
+import { useClientStore, useClientStoreRefs } from "@/stores/useClientsStore";
 import ClientCard from "@/components/ui/card/ClientCard.vue";
 import pagination from "@/components/ui/buttons/pagination.vue";
 import Loader from "@/components/ui/loading/Loader.vue";

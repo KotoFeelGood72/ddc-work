@@ -19,7 +19,7 @@
 <script setup lang="ts">
 	import CloseModal from "../ui/buttons/CloseModal.vue";
 	import { computed, defineAsyncComponent } from "vue";
-	import { useModalStore, useModalStoreRefs } from "@/store/useModalStore";
+	import { useModalStore, useModalStoreRefs } from "@/stores/useModalStore";
 	import { useRouter } from "vue-router";
 	const AsyncModalSingleData = defineAsyncComponent(
 		() => import("./view/ModalSingleData.vue")
