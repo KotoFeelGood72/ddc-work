@@ -36,5 +36,5 @@ jobs:
         lftp -c "
         set ssl:verify-certificate no;
         open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
-        mirror -R --delete ./dist /www/manager.dynamic-devs-collective.ru/wp-content/themes/manager/vue/;
+        mirror -R --delete ./dist /www/crm.gleede.ru/wp-content/themes/manager/vue/;
         quit"
