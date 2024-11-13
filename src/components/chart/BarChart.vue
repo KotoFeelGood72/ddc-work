@@ -125,14 +125,14 @@ const chartOptions = ref({
   colors: ["#90e0ef"],
 });
 
-const setMonth = (selectedValue: string) => {
-  activeMonth.value = selectedValue; // Явное обновление активного месяца
-  const monthData = monthsData.value.find((month: any) => month.id === selectedValue);
-  if (monthData) {
-    console.log(monthData);
-    series.value[0].data = monthData.data;
-  }
-};
+// const setMonth = (selectedValue: string) => {
+//   activeMonth.value = selectedValue; // Явное обновление активного месяца
+//   const monthData = monthsData.value.find((month: any) => month.id === selectedValue);
+//   if (monthData) {
+//     console.log(monthData);
+//     series.value[0].data = monthData.data;
+//   }
+// };
 
 watch(activeMonth, (newMonth) => {
   const monthData = monthsData.value.find((month: any) => month.id === newMonth);
