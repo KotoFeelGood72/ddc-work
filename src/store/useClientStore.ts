@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from "pinia";
-// import api from "@/api/api";
-import custom from "@/api/custom";
+import { api } from "@/api/api";
+// import custom from "@/api/custom";
 
 export const useClientStore = defineStore("clientStore", {
   state: () => ({
@@ -83,7 +83,7 @@ export const useClientStore = defineStore("clientStore", {
           params.callback_date = this.formatDate(this.selectedDate);
         }
 
-        const response = await api.get("/client_new", { params });
+        const response = await api.get("/clients", { params });
         this.clients = response.data;
         this.totalPages = Math.ceil(
           response.headers["x-wp-total"] / this.perPage

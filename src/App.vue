@@ -1,7 +1,7 @@
 <template>
   <component :is="layoutComponent" :class="{ fixed: isAnyModalActive }">
     <router-view />
-    <Modal :positionX="[isCart, isQr] ? 'right' : 'center'" />
+    <!-- <Modal :positionX="[isCart, isQr] ? 'right' : 'center'" /> -->
   </component>
 </template>
 
@@ -16,7 +16,7 @@ import { useModalStoreRefs } from "./store/useModalStore";
 import { useUsersStore } from "./store/useUserStore";
 
 const { modals } = useModalStoreRefs();
-const { fetchUserInfo } = useUsersStore();
+// const { fetchUserInfo } = useUsersStore();
 const isAnyModalActive = computed(() => {
   return Object.values(modals.value).some((value) => value);
 });
@@ -46,9 +46,9 @@ watch(isAnyModalActive, (newValue) => {
 });
 
 onMounted(async () => {
-  if(route.path != '/login') {
-    await fetchUserInfo();
-  }
+  // if(route.path != '/login') {
+  //   await fetchUserInfo();
+  // }
 });
 </script>
 
