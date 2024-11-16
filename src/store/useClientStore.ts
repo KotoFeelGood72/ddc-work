@@ -1,8 +1,9 @@
 import { defineStore, storeToRefs } from "pinia";
 import { api } from "@/api/api";
+import axios from "axios";
 // import custom from "@/api/custom";
 
-export const useClientStore = defineStore("clientStore", {
+export const useClientStore = defineStore("clients", {
   state: () => ({
     clients: [] as any[],
     categories: [] as any[],
@@ -83,7 +84,9 @@ export const useClientStore = defineStore("clientStore", {
           params.callback_date = this.formatDate(this.selectedDate);
         }
 
-        const response = await api.get("/clients", { params });
+        const response = await api.get(
+          "/wp-content/uploads/json/clients/all-clients.json"
+        );
         this.clients = response.data;
         this.totalPages = Math.ceil(
           response.headers["x-wp-total"] / this.perPage
@@ -131,7 +134,7 @@ export const useClientStore = defineStore("clientStore", {
     async updateClient(updatedClient: any) {
       try {
         // Отправляем запрос на сервер с обновленными полями
-        await custom.post(`/update-client/${updatedClient.id}`, {
+        await api.post(`/update-client/${updatedClient.id}`, {
           name: updatedClient.acf.name,
           city: updatedClient.acf.city,
           phones: updatedClient.acf.phones,
@@ -172,7 +175,7 @@ export const useClientStore = defineStore("clientStore", {
     },
     async deleteClient(clientId: number) {
       try {
-        await custom.delete(`/delete-client/${clientId}`);
+        await api.delete(`/delete-client/${clientId}`);
         this.clients = this.clients.filter((client) => client.id !== clientId);
       } catch (error) {
         console.error(`Failed to delete client ${clientId}:`, error);
@@ -269,7 +272,7 @@ export const useClientStore = defineStore("clientStore", {
           ...this.clients[clientIndex],
           acf: { ...this.clients[clientIndex].acf, status: newStatus },
         };
-        await custom.post(`/update-client/${clientId}`, {
+        await api.post(`/update-client/${clientId}`, {
           status: newStatus,
         });
 

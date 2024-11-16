@@ -36,13 +36,11 @@ export default defineConfig({
     },
   },
   server: {
-    port: 8000,
-    host: true,
     proxy: {
-      "/api": {
-        target: "https://crm.gleede.ru/", // Использование переменной окружения
+      "/api/": {
+        target: "https://crm.gleede.ru/",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/auth/, ""),
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

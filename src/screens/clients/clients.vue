@@ -2,7 +2,11 @@
   <div class="clients">
     <div class="clients_head"></div>
     <div class="clients_body">
-      <Client v-for="(item, i) in clients" :key="'item-clients-' + i" :client="item" />
+      <Client
+        v-for="(item, i) in clients"
+        :key="'item-clients-' + i"
+        :client="item"
+      />
     </div>
   </div>
 </template>
@@ -19,5 +23,10 @@ onMounted(() => {
   fetchClients();
 });
 </script>
-
-<style scoped></style>
+<style scoped lang="scss">
+.clients_body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+</style>
