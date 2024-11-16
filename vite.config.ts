@@ -37,7 +37,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api/": {
+      "/api": {
         target: "https://crm.gleede.ru/",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
