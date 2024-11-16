@@ -145,24 +145,24 @@ const statuses = ["В обработке", "В работе", "Клиент", "�
 const isLoading = ref<boolean>(false);
 
 const ruLocale = ref<string>("ru"); // Устанавливаем локаль
-async function getClientById(id: string) {
-  try {
-    const response = await api.get(`/client_new/${id}`);
-    clientData.value = response.data;
+// async function getClientById(id: string) {
+//   try {
+//     const response = await api.get(`/client_new/${id}`);
+//     clientData.value = response.data;
 
-    if (clientData.value.acf.callback) {
-      clientData.value.acf.callback = parse(
-        clientData.value.acf.callback,
-        "dd/MM/yyyy h:mm a",
-        new Date(),
-        { locale: ru }
-      );
-    }
-    commentary.value = clientData.value.acf.comment || "";
-  } catch (error) {
-    console.error("Failed to fetch client data:", error);
-  }
-}
+//     if (clientData.value.acf.callback) {
+//       clientData.value.acf.callback = parse(
+//         clientData.value.acf.callback,
+//         "dd/MM/yyyy h:mm a",
+//         new Date(),
+//         { locale: ru }
+//       );
+//     }
+//     commentary.value = clientData.value.acf.comment || "";
+//   } catch (error) {
+//     console.error("Failed to fetch client data:", error);
+//   }
+// }
 
 function getStatusClass(status: string, activeStatus: string) {
   return status === activeStatus ? "status-active" : "status-inactive";
@@ -185,7 +185,7 @@ function getStatusColorClass(status: string) {
 
 onMounted(() => {
   if (route.query.client) {
-    getClientById(route.query.client as string);
+    // getClientById(route.query.client as string);
   }
 });
 
@@ -193,7 +193,7 @@ watch(
   () => route.query.client,
   (newClientId) => {
     if (newClientId) {
-      getClientById(newClientId as string);
+      // getClientById(newClientId as string);
     }
   }
 );
