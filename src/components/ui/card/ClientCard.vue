@@ -251,12 +251,12 @@
                   @click.stop
                   @keydown.enter="onEnter"
                 ></textarea>
-                <div class="send_comment" @click.stop="addComment">
+                <!-- <div class="send_comment" @click.stop="addComment">
                   <Icons
                     icon="solar:chat-round-unread-bold"
                     :size="20"
                   />Отправить
-                </div>
+                </div> -->
               </div>
             </li>
           </ul>
