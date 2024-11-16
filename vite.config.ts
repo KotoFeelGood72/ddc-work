@@ -36,11 +36,13 @@ export default defineConfig({
     },
   },
   server: {
+    port: 8000,
+    host: true,
     proxy: {
-      '/wp-json': {
-        target: 'https://manager.dynamic-devs-collective.ru',
+      "/api": {
+        target: "https://crm.gleede.ru/", // Использование переменной окружения
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/wp-json/, '/wp-json'),
+        rewrite: (path) => path.replace(/^\/auth/, ""),
       },
     },
   },

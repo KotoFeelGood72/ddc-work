@@ -3,10 +3,16 @@
     <div v-if="!isDeleted" class="card">
       <div class="card_top">
         <ul class="card_tab__link">
-          <li @click.stop="activeTab = 'org'" :class="{ active: activeTab === 'org' }">
+          <li
+            @click.stop="activeTab = 'org'"
+            :class="{ active: activeTab === 'org' }"
+          >
             Сведение об организации
           </li>
-          <li @click.stop="activeTab = 'info'" :class="{ active: activeTab === 'info' }">
+          <li
+            @click.stop="activeTab = 'info'"
+            :class="{ active: activeTab === 'info' }"
+          >
             Сведение о контактном лице
           </li>
           <li
@@ -56,9 +62,12 @@
             <li>
               <Icons icon="solar:code-circle-broken" :size="18" />
               <p>Сайт:</p>
-              <a :href="firstWebsite" target="_blank" @click.stop="handleWebsiteClick">{{
-                firstWebsite
-              }}</a>
+              <a
+                :href="firstWebsite"
+                target="_blank"
+                @click.stop="handleWebsiteClick"
+                >{{ firstWebsite }}</a
+              >
             </li>
             <li>
               <Icons icon="solar:document-add-broken" :size="18" />
@@ -82,7 +91,11 @@
                   >
                     {{ isStatusSendKP ? "Отправлено" : "Отправить" }}
 
-                    <Icons icon="solar:login-2-broken" v-if="!isLoad" size="16" />
+                    <Icons
+                      icon="solar:login-2-broken"
+                      v-if="!isLoad"
+                      size="16"
+                    />
                     <div class="send_load" v-if="isLoad">
                       <Icons icon="line-md:loading-loop" size="16" />
                     </div>
@@ -239,7 +252,10 @@
                   @keydown.enter="onEnter"
                 ></textarea>
                 <div class="send_comment" @click.stop="addComment">
-                  <Icons icon="solar:chat-round-unread-bold" :size="20" />Отправить
+                  <Icons
+                    icon="solar:chat-round-unread-bold"
+                    :size="20"
+                  />Отправить
                 </div>
               </div>
             </li>
@@ -284,7 +300,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { ru } from "date-fns/locale";
 import { useClientStore, useClientStoreRefs } from "@/store/useClientStore";
 import { useUsersStoreRefs } from "@/store/useUserStore";
-import api from "@/api/api";
+// import api from "@/api/api";
 import axios from "axios";
 
 const props = withDefaults(
@@ -339,7 +355,9 @@ const firstWebsite = computed(() => {
 
 const formattedPhone = computed(() => {
   if (!props.card.acf.phones) return null;
-  const phones = props.card.acf.phones.split(" ").map((phone: any) => phone.trim());
+  const phones = props.card.acf.phones
+    .split(" ")
+    .map((phone: any) => phone.trim());
   const firstPhone = phones[0];
   if (firstPhone.startsWith("8")) {
     return formatPhoneNumber(firstPhone.replace("8", "+7"));

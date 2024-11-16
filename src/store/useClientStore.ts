@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from "pinia";
-import api from "@/api/api";
+// import api from "@/api/api";
 import custom from "@/api/custom";
 
 export const useClientStore = defineStore("clientStore", {
@@ -42,7 +42,7 @@ export const useClientStore = defineStore("clientStore", {
     hasWebsite: "",
     searchQuery: "",
     searchPhone: "",
-    selectedDate: null,  // Добавляем переменную для выбранной даты
+    selectedDate: null, // Добавляем переменную для выбранной даты
     isLoading: false,
     currentView: "list", // 'list' or 'card'
   }),
@@ -54,36 +54,35 @@ export const useClientStore = defineStore("clientStore", {
           page: this.page,
           per_page: this.perPage,
         };
-    
+
         if (this.selectedCategory) {
           params.theme_bussines = this.selectedCategory;
         }
-    
+
         if (this.selectedStatus) {
           params.statuses = this.selectedStatus;
         }
-    
+
         if (this.selectedCity) {
           params.city = this.selectedCity;
         }
-    
+
         if (this.hasWebsite) {
           params.has_website = this.hasWebsite;
         }
-    
+
         if (this.searchQuery) {
           params.search = this.searchQuery;
         }
-    
+
         if (this.searchPhone) {
           params.phone = this.searchPhone;
         }
-    
+
         if (this.selectedDate) {
-          params.callback_date = this.formatDate(this.selectedDate); 
+          params.callback_date = this.formatDate(this.selectedDate);
         }
-        
-    
+
         const response = await api.get("/client_new", { params });
         this.clients = response.data;
         this.totalPages = Math.ceil(
@@ -99,9 +98,9 @@ export const useClientStore = defineStore("clientStore", {
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const year = date.getFullYear();
-    
+
       return `${year}-${month}-${day}`;
-    },    
+    },
 
     getStatusClass(status: string) {
       switch (status) {
@@ -237,7 +236,6 @@ export const useClientStore = defineStore("clientStore", {
       this.page = 1;
       this.getClients();
     },
-    
 
     clearFilters() {
       this.selectedCategory = "";

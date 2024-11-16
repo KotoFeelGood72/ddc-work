@@ -11,7 +11,7 @@ const routes = [
     redirect: "/dashboard",
     meta: {
       layout: "Admin",
-      requiresAuth: true,
+      // requiresAuth: true,
     },
   },
   {
@@ -36,7 +36,7 @@ const routes = [
     component: () => import("../view/Dashboard.vue"),
     meta: {
       layout: "Admin",
-      requiresAuth: true,
+      // requiresAuth: true,
       title: "Dashboard",
     },
   },
@@ -46,9 +46,9 @@ const routes = [
     component: () => import("../view/staff/index.vue"),
     meta: {
       layout: "Admin",
-      requiresAuth: true,
+      // requiresAuth: true,
       title: "Dashboard",
-      role: 'admin'
+      role: "admin",
     },
   },
 ];
@@ -58,17 +58,17 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _from, next) => {
-  const isAuthenticated = !!localStorage.getItem("user");
+// router.beforeEach((to, _from, next) => {
+//   const isAuthenticated = !!localStorage.getItem("user");
 
-  if (
-    to.matched.some((record) => record.meta.requiresAuth) &&
-    !isAuthenticated
-  ) {
-    next({ path: "/login" });
-  } else if (to.path === "/login" && isAuthenticated) {
-    next({ path: "/dashboard" });
-  } else {
-    next();
-  }
-});
+//   if (
+//     to.matched.some((record) => record.meta.requiresAuth) &&
+//     !isAuthenticated
+//   ) {
+//     next({ path: "/login" });
+//   } else if (to.path === "/login" && isAuthenticated) {
+//     next({ path: "/dashboard" });
+//   } else {
+//     next();
+//   }
+// });
