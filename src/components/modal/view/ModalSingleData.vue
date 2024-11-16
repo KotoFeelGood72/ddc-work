@@ -133,10 +133,10 @@ import { useClientStore } from "@/store/useClientStore";
 // @ts-ignore
 import DatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css"; // Импорт стилей
-import { parse } from "date-fns";
+// import { parse } from "date-fns";
 const { closeModal } = useModalStore();
 const clientStore = useClientStore();
-import { ru } from "date-fns/locale";
+// import { ru } from "date-fns/locale";
 const router = useRouter();
 const route = useRoute();
 const clientData = ref<any>({});
