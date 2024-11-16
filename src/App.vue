@@ -11,17 +11,17 @@ import { useRoute } from "vue-router";
 import AdminLayout from "@/layouts/AdminLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import EmptyLayout from "@/layouts/EmptyLayout.vue";
-import Modal from "./components/modal/Modal.vue";
+// import Modal from "./components/modal/Modal.vue";
 import { useModalStoreRefs } from "./store/useModalStore";
-import { useUsersStore } from "./store/useUserStore";
+// import { useUsersStore } from "./store/useUserStore";
 
 const { modals } = useModalStoreRefs();
 // const { fetchUserInfo } = useUsersStore();
 const isAnyModalActive = computed(() => {
   return Object.values(modals.value).some((value) => value);
 });
-const isCart = computed(() => modals.value.client);
-const isQr = computed(() => modals.value.qr);
+// const isCart = computed(() => modals.value.client);
+// const isQr = computed(() => modals.value.qr);
 
 const route = useRoute();
 

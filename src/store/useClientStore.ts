@@ -1,6 +1,6 @@
 import { defineStore, storeToRefs } from "pinia";
 import { api } from "@/api/api";
-import axios from "axios";
+// import axios from "axios";
 // import custom from "@/api/custom";
 
 export const useClientStore = defineStore("clients", {

@@ -425,7 +425,7 @@ function onEnter(event: KeyboardEvent) {
     newComment.value += "\n";
   } else {
     // Если просто Enter, то вызываем метод отправки комментария
-    addComment();
+    // addComment();
     // Предотвращаем стандартное поведение Enter
     event.preventDefault();
   }
@@ -460,31 +460,31 @@ async function saveEmail() {
   }
 }
 
-async function addComment() {
-  if (newComment.value.trim()) {
-    try {
-      // Отправляем новый комментарий через API
-      await api.post("/comments", {
-        post: props.card.id,
-        content: newComment.value.trim(),
-        author_name: users.value.userInfo.name,
-        author_email: users.value.userInfo.acf.user_email,
-      });
+// async function addComment() {
+//   if (newComment.value.trim()) {
+//     try {
+//       // Отправляем новый комментарий через API
+//       await api.post("/comments", {
+//         post: props.card.id,
+//         content: newComment.value.trim(),
+//         author_name: users.value.userInfo.name,
+//         author_email: users.value.userInfo.acf.user_email,
+//       });
 
-      // После успешной отправки комментария, заново получаем обновленную карточку клиента
-      const updatedCard = await api.get(`/client_new/${props.card.id}`);
+//       // После успешной отправки комментария, заново получаем обновленную карточку клиента
+//       const updatedCard = await api.get(`/client_new/${props.card.id}`);
 
-      // Обновляем карточку клиента в хранилище
-      clientStore.updateClientInStore(updatedCard.data);
+//       // Обновляем карточку клиента в хранилище
+//       clientStore.updateClientInStore(updatedCard.data);
 
-      console.log("Комментарий успешно добавлен и карточка обновлена.");
-    } catch (error) {
-      console.error("Ошибка при добавлении комментария:", error);
-    }
+//       console.log("Комментарий успешно добавлен и карточка обновлена.");
+//     } catch (error) {
+//       console.error("Ошибка при добавлении комментария:", error);
+//     }
 
-    newComment.value = ""; // Очищаем поле ввода после отправки
-  }
-}
+//     newComment.value = ""; // Очищаем поле ввода после отправки
+//   }
+// }
 
 async function handlePhoneClick() {
   await clientStore.updateClient({
